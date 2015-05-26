@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/guarana-core/guarana-core.iml" filepath="$PROJECT_DIR$/guarana-core/guarana-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/project-guarana.iml" filepath="$PROJECT_DIR$/project-guarana.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testapp/testapp.iml" filepath="$PROJECT_DIR$/testapp/testapp.iml" />
+    </modules>
+  </component>
+</project>

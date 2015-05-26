@@ -5,9 +5,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ogerardin.guarana</groupId>
-    <artifactId>guarana-core</artifactId>
+    <artifactId>testapp-app</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.ogerardin.guarana</groupId>
+            <artifactId>guarana-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ogerardin.guarana</groupId>
+            <artifactId>testapp-business</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

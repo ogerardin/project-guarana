@@ -5,13 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ogerardin.guarana</groupId>
-    <artifactId>guarana-core</artifactId>
+    <artifactId>project-guarana</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <modules>
+        <module>guarana-core</module>
+        <module>testapp-business</module>
+        <module>testapp-app</module>
+    </modules>
 
 
 </project>

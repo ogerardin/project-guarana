@@ -22,5 +22,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="guarana-core" />
     <orderEntry type="module" module-name="testapp-business" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:18.0" level="project" />
+    <orderEntry type="library" name="Maven: com.db4o:com.db4o:7.7.67" level="project" />
+    <orderEntry type="library" name="Maven: edu.purdue.cs.bloat:edu.purdue.cs.bloat:1.0" level="project" />
   </component>
 </module>

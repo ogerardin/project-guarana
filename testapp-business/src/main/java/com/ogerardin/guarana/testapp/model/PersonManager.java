@@ -7,4 +7,6 @@ import java.util.Collection;
  */
 public interface PersonManager {
     Collection<Person> getAllpersons();
+
+    Person save(Person person);
 }

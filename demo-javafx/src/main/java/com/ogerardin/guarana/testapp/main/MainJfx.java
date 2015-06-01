@@ -23,24 +23,20 @@ public class MainJfx extends Application {
     public void start(Stage primaryStage) {
         Button btn = new Button();
         btn.setText("Say 'Hello World'");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
+        btn.setOnAction(event -> {
+            final Person person = new Person("Olivier", "Gérardin");
 
-            @Override
-            public void handle(ActionEvent event) {
-                final Person person = new Person("Olivier", "Gérardin");
+            try {
+                InstanceInspector stage = new InstanceInspector(Person.class);
+                stage.setTarget(person);
 
-                try {
-                    InstanceInspector stage = new InstanceInspector(Person.class);
-                    stage.setTarget(person);
+                stage.setOnCloseRequest(e -> System.out.println(person));
 
-                    stage.setOnCloseRequest(e -> System.out.println(person));
-
-                    stage.show();
-                } catch (IntrospectionException e) {
-                    throw new RuntimeException(e);
-                }
-
+                stage.show();
+            } catch (IntrospectionException e) {
+                throw new RuntimeException(e);
             }
+
         });
 
         StackPane root = new StackPane();

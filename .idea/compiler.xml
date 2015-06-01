@@ -22,19 +22,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="demo-app" />
+        <module name="demo-business" />
         <module name="guarana-core" />
+        <module name="guarana-javafx" />
         <module name="testapp" />
         <module name="testapp-app" />
         <module name="testapp-business" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="guarana" target="1.5" />
-      <module name="guarana-core" target="1.5" />
-      <module name="project-guarana" target="1.5" />
-      <module name="testapp" target="1.5" />
-      <module name="testapp-app" target="1.5" />
-      <module name="testapp-business" target="1.5" />
-    </bytecodeTargetLevel>
   </component>
 </project>

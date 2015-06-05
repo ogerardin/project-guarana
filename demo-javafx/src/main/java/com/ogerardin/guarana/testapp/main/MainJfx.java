@@ -22,7 +22,7 @@ public class MainJfx extends Application {
     @Override
     public void start(Stage primaryStage) {
         Button btn = new Button();
-        btn.setText("Say 'Hello World'");
+        btn.setText("Show Person");
         btn.setOnAction(event -> {
             final Person person = new Person("Olivier", "Gérardin");
 

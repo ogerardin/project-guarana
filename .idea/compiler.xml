@@ -25,10 +25,23 @@
         <module name="demo-app" />
         <module name="demo-business" />
         <module name="guarana-core" />
-        <module name="guarana-javafx" />
         <module name="testapp" />
         <module name="testapp-app" />
         <module name="testapp-business" />
+      </profile>
+      <profile default="false" name="Annotation profile for guarana-javafx" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="guarana-javafx" />
+      </profile>
+      <profile default="false" name="Annotation profile for demo-javafx" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="demo-javafx" />
       </profile>
     </annotationProcessing>
   </component>

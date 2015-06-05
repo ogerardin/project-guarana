@@ -13,7 +13,7 @@
         <module>guarana-core</module>
         <module>guarana-javafx</module>
         <module>demo-business</module>
-        <module>demo-app</module>
+        <module>demo-javafx</module>
     </modules>
 
 

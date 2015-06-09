@@ -22,8 +22,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="demo-app" />
         <module name="demo-business" />
+        <module name="demo-javafx" />
         <module name="guarana-core" />
         <module name="testapp" />
         <module name="testapp-app" />

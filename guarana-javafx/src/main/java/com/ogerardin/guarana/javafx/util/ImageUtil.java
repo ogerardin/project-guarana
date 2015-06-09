@@ -13,9 +13,9 @@ import java.io.IOException;
 /**
  * Created by Olivier on 02/06/15.
  */
-public final class Util {
+public final class ImageUtil {
 
-    private Util() {
+    private ImageUtil() {
     }
 
     public static Image createImage(java.awt.Image image) throws IOException {

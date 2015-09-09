@@ -15,9 +15,6 @@ import java.io.IOException;
  */
 public final class ImageUtil {
 
-    private ImageUtil() {
-    }
-
     public static Image createImage(java.awt.Image image) throws IOException {
         if (!(image instanceof RenderedImage)) {
             BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),

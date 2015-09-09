@@ -8,6 +8,17 @@
     <artifactId>demo-javafx</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <repositories>
+        <repository>
+            <id>exo</id>
+            <url>http://nexus.luxbourse.local:8081/nexus/content/repositories/exoplatform/</url>
+        </repository>
+        <repository>
+            <id>jcenter</id>
+            <url>http://jcenter.bintray.com/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.ogerardin.guarana</groupId>

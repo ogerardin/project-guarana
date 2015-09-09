@@ -23,26 +23,32 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="demo-business" />
-        <module name="demo-javafx" />
         <module name="guarana-core" />
         <module name="testapp" />
         <module name="testapp-app" />
         <module name="testapp-business" />
       </profile>
       <profile default="false" name="Annotation profile for guarana-javafx" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <sourceOutputDir name="target\generated-sources\annotations" />
+        <sourceTestOutputDir name="target\generated-test-sources\test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="guarana-javafx" />
       </profile>
       <profile default="false" name="Annotation profile for demo-javafx" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <sourceOutputDir name="target\generated-sources\annotations" />
+        <sourceTestOutputDir name="target\generated-test-sources\test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="demo-javafx" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="demo-business" target="1.5" />
+      <module name="demo-javafx" target="1.8" />
+      <module name="guarana" target="1.5" />
+      <module name="guarana-core" target="1.5" />
+      <module name="guarana-javafx" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

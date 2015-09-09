@@ -4,13 +4,14 @@ package com.ogerardin.guarana.testapp.main;
  * Created by Olivier on 28/05/15.
  */
 
-import com.ogerardin.guarana.javafx.ui.InstanceUI;
 import com.ogerardin.guarana.javafx.ui.ListUI;
+import com.ogerardin.guarana.javafx.ui.builder.JfxInstanceUI;
 import com.ogerardin.guarana.testapp.model.Person;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.util.Arrays;
@@ -27,10 +28,13 @@ public class MainJfx extends Application {
             btn.setText("Show Person");
             btn.setOnAction(event -> {
                 final Person person = new Person("Olivier", "Gérardin");
-                InstanceUI stage = new InstanceUI(Person.class);
-                stage.setTarget(person);
-                stage.setOnCloseRequest(e -> System.out.println(person));
-                stage.show();
+                JfxInstanceUI ui = new JfxInstanceUI(Person.class);
+                ui.setTarget(person);
+
+                Popup popup = new Popup();
+                popup.getContent().add(ui.render());
+                popup.setOnCloseRequest(e -> System.out.println(person));
+                popup.show(primaryStage);
             });
             vBox.getChildren().add(btn);
         }

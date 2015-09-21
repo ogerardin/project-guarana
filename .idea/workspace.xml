@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SCOPE_TYPE" value="3" />
+  </component>
   <component name="ChangeListManager">
     <list id="5d9c2105-c5ae-48cd-9df4-f93a79011ba2" name="Default" comment="renamed demo-app to demo-javafx&#10;&#10;(cherry picked from commit 92a3d033a1bddbbb72acabcbc284669efbca3a63)&#10;&#10;# Conflicts:&#10;#&#9;demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx.java&#10;#&#9;demo-javafx/src/main/java/spring-config.xml&#10;#&#9;guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/inspector/InstanceInspector.java&#10;" />
     <list default="true" id="4c7f9683-5790-4b5c-a921-3f722bc5b524" name="renamed demo-app to demo-javafx (cherry picked from commit 92a3d03)" comment="introduced parametrized factory UiBuilder">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/CollectionUI.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java" afterPath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java" afterPath="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="project-guarana.iws" />
@@ -40,26 +46,77 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="JfxInstanceUI.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="JfxInstanceUI.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.33333334">
-              <caret line="155" column="22" selection-start-line="155" selection-start-column="22" selection-end-line="155" selection-end-column="22" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="140" column="4" selection-start-line="140" selection-start-column="4" selection-end-line="140" selection-end-column="4" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JfxCollectionUI.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxCollectionUI.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="95" column="45" selection-start-line="95" selection-start-column="45" selection-end-line="95" selection-end-column="45" />
               <folding>
-                <element signature="e#1065#1094#0" expanded="true" />
-                <element signature="e#1187#1216#0" expanded="true" />
-                <element signature="e#5564#5565#0" expanded="true" />
-                <element signature="e#5591#5592#0" expanded="true" />
+                <element signature="e#2962#2963#0" expanded="true" />
+                <element signature="e#2989#2990#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Defaults.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/Defaults.java">
+      <file leaf-file-name="Person.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/Person.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="8" column="11" selection-start-line="8" selection-start-column="11" selection-end-line="8" selection-end-column="11" />
+              <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ResetDatabase.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/ResetDatabase.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="9" column="28" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PersonManagerDb4oImpl.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="38" column="5" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
+              <folding>
+                <element signature="e#921#922#0" expanded="true" />
+                <element signature="e#979#980#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PersonManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/PersonManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MainDemoJfx.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainDemoJfx.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -69,91 +126,18 @@
         <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/DialogUtil.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="16" column="12" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
+              <caret line="12" column="25" selection-start-line="12" selection-start-column="25" selection-end-line="12" selection-end-column="25" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="InstanceUI.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/InstanceUI.java">
+      <file leaf-file-name="MethodCallUI.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/MethodCallUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
+            <state vertical-scroll-proportion="0.79965156">
+              <caret line="39" column="36" selection-start-line="39" selection-start-column="36" selection-end-line="39" selection-end-column="36" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImageUtil.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/ImageUtil.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JfxClassUI.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxClassUI.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="43" column="17" selection-start-line="43" selection-start-column="17" selection-end-line="43" selection-end-column="17" />
-              <folding>
-                <element signature="e#1501#1502#0" expanded="true" />
-                <element signature="e#1528#1529#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JfxUiBuilder.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxUiBuilder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="20" column="27" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
-              <folding>
-                <element signature="e#410#411#0" expanded="true" />
-                <element signature="e#462#463#0" expanded="true" />
-                <element signature="e#556#557#0" expanded="true" />
-                <element signature="e#611#612#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MainJfx2.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx2.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="24" column="95" selection-start-line="24" selection-start-column="95" selection-end-line="24" selection-end-column="95" />
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="UIBuilder.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="9" column="25" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Scene.java" pinned="false" current-in-tab="false">
-        <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/Scene.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="179" column="11" selection-start-line="179" selection-start-column="11" selection-end-line="179" selection-end-column="11" />
-              <folding>
-                <element signature="e#5884#5885#0" expanded="true" />
-                <element signature="e#5966#5967#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -185,19 +169,12 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/testapp-business/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerImpl.java" />
-        <option value="$PROJECT_DIR$/testapp-app/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerImpl.java" />
-        <option value="$PROJECT_DIR$/testapp-app/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java" />
-        <option value="$PROJECT_DIR$/testapp-app/src/main/java/com/ogerardin/guarana/testapp/main/MainConsole.java" />
-        <option value="$PROJECT_DIR$/testapp-app/pom.xml" />
         <option value="$PROJECT_DIR$/testapp-business/pom.xml" />
         <option value="$PROJECT_DIR$/testapp-business/src/main/java/com/ogerardin/guarana/testapp/model/Person.java" />
         <option value="$PROJECT_DIR$/testapp-app/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx.java" />
         <option value="$PROJECT_DIR$/demo-business/pom.xml" />
-        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainConsole.java" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/Person.java" />
-        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainConsole.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/guarana-javafx/pom.xml" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/inspector/Util.java" />
@@ -213,7 +190,6 @@
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/ListUI.java" />
         <option value="$PROJECT_DIR$/demo-javafx/pom.xml" />
         <option value="$PROJECT_DIR$/demo-javafx/pom.xml" />
-        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java" />
         <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/testapp/main/JavaFxUiBuilder.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JavaFxUiBuilder.java" />
@@ -223,19 +199,27 @@
         <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/Introspector.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/ClassUI.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JavaFxUiBuilder.java" />
-        <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java" />
         <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/Renderable.java" />
         <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/ClassUI.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/InstanceUI.java" />
         <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/InstanceUI.java" />
-        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx.java" />
-        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx.java" />
-        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxUiBuilder.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxClassUI.java" />
-        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx2.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/ImageUtil.java" />
-        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/DialogUtil.java" />
+        <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/CollectionUI.java" />
+        <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxUiBuilder.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxCollectionUI.java" />
+        <option value="$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/PersonManager.java" />
+        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java" />
+        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainConsole.java" />
+        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainConsole.java" />
+        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/ResetDatabase.java" />
+        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx2.java" />
+        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx.java" />
+        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx.java" />
+        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainDemoJfx.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/DialogUtil.java" />
       </list>
     </option>
   </component>
@@ -340,7 +324,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
+    <navigator currentView="PackagesPane" proportions="" version="1">
       <flattenPackages ProjectPane="false" />
       <showMembers />
       <showModules />
@@ -362,6 +346,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -369,344 +354,6 @@
               <option name="myItemId" value="project-guarana" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Maven: org.jfxtras:jfxtras-labs:8.0-r3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jfxtras-labs-8.0-r3.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Maven: org.jfxtras:jfxtras-labs:8.0-r3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jfxtras-labs-8.0-r3.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="labs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Maven: org.jfxtras:jfxtras-labs:8.0-r3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jfxtras-labs-8.0-r3.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="labs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scene" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Maven: org.jfxtras:jfxtras-labs:8.0-r3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jfxtras-labs-8.0-r3.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="labs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scene" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="control" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Maven: com.db4o:com.db4o:7.7.67" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com.db4o-7.7.67.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Maven: com.db4o:com.db4o:7.7.67" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com.db4o-7.7.67.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="db4o" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Maven: com.db4o:com.db4o:7.7.67" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com.db4o-7.7.67.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="db4o" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="internal" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; 1.8 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; 1.8 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rt.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; 1.8 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rt.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; 1.8 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rt.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lang" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; 1.8 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jfxrt.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; 1.8 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jfxrt.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; 1.8 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jfxrt.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="stage" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; 1.8 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jfxrt.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scene" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -715,204 +362,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guarana-javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guarana-javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="util" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guarana-javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guarana-javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="builder" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guarana-core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guarana-core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guarana-core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ui" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -940,61 +389,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="demo-javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testapp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="demo-javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testapp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="adapters" />
+              <option name="myItemId" value="demo-business" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1054,6 +449,28 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="guarana-javafx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com.ogerardin.guarana.javafx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ui" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="builder" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="guarana-core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
             </PATH_ELEMENT>
@@ -1081,16 +498,51 @@
               <option name="myItemId" value="com.ogerardin.guarana.testapp" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="project-guarana" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="demo-javafx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com.ogerardin.guarana.testapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="demo-business" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="demo-business" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com.ogerardin.guarana.testapp.model" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1100,7 +552,7 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.3816092" />
     <property name="FullScreen" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.JavaFX" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.completion" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -1111,7 +563,7 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="extract.method.default.visibility" value="private" />
+    <property name="extract.method.default.visibility" value="public" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="123" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
@@ -1162,13 +614,14 @@
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.ogerardin.guarana.javafx.ui.builder" />
+      <recent name="com.ogerardin.guarana.core.ui" />
       <recent name="com.ogerardin.guarana.testapp.main" />
       <recent name="com.ogerardin.guarana.javafx.ui" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.MainJfx2">
-    <configuration default="false" name="MainJfx" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.ogerardin.guarana.testapp.main.MainJfx" />
+  <component name="RunManager" selected="Application.MainDemoJfx">
+    <configuration default="false" name="MainDemoJfx" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.ogerardin.guarana.testapp.main.MainDemoJfx" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -1181,8 +634,22 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="MainJfx2" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.ogerardin.guarana.testapp.main.MainJfx2" />
+    <configuration default="false" name="MainDemoJfx" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.ogerardin.guarana.testapp.main.MainDemoJfx" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="demo-javafx" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="ResetDatabase" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.ogerardin.guarana.testapp.main.ResetDatabase" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -1303,14 +770,16 @@
       <envs />
       <method />
     </configuration>
-    <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="Application.MainJfx" />
-      <item index="1" class="java.lang.String" itemvalue="Application.MainJfx2" />
+    <list size="3">
+      <item index="0" class="java.lang.String" itemvalue="Application.MainDemoJfx" />
+      <item index="1" class="java.lang.String" itemvalue="Application.MainDemoJfx" />
+      <item index="2" class="java.lang.String" itemvalue="Application.ResetDatabase" />
     </list>
     <recent_temporary>
-      <list size="2">
-        <item index="0" class="java.lang.String" itemvalue="Application.MainJfx2" />
-        <item index="1" class="java.lang.String" itemvalue="Application.MainJfx" />
+      <list size="3">
+        <item index="0" class="java.lang.String" itemvalue="Application.MainDemoJfx" />
+        <item index="1" class="java.lang.String" itemvalue="Application.MainDemoJfx" />
+        <item index="2" class="java.lang.String" itemvalue="Application.ResetDatabase" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
@@ -1323,7 +792,7 @@
   <component name="ShelveChangesManager" show_recycled="false" />
   <component name="StructureViewFactory">
     <option name="AUTOSCROLL_FROM_SOURCE" value="true" />
-    <option name="ACTIVE_ACTIONS" value=",SHOW_PROPERTIES,SHOW_NON_PUBLIC" />
+    <option name="ACTIVE_ACTIONS" value=",SHOW_PROPERTIES" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -1357,6 +826,8 @@
       <workItem from="1441206364705" duration="177000" />
       <workItem from="1441206586616" duration="1159000" />
       <workItem from="1441626003726" duration="27154000" />
+      <workItem from="1442563671768" duration="137000" />
+      <workItem from="1442834067004" duration="11555000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1432644091789</created>
@@ -1420,9 +891,9 @@
     </servers>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="92964000" />
+    <option name="totallyTimeSpent" value="104656000" />
   </component>
-  <component name="TodoView" selected-index="4">
+  <component name="TodoView">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
     </todo-panel>
@@ -1432,24 +903,24 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="32" width="1696" height="1026" extended-state="7" />
-    <editor active="true" />
+    <frame x="-8" y="32" width="1696" height="1026" extended-state="1" />
+    <editor active="false" />
     <layout>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32897604" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3278867" sideWeight="0.48594132" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32897604" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3273743" sideWeight="0.48594132" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3988827" sideWeight="0.502445" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2029762" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3278867" sideWeight="0.49285713" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27668846" sideWeight="0.49266502" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3273743" sideWeight="0.49285713" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28268155" sideWeight="0.49266502" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32897604" sideWeight="0.49761903" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22559524" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25611246" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23166259" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Duplicates" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24420024" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32897604" sideWeight="0.49761903" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19285715" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19804402" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.17094018" sideWeight="0.5059347" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3888889" sideWeight="0.49755502" order="3" side_tool="false" content_ui="tabs" />
@@ -1457,6 +928,7 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25611246" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -1521,13 +993,13 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxClassUI.java</url>
-          <line>26</line>
+          <url>file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java</url>
+          <line>115</line>
           <properties />
-          <option name="timeStamp" value="10" />
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="15" />
+      <option name="time" value="19" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1536,141 +1008,10 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/project-guarana.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-core/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="14" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo-business/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/maven/lib/maven.jar!/schemas/maven-4.0.0.xsd">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.69741696">
-          <caret line="64" column="19" selection-start-line="64" selection-start-column="12" selection-end-line="64" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo-business/demo-business.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="28" selection-start-line="24" selection-start-column="28" selection-end-line="24" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="uml://MAVEN/com.ogerardin.guarana:demo-javafx:1.0-SNAPSHOT">
-      <provider selected="true" editor-type-id="UmlEditorProvider">
-        <state>
-          <ID>MAVEN</ID>
-          <OriginalElement>com.ogerardin.guarana:demo-javafx:1.0-SNAPSHOT</OriginalElement>
-          <nodes>
-            <node x="" y="">com.ogerardin.guarana:demo-javafx:1.0-SNAPSHOT</node>
-            <node x="" y="">com.ogerardin.guarana:guarana-core:jar:1.0-SNAPSHOT</node>
-            <node x="" y="">com.ogerardin.guarana:demo-business:jar:1.0-SNAPSHOT</node>
-            <node x="" y="">com.ogerardin.guarana:demo-business:jar:1.0-SNAPSHOT/com.google.guava:guava:jar:18.0</node>
-            <node x="" y="">com.ogerardin.guarana:guarana-javafx:jar:1.0-SNAPSHOT</node>
-            <node x="" y="">com.ogerardin.guarana:guarana-javafx:jar:1.0-SNAPSHOT/org.jfxtras:jfxtras-labs:jar:8.0-r3</node>
-            <node x="" y="">com.ogerardin.guarana:guarana-javafx:jar:1.0-SNAPSHOT/org.jfxtras:jfxtras-labs:jar:8.0-r3/org.jfxtras:jfxtras-controls:jar:8.0-r3</node>
-            <node x="" y="">com.ogerardin.guarana:guarana-javafx:jar:1.0-SNAPSHOT/org.jfxtras:jfxtras-labs:jar:8.0-r3/org.jfxtras:jfxtras-controls:jar:8.0-r3/org.jfxtras:jfxtras-fxml:jar:8.0-r3</node>
-            <node x="" y="">com.ogerardin.guarana:guarana-javafx:jar:1.0-SNAPSHOT/org.jfxtras:jfxtras-labs:jar:8.0-r3/org.jfxtras:jfxtras-controls:jar:8.0-r3/org.jfxtras:jfxtras-common:jar:8.0-r3</node>
-            <node x="" y="">com.db4o:com.db4o:jar:7.7.67</node>
-          </nodes>
-          <notes />
-          <edges />
-          <settings layout="Hierarchic Group" zoom="1.0" x="328.0" y="95.0" />
-          <SelectedNodes />
-          <Categories />
-          <SCOPE>All</SCOPE>
-          <VISIBILITY>All</VISIBILITY>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="16" column="14" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.24132492">
-          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainConsole.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="1" selection-start-line="24" selection-start-column="1" selection-end-line="24" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo-javafx/demo-javafx.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/application/Application.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33280757">
-          <caret line="304" column="25" selection-start-line="304" selection-start-column="25" selection-end-line="304" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/MethodCallUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.83843535">
-          <caret line="39" column="36" selection-start-line="39" selection-start-column="36" selection-end-line="39" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/Person.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.56632656">
-          <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/demo-javafx/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="27" column="20" selection-start-line="27" selection-start-column="20" selection-end-line="27" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1705,7 +1046,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.17258883">
           <caret line="11" column="17" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1724,10 +1064,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.34856176">
           <caret line="97" column="15" selection-start-line="97" selection-start-column="15" selection-end-line="97" selection-end-column="15" />
-          <folding>
-            <element signature="e#3177#3178#0" expanded="true" />
-            <element signature="e#3214#3215#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1735,31 +1071,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.10881801">
           <caret line="402" column="30" selection-start-line="402" selection-start-column="30" selection-end-line="402" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/PersonManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/ClassUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="5" column="51" selection-start-line="5" selection-start-column="51" selection-end-line="5" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/Renderable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1767,7 +1078,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334">
           <caret line="73" column="13" selection-start-line="73" selection-start-column="13" selection-end-line="73" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1775,7 +1085,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="137" column="28" selection-start-line="137" selection-start-column="28" selection-end-line="137" selection-end-column="28" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1783,7 +1092,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="96" column="28" selection-start-line="96" selection-start-column="28" selection-end-line="96" selection-end-column="28" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1799,7 +1107,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="82" column="22" selection-start-line="82" selection-start-column="22" selection-end-line="82" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1807,41 +1114,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.7317487">
           <caret line="132" column="11" selection-start-line="132" selection-start-column="11" selection-end-line="132" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="39" column="15" selection-start-line="39" selection-start-column="15" selection-end-line="39" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/GuaranaUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="18" column="13" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/ListUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="27" column="19" selection-start-line="27" selection-start-column="19" selection-end-line="27" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding>
-            <element signature="e#719#720#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1849,9 +1121,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-6.5555553">
           <caret line="127" column="0" selection-start-line="127" selection-start-column="0" selection-end-line="127" selection-end-column="0" />
-          <folding>
-            <element signature="e#4229#4230#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1859,7 +1128,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.34980237">
           <caret line="228" column="0" selection-start-line="228" selection-start-column="0" selection-end-line="228" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1867,10 +1135,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.34980237">
           <caret line="61" column="11" selection-start-line="61" selection-start-column="11" selection-end-line="61" selection-end-column="11" />
-          <folding>
-            <element signature="e#2241#2242#0" expanded="true" />
-            <element signature="e#2275#2276#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1879,46 +1143,485 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="179" column="11" selection-start-line="179" selection-start-column="11" selection-end-line="179" selection-end-column="11" />
           <folding>
-            <element signature="e#5884#5885#0" expanded="true" />
-            <element signature="e#5966#5967#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/InstanceUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxClassUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="43" column="17" selection-start-line="43" selection-start-column="17" selection-end-line="43" selection-end-column="17" />
-          <folding>
-            <element signature="e#1501#1502#0" expanded="true" />
-            <element signature="e#1528#1529#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx2.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="95" selection-start-line="24" selection-start-column="95" selection-end-line="24" selection-end-column="95" />
-          <folding>
+            <element signature="e#0#230316#0" expanded="false" />
             <element signature="imports" expanded="false" />
+            <element signature="e#5884#5885#0" expanded="false" />
+            <element signature="e#5966#5967#0" expanded="false" />
+            <element signature="e#13284#13285#0" expanded="false" />
+            <element signature="e#13360#13361#0" expanded="false" />
+            <element signature="e#14255#14256#0" expanded="false" />
+            <element signature="e#14332#14333#0" expanded="false" />
+            <element signature="e#14703#14704#0" expanded="false" />
+            <element signature="e#14792#14793#0" expanded="false" />
+            <element signature="e#16738#16739#0" expanded="false" />
+            <element signature="e#16815#16816#0" expanded="false" />
+            <element signature="e#21567#21568#0" expanded="false" />
+            <element signature="e#21599#21600#0" expanded="false" />
+            <element signature="e#22536#22537#0" expanded="false" />
+            <element signature="e#22571#22572#0" expanded="false" />
+            <element signature="e#23028#23029#0" expanded="false" />
+            <element signature="e#23075#23076#0" expanded="false" />
+            <element signature="e#23114#23115#0" expanded="false" />
+            <element signature="e#23173#23174#0" expanded="false" />
+            <element signature="e#23241#23242#0" expanded="false" />
+            <element signature="e#23306#23307#0" expanded="false" />
+            <element signature="e#24105#24106#0" expanded="false" />
+            <element signature="e#24162#24163#0" expanded="false" />
+            <element signature="e#24231#24232#0" expanded="false" />
+            <element signature="e#24286#24287#0" expanded="false" />
+            <element signature="e#24577#24578#0" expanded="false" />
+            <element signature="e#24609#24610#0" expanded="false" />
+            <element signature="e#28250#28251#0" expanded="false" />
+            <element signature="e#28292#28293#0" expanded="false" />
+            <element signature="e#28326#28327#0" expanded="false" />
+            <element signature="e#28374#28375#0" expanded="false" />
+            <element signature="e#28429#28430#0" expanded="false" />
+            <element signature="e#28489#28490#0" expanded="false" />
+            <element signature="e#28828#28829#0" expanded="false" />
+            <element signature="e#28870#28871#0" expanded="false" />
+            <element signature="e#28904#28905#0" expanded="false" />
+            <element signature="e#28952#28953#0" expanded="false" />
+            <element signature="e#29007#29008#0" expanded="false" />
+            <element signature="e#29067#29068#0" expanded="false" />
+            <element signature="e#29379#29380#0" expanded="false" />
+            <element signature="e#29425#29426#0" expanded="false" />
+            <element signature="e#29463#29464#0" expanded="false" />
+            <element signature="e#29519#29520#0" expanded="false" />
+            <element signature="e#29578#29579#0" expanded="false" />
+            <element signature="e#29642#29643#0" expanded="false" />
+            <element signature="e#30508#30509#0" expanded="false" />
+            <element signature="e#30565#30566#0" expanded="false" />
+            <element signature="e#30634#30635#0" expanded="false" />
+            <element signature="e#30688#30689#0" expanded="false" />
+            <element signature="e#30890#30891#0" expanded="false" />
+            <element signature="e#30937#30938#0" expanded="false" />
+            <element signature="e#30976#30977#0" expanded="false" />
+            <element signature="e#31034#31035#0" expanded="false" />
+            <element signature="e#31094#31095#0" expanded="false" />
+            <element signature="e#31159#31160#0" expanded="false" />
+            <element signature="e#31785#31786#0" expanded="false" />
+            <element signature="e#31842#31843#0" expanded="false" />
+            <element signature="e#31911#31912#0" expanded="false" />
+            <element signature="e#31966#31967#0" expanded="false" />
+            <element signature="e#32095#32096#0" expanded="false" />
+            <element signature="e#32148#32149#0" expanded="false" />
+            <element signature="e#32859#32860#0" expanded="false" />
+            <element signature="e#32902#32903#0" expanded="false" />
+            <element signature="e#32941#32942#0" expanded="false" />
+            <element signature="e#33000#33001#0" expanded="false" />
+            <element signature="e#34736#34737#0" expanded="false" />
+            <element signature="e#34793#34794#0" expanded="false" />
+            <element signature="e#34862#34863#0" expanded="false" />
+            <element signature="e#34917#34918#0" expanded="false" />
+            <element signature="e#35703#35704#0" expanded="false" />
+            <element signature="e#35752#35753#0" expanded="false" />
+            <element signature="e#36192#36193#0" expanded="false" />
+            <element signature="e#36233#36234#0" expanded="false" />
+            <element signature="e#36269#36270#0" expanded="false" />
+            <element signature="e#36331#36332#0" expanded="false" />
+            <element signature="e#36554#36555#0" expanded="false" />
+            <element signature="e#36625#36626#0" expanded="false" />
+            <element signature="e#36694#36695#0" expanded="false" />
+            <element signature="e#36751#36752#0" expanded="false" />
+            <element signature="e#36820#36821#0" expanded="false" />
+            <element signature="e#36873#36874#0" expanded="false" />
+            <element signature="e#37597#37598#0" expanded="false" />
+            <element signature="e#37638#37639#0" expanded="false" />
+            <element signature="e#37675#37676#0" expanded="false" />
+            <element signature="e#37730#37731#0" expanded="false" />
+            <element signature="e#39871#39872#0" expanded="false" />
+            <element signature="e#39928#39929#0" expanded="false" />
+            <element signature="e#39997#39998#0" expanded="false" />
+            <element signature="e#40050#40051#0" expanded="false" />
+            <element signature="e#52307#52308#0" expanded="false" />
+            <element signature="e#52350#52351#0" expanded="false" />
+            <element signature="e#52389#52390#0" expanded="false" />
+            <element signature="e#52448#52449#0" expanded="false" />
+            <element signature="e#52685#52686#0" expanded="false" />
+            <element signature="e#52760#52761#0" expanded="false" />
+            <element signature="e#52847#52848#0" expanded="false" />
+            <element signature="e#52922#52923#0" expanded="false" />
+            <element signature="e#53009#53010#0" expanded="false" />
+            <element signature="e#53082#53083#0" expanded="false" />
+            <element signature="e#53650#53651#0" expanded="false" />
+            <element signature="e#53701#53702#0" expanded="false" />
+            <element signature="e#58344#58345#0" expanded="false" />
+            <element signature="e#58398#58399#0" expanded="false" />
+            <element signature="e#58561#58562#0" expanded="false" />
+            <element signature="e#58595#58596#0" expanded="false" />
+            <element signature="e#62973#62974#0" expanded="false" />
+            <element signature="e#63004#63005#0" expanded="false" />
+            <element signature="e#64072#64094#0" expanded="false" />
+            <element signature="e#64401#64402#0" expanded="false" />
+            <element signature="e#64447#64448#0" expanded="false" />
+            <element signature="e#72560#72561#0" expanded="false" />
+            <element signature="e#72593#72594#0" expanded="false" />
+            <element signature="e#73223#73224#0" expanded="false" />
+            <element signature="e#73272#73273#0" expanded="false" />
+            <element signature="e#73607#73608#0" expanded="false" />
+            <element signature="e#73653#73654#0" expanded="false" />
+            <element signature="e#74171#74172#0" expanded="false" />
+            <element signature="e#74221#74222#0" expanded="false" />
+            <element signature="e#76503#76504#0" expanded="false" />
+            <element signature="e#76542#76543#0" expanded="false" />
+            <element signature="e#76612#76613#0" expanded="false" />
+            <element signature="e#76667#76668#0" expanded="false" />
+            <element signature="e#76714#76715#0" expanded="false" />
+            <element signature="e#76763#76764#0" expanded="false" />
+            <element signature="e#78378#78379#0" expanded="false" />
+            <element signature="e#78425#78426#0" expanded="false" />
+            <element signature="e#78528#78529#0" expanded="false" />
+            <element signature="e#78590#78591#0" expanded="false" />
+            <element signature="e#78689#78690#0" expanded="false" />
+            <element signature="e#78726#78727#0" expanded="false" />
+            <element signature="e#78803#78804#0" expanded="false" />
+            <element signature="e#78832#78833#0" expanded="false" />
+            <element signature="e#79026#79027#0" expanded="false" />
+            <element signature="e#79071#79072#0" expanded="false" />
+            <element signature="e#90512#90513#0" expanded="false" />
+            <element signature="e#90566#90567#0" expanded="false" />
+            <element signature="e#107915#107928#0" expanded="false" />
+            <element signature="e#107992#108005#0" expanded="false" />
+            <element signature="e#108486#108487#0" expanded="false" />
+            <element signature="e#108553#108554#0" expanded="false" />
+            <element signature="e#121891#121892#0" expanded="false" />
+            <element signature="e#121937#121938#0" expanded="false" />
+            <element signature="e#126044#126071#0" expanded="false" />
+            <element signature="e#126156#126169#0" expanded="false" />
+            <element signature="e#126238#126251#0" expanded="false" />
+            <element signature="e#129616#129617#0" expanded="false" />
+            <element signature="e#129672#129673#0" expanded="false" />
+            <element signature="e#130439#130452#0" expanded="false" />
+            <element signature="e#130531#130544#0" expanded="false" />
+            <element signature="e#130619#130632#0" expanded="false" />
+            <element signature="e#130719#130732#0" expanded="false" />
+            <element signature="e#130814#130827#0" expanded="false" />
+            <element signature="e#150142#150143#0" expanded="false" />
+            <element signature="e#150194#150195#0" expanded="false" />
+            <element signature="e#150251#150252#0" expanded="false" />
+            <element signature="e#150305#150306#0" expanded="false" />
+            <element signature="e#158049#158050#0" expanded="false" />
+            <element signature="e#158102#158103#0" expanded="false" />
+            <element signature="e#161627#161628#0" expanded="false" />
+            <element signature="e#161730#161731#0" expanded="false" />
+            <element signature="e#161799#161800#0" expanded="false" />
+            <element signature="e#161856#161857#0" expanded="false" />
+            <element signature="e#161925#161926#0" expanded="false" />
+            <element signature="e#161996#161997#0" expanded="false" />
+            <element signature="e#162778#162779#0" expanded="false" />
+            <element signature="e#162829#162830#0" expanded="false" />
+            <element signature="e#163273#163274#0" expanded="false" />
+            <element signature="e#163361#163362#0" expanded="false" />
+            <element signature="e#163430#163431#0" expanded="false" />
+            <element signature="e#163487#163488#0" expanded="false" />
+            <element signature="e#163556#163557#0" expanded="false" />
+            <element signature="e#163619#163620#0" expanded="false" />
+            <element signature="e#163975#163976#0" expanded="false" />
+            <element signature="e#164026#164027#0" expanded="false" />
+            <element signature="e#164470#164471#0" expanded="false" />
+            <element signature="e#164558#164559#0" expanded="false" />
+            <element signature="e#164627#164628#0" expanded="false" />
+            <element signature="e#164684#164685#0" expanded="false" />
+            <element signature="e#164753#164754#0" expanded="false" />
+            <element signature="e#164816#164817#0" expanded="false" />
+            <element signature="e#165136#165137#0" expanded="false" />
+            <element signature="e#165187#165188#0" expanded="false" />
+            <element signature="e#165631#165632#0" expanded="false" />
+            <element signature="e#165719#165720#0" expanded="false" />
+            <element signature="e#165788#165789#0" expanded="false" />
+            <element signature="e#165845#165846#0" expanded="false" />
+            <element signature="e#165914#165915#0" expanded="false" />
+            <element signature="e#165977#165978#0" expanded="false" />
+            <element signature="e#166294#166295#0" expanded="false" />
+            <element signature="e#166344#166345#0" expanded="false" />
+            <element signature="e#166782#166783#0" expanded="false" />
+            <element signature="e#166869#166870#0" expanded="false" />
+            <element signature="e#166938#166939#0" expanded="false" />
+            <element signature="e#166995#166996#0" expanded="false" />
+            <element signature="e#167064#167065#0" expanded="false" />
+            <element signature="e#167126#167127#0" expanded="false" />
+            <element signature="e#167489#167490#0" expanded="false" />
+            <element signature="e#167538#167539#0" expanded="false" />
+            <element signature="e#167970#167971#0" expanded="false" />
+            <element signature="e#168056#168057#0" expanded="false" />
+            <element signature="e#168125#168126#0" expanded="false" />
+            <element signature="e#168182#168183#0" expanded="false" />
+            <element signature="e#168251#168252#0" expanded="false" />
+            <element signature="e#168312#168313#0" expanded="false" />
+            <element signature="e#168655#168656#0" expanded="false" />
+            <element signature="e#168706#168707#0" expanded="false" />
+            <element signature="e#169150#169151#0" expanded="false" />
+            <element signature="e#169238#169239#0" expanded="false" />
+            <element signature="e#169307#169308#0" expanded="false" />
+            <element signature="e#169364#169365#0" expanded="false" />
+            <element signature="e#169433#169434#0" expanded="false" />
+            <element signature="e#169496#169497#0" expanded="false" />
+            <element signature="e#170346#170347#0" expanded="false" />
+            <element signature="e#170435#170436#0" expanded="false" />
+            <element signature="e#170504#170505#0" expanded="false" />
+            <element signature="e#170561#170562#0" expanded="false" />
+            <element signature="e#170630#170631#0" expanded="false" />
+            <element signature="e#170694#170695#0" expanded="false" />
+            <element signature="e#171075#171076#0" expanded="false" />
+            <element signature="e#171126#171127#0" expanded="false" />
+            <element signature="e#171570#171571#0" expanded="false" />
+            <element signature="e#171658#171659#0" expanded="false" />
+            <element signature="e#171727#171728#0" expanded="false" />
+            <element signature="e#171784#171785#0" expanded="false" />
+            <element signature="e#171853#171854#0" expanded="false" />
+            <element signature="e#171916#171917#0" expanded="false" />
+            <element signature="e#172827#172828#0" expanded="false" />
+            <element signature="e#172921#172922#0" expanded="false" />
+            <element signature="e#172990#172991#0" expanded="false" />
+            <element signature="e#173047#173048#0" expanded="false" />
+            <element signature="e#173116#173117#0" expanded="false" />
+            <element signature="e#173180#173181#0" expanded="false" />
+            <element signature="e#174122#174123#0" expanded="false" />
+            <element signature="e#174220#174221#0" expanded="false" />
+            <element signature="e#174289#174290#0" expanded="false" />
+            <element signature="e#174346#174347#0" expanded="false" />
+            <element signature="e#174415#174416#0" expanded="false" />
+            <element signature="e#174483#174484#0" expanded="false" />
+            <element signature="e#175415#175416#0" expanded="false" />
+            <element signature="e#175512#175513#0" expanded="false" />
+            <element signature="e#175581#175582#0" expanded="false" />
+            <element signature="e#175638#175639#0" expanded="false" />
+            <element signature="e#175707#175708#0" expanded="false" />
+            <element signature="e#175774#175775#0" expanded="false" />
+            <element signature="e#176695#176696#0" expanded="false" />
+            <element signature="e#176791#176792#0" expanded="false" />
+            <element signature="e#176860#176861#0" expanded="false" />
+            <element signature="e#176917#176918#0" expanded="false" />
+            <element signature="e#176986#176987#0" expanded="false" />
+            <element signature="e#177052#177053#0" expanded="false" />
+            <element signature="e#178312#178313#0" expanded="false" />
+            <element signature="e#178402#178403#0" expanded="false" />
+            <element signature="e#178471#178472#0" expanded="false" />
+            <element signature="e#178528#178529#0" expanded="false" />
+            <element signature="e#178597#178598#0" expanded="false" />
+            <element signature="e#178661#178662#0" expanded="false" />
+            <element signature="e#178969#178970#0" expanded="false" />
+            <element signature="e#179014#179015#0" expanded="false" />
+            <element signature="e#179082#179083#0" expanded="false" />
+            <element signature="e#179145#179146#0" expanded="false" />
+            <element signature="e#179425#179426#0" expanded="false" />
+            <element signature="e#179507#179508#0" expanded="false" />
+            <element signature="e#179576#179577#0" expanded="false" />
+            <element signature="e#179633#179634#0" expanded="false" />
+            <element signature="e#179702#179703#0" expanded="false" />
+            <element signature="e#179759#179760#0" expanded="false" />
+            <element signature="e#180605#180606#0" expanded="false" />
+            <element signature="e#180696#180697#0" expanded="false" />
+            <element signature="e#180765#180766#0" expanded="false" />
+            <element signature="e#180822#180823#0" expanded="false" />
+            <element signature="e#180891#180892#0" expanded="false" />
+            <element signature="e#180956#180957#0" expanded="false" />
+            <element signature="e#181825#181826#0" expanded="false" />
+            <element signature="e#181917#181918#0" expanded="false" />
+            <element signature="e#181986#181987#0" expanded="false" />
+            <element signature="e#182043#182044#0" expanded="false" />
+            <element signature="e#182112#182113#0" expanded="false" />
+            <element signature="e#182178#182179#0" expanded="false" />
+            <element signature="e#182512#182513#0" expanded="false" />
+            <element signature="e#182557#182558#0" expanded="false" />
+            <element signature="e#182625#182626#0" expanded="false" />
+            <element signature="e#182688#182689#0" expanded="false" />
+            <element signature="e#182968#182969#0" expanded="false" />
+            <element signature="e#183050#183051#0" expanded="false" />
+            <element signature="e#183119#183120#0" expanded="false" />
+            <element signature="e#183176#183177#0" expanded="false" />
+            <element signature="e#183245#183246#0" expanded="false" />
+            <element signature="e#183302#183303#0" expanded="false" />
+            <element signature="e#184165#184166#0" expanded="false" />
+            <element signature="e#184258#184259#0" expanded="false" />
+            <element signature="e#184327#184328#0" expanded="false" />
+            <element signature="e#184384#184385#0" expanded="false" />
+            <element signature="e#184453#184454#0" expanded="false" />
+            <element signature="e#184520#184521#0" expanded="false" />
+            <element signature="e#184859#184860#0" expanded="false" />
+            <element signature="e#184909#184910#0" expanded="false" />
+            <element signature="e#185344#185345#0" expanded="false" />
+            <element signature="e#185430#185431#0" expanded="false" />
+            <element signature="e#185499#185500#0" expanded="false" />
+            <element signature="e#185556#185557#0" expanded="false" />
+            <element signature="e#185625#185626#0" expanded="false" />
+            <element signature="e#185687#185688#0" expanded="false" />
+            <element signature="e#186008#186009#0" expanded="false" />
+            <element signature="e#186051#186052#0" expanded="false" />
+            <element signature="e#186115#186116#0" expanded="false" />
+            <element signature="e#186174#186175#0" expanded="false" />
+            <element signature="e#186444#186445#0" expanded="false" />
+            <element signature="e#186522#186523#0" expanded="false" />
+            <element signature="e#186591#186592#0" expanded="false" />
+            <element signature="e#186648#186649#0" expanded="false" />
+            <element signature="e#186717#186718#0" expanded="false" />
+            <element signature="e#186772#186773#0" expanded="false" />
+            <element signature="e#187094#187095#0" expanded="false" />
+            <element signature="e#187145#187146#0" expanded="false" />
+            <element signature="e#187586#187587#0" expanded="false" />
+            <element signature="e#187673#187674#0" expanded="false" />
+            <element signature="e#187742#187743#0" expanded="false" />
+            <element signature="e#187799#187800#0" expanded="false" />
+            <element signature="e#187868#187869#0" expanded="false" />
+            <element signature="e#187931#187932#0" expanded="false" />
+            <element signature="e#188283#188284#0" expanded="false" />
+            <element signature="e#188329#188330#0" expanded="false" />
+            <element signature="e#188397#188398#0" expanded="false" />
+            <element signature="e#188462#188463#0" expanded="false" />
+            <element signature="e#188743#188744#0" expanded="false" />
+            <element signature="e#188826#188827#0" expanded="false" />
+            <element signature="e#188895#188896#0" expanded="false" />
+            <element signature="e#188952#188953#0" expanded="false" />
+            <element signature="e#189021#189022#0" expanded="false" />
+            <element signature="e#189079#189080#0" expanded="false" />
+            <element signature="e#189432#189433#0" expanded="false" />
+            <element signature="e#189480#189481#0" expanded="false" />
+            <element signature="e#189906#189907#0" expanded="false" />
+            <element signature="e#189991#189992#0" expanded="false" />
+            <element signature="e#190060#190061#0" expanded="false" />
+            <element signature="e#190117#190118#0" expanded="false" />
+            <element signature="e#190186#190187#0" expanded="false" />
+            <element signature="e#190246#190247#0" expanded="false" />
+            <element signature="e#190601#190602#0" expanded="false" />
+            <element signature="e#190649#190650#0" expanded="false" />
+            <element signature="e#191075#191076#0" expanded="false" />
+            <element signature="e#191160#191161#0" expanded="false" />
+            <element signature="e#191229#191230#0" expanded="false" />
+            <element signature="e#191286#191287#0" expanded="false" />
+            <element signature="e#191355#191356#0" expanded="false" />
+            <element signature="e#191415#191416#0" expanded="false" />
+            <element signature="e#191773#191774#0" expanded="false" />
+            <element signature="e#191822#191823#0" expanded="false" />
+            <element signature="e#192254#192255#0" expanded="false" />
+            <element signature="e#192340#192341#0" expanded="false" />
+            <element signature="e#192409#192410#0" expanded="false" />
+            <element signature="e#192466#192467#0" expanded="false" />
+            <element signature="e#192535#192536#0" expanded="false" />
+            <element signature="e#192596#192597#0" expanded="false" />
+            <element signature="e#193338#193339#0" expanded="false" />
+            <element signature="e#193389#193390#0" expanded="false" />
+            <element signature="e#193833#193834#0" expanded="false" />
+            <element signature="e#193921#193922#0" expanded="false" />
+            <element signature="e#193990#193991#0" expanded="false" />
+            <element signature="e#194047#194048#0" expanded="false" />
+            <element signature="e#194116#194117#0" expanded="false" />
+            <element signature="e#194179#194180#0" expanded="false" />
+            <element signature="e#194507#194508#0" expanded="false" />
+            <element signature="e#194556#194557#0" expanded="false" />
+            <element signature="e#194988#194989#0" expanded="false" />
+            <element signature="e#195074#195075#0" expanded="false" />
+            <element signature="e#195143#195144#0" expanded="false" />
+            <element signature="e#195200#195201#0" expanded="false" />
+            <element signature="e#195269#195270#0" expanded="false" />
+            <element signature="e#195330#195331#0" expanded="false" />
+            <element signature="e#196170#196171#0" expanded="false" />
+            <element signature="e#196259#196260#0" expanded="false" />
+            <element signature="e#196328#196329#0" expanded="false" />
+            <element signature="e#196385#196386#0" expanded="false" />
+            <element signature="e#196454#196455#0" expanded="false" />
+            <element signature="e#196518#196519#0" expanded="false" />
+            <element signature="e#197395#197396#0" expanded="false" />
+            <element signature="e#197486#197487#0" expanded="false" />
+            <element signature="e#197555#197556#0" expanded="false" />
+            <element signature="e#197612#197613#0" expanded="false" />
+            <element signature="e#197681#197682#0" expanded="false" />
+            <element signature="e#197747#197748#0" expanded="false" />
+            <element signature="e#198647#198662#0" expanded="false" />
+            <element signature="e#198710#198719#0" expanded="false" />
+            <element signature="e#198765#198771#0" expanded="false" />
+            <element signature="e#200018#200019#0" expanded="false" />
+            <element signature="e#200066#200067#0" expanded="false" />
+            <element signature="e#201239#201240#0" expanded="false" />
+            <element signature="e#201289#201290#0" expanded="false" />
+            <element signature="e#201831#201832#0" expanded="false" />
+            <element signature="e#201917#201918#0" expanded="false" />
+            <element signature="e#201986#201987#0" expanded="false" />
+            <element signature="e#202043#202044#0" expanded="false" />
+            <element signature="e#202112#202113#0" expanded="false" />
+            <element signature="e#202174#202175#0" expanded="false" />
+            <element signature="e#202390#202391#0" expanded="false" />
+            <element signature="e#202439#202440#0" expanded="false" />
+            <element signature="e#202974#202975#0" expanded="false" />
+            <element signature="e#203059#203060#0" expanded="false" />
+            <element signature="e#203128#203129#0" expanded="false" />
+            <element signature="e#203185#203186#0" expanded="false" />
+            <element signature="e#203254#203255#0" expanded="false" />
+            <element signature="e#203315#203316#0" expanded="false" />
+            <element signature="e#203526#203527#0" expanded="false" />
+            <element signature="e#203573#203574#0" expanded="false" />
+            <element signature="e#204108#204109#0" expanded="false" />
+            <element signature="e#204191#204192#0" expanded="false" />
+            <element signature="e#204260#204261#0" expanded="false" />
+            <element signature="e#204317#204318#0" expanded="false" />
+            <element signature="e#204386#204387#0" expanded="false" />
+            <element signature="e#204445#204446#0" expanded="false" />
+            <element signature="e#206003#206004#0" expanded="false" />
+            <element signature="e#206053#206054#0" expanded="false" />
+            <element signature="e#206766#206767#0" expanded="false" />
+            <element signature="e#206852#206853#0" expanded="false" />
+            <element signature="e#206921#206922#0" expanded="false" />
+            <element signature="e#206978#206979#0" expanded="false" />
+            <element signature="e#207047#207048#0" expanded="false" />
+            <element signature="e#207109#207110#0" expanded="false" />
+            <element signature="e#207321#207322#0" expanded="false" />
+            <element signature="e#207368#207369#0" expanded="false" />
+            <element signature="e#208436#208437#0" expanded="false" />
+            <element signature="e#208519#208520#0" expanded="false" />
+            <element signature="e#208588#208589#0" expanded="false" />
+            <element signature="e#208645#208646#0" expanded="false" />
+            <element signature="e#208714#208715#0" expanded="false" />
+            <element signature="e#208773#208774#0" expanded="false" />
+            <element signature="e#209790#209791#0" expanded="false" />
+            <element signature="e#209850#209851#0" expanded="false" />
+            <element signature="e#210469#210470#0" expanded="false" />
+            <element signature="e#210504#210505#0" expanded="false" />
+            <element signature="e#212432#212433#0" expanded="false" />
+            <element signature="e#212481#212482#0" expanded="false" />
+            <element signature="e#212907#212908#0" expanded="false" />
+            <element signature="e#212991#212992#0" expanded="false" />
+            <element signature="e#213060#213061#0" expanded="false" />
+            <element signature="e#213117#213118#0" expanded="false" />
+            <element signature="e#213186#213187#0" expanded="false" />
+            <element signature="e#213247#213248#0" expanded="false" />
+            <element signature="e#213738#213739#0" expanded="false" />
+            <element signature="e#213788#213789#0" expanded="false" />
+            <element signature="e#214220#214221#0" expanded="false" />
+            <element signature="e#214305#214306#0" expanded="false" />
+            <element signature="e#214374#214375#0" expanded="false" />
+            <element signature="e#214431#214432#0" expanded="false" />
+            <element signature="e#214500#214501#0" expanded="false" />
+            <element signature="e#214562#214563#0" expanded="false" />
+            <element signature="e#215539#215540#0" expanded="false" />
+            <element signature="e#215621#215622#0" expanded="false" />
+            <element signature="e#215690#215691#0" expanded="false" />
+            <element signature="e#215747#215748#0" expanded="false" />
+            <element signature="e#215816#215817#0" expanded="false" />
+            <element signature="e#215875#215876#0" expanded="false" />
+            <element signature="e#217609#217610#0" expanded="false" />
+            <element signature="e#217715#217716#0" expanded="false" />
+            <element signature="e#217784#217785#0" expanded="false" />
+            <element signature="e#217841#217842#0" expanded="false" />
+            <element signature="e#217910#217911#0" expanded="false" />
+            <element signature="e#217983#217984#0" expanded="false" />
+            <element signature="e#218943#218944#0" expanded="false" />
+            <element signature="e#219001#219002#0" expanded="false" />
+            <element signature="e#220128#220129#0" expanded="false" />
+            <element signature="e#220165#220166#0" expanded="false" />
+            <element signature="e#221361#221362#0" expanded="false" />
+            <element signature="e#221419#221420#0" expanded="false" />
+            <element signature="e#222545#222546#0" expanded="false" />
+            <element signature="e#222602#222603#0" expanded="false" />
+            <element signature="e#222671#222672#0" expanded="false" />
+            <element signature="e#222735#222736#0" expanded="false" />
+            <element signature="e#225341#225342#0" expanded="false" />
+            <element signature="e#225401#225402#0" expanded="false" />
+            <element signature="e#225454#225455#0" expanded="false" />
+            <element signature="e#225495#225496#0" expanded="false" />
+            <element signature="e#225548#225549#0" expanded="false" />
+            <element signature="e#225605#225606#0" expanded="false" />
+            <element signature="e#225641#225642#0" expanded="false" />
+            <element signature="e#225688#225689#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="9" column="25" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1926,7 +1629,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.21383648">
           <caret line="31" column="12" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1934,7 +1636,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334">
           <caret line="234" column="69" selection-start-line="234" selection-start-column="69" selection-end-line="234" selection-end-column="69" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1942,27 +1643,8 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/DialogUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="16" column="12" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxUiBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="20" column="27" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
           <folding>
-            <element signature="e#410#411#0" expanded="true" />
-            <element signature="e#462#463#0" expanded="true" />
-            <element signature="e#556#557#0" expanded="true" />
-            <element signature="e#611#612#0" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1975,16 +1657,231 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java">
+    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/jre/lib/rt.jar!/java/awt/Font.class">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334">
-          <caret line="155" column="22" selection-start-line="155" selection-start-column="22" selection-end-line="155" selection-end-column="22" />
+          <caret line="145" column="11" selection-start-line="145" selection-start-column="11" selection-end-line="145" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/layout/GridPane.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="1139" column="0" selection-start-line="1139" selection-start-column="0" selection-end-line="1139" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/layout/ColumnConstraints.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="99" column="11" selection-start-line="99" selection-start-column="11" selection-end-line="99" selection-end-column="11" />
           <folding>
-            <element signature="e#1065#1094#0" expanded="true" />
-            <element signature="e#1187#1216#0" expanded="true" />
-            <element signature="e#5564#5565#0" expanded="true" />
-            <element signature="e#5591#5592#0" expanded="true" />
+            <element signature="e#2148#2149#0" expanded="true" />
+            <element signature="e#2171#2172#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxClassUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/Renderable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/ClassUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="51" selection-start-line="5" selection-start-column="51" selection-end-line="5" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/InstanceUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/jre/lib/rt.jar!/java/beans/FeatureDescriptor.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.34811166">
+          <caret line="84" column="18" selection-start-line="84" selection-start-column="18" selection-end-line="84" selection-end-column="18" />
+          <folding>
+            <element signature="e#2009#2010#0" expanded="true" />
+            <element signature="e#2076#2077#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.29402515">
+          <caret line="11" column="27" selection-start-line="11" selection-start-column="27" selection-end-line="11" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/collections/FXCollections.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/control/TableView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="755" column="0" selection-start-line="755" selection-start-column="0" selection-end-line="755" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/control/cell/MapValueFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="85" column="11" selection-start-line="85" selection-start-column="11" selection-end-line="85" selection-end-column="11" />
+          <folding>
+            <element signature="e#2723#2724#0" expanded="true" />
+            <element signature="e#2753#2754#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/CollectionUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="140" column="4" selection-start-line="140" selection-start-column="4" selection-end-line="140" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxCollectionUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="95" column="45" selection-start-line="95" selection-start-column="45" selection-end-line="95" selection-end-column="45" />
+          <folding>
+            <element signature="e#2962#2963#0" expanded="true" />
+            <element signature="e#2989#2990#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/Person.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/PersonManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/mavenRepo/com/db4o/com.db4o/7.7.67/com.db4o-7.7.67.jar!/com/db4o/Db4o.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3327645">
+          <caret line="71" column="40" selection-start-line="71" selection-start-column="40" selection-end-line="71" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/mavenRepo/com/db4o/com.db4o/7.7.67/com.db4o-7.7.67.jar!/com/db4o/ObjectSet.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.17406143">
+          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/mavenRepo/com/db4o/com.db4o/7.7.67/com.db4o-7.7.67.jar!/com/db4o/ObjectContainer.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.43686005">
+          <caret line="37" column="22" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="38" column="5" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
+          <folding>
+            <element signature="e#921#922#0" expanded="true" />
+            <element signature="e#979#980#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/ResetDatabase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="9" column="28" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxUiBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.19381107">
+          <caret line="11" column="12" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
+          <folding>
+            <element signature="e#461#462#0" expanded="true" />
+            <element signature="e#513#514#0" expanded="true" />
+            <element signature="e#607#608#0" expanded="true" />
+            <element signature="e#662#663#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainDemoJfx.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/DialogUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="12" column="25" selection-start-line="12" selection-start-column="25" selection-end-line="12" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/MethodCallUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.79965156">
+          <caret line="39" column="36" selection-start-line="39" selection-start-column="36" selection-end-line="39" selection-end-column="36" />
+          <folding />
         </state>
       </provider>
     </entry>

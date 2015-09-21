@@ -1,6 +1,7 @@
 package com.ogerardin.guarana.javafx.ui.builder;
 
 import com.ogerardin.guarana.core.Introspector;
+import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.javafx.ui.Defaults;
 import com.ogerardin.guarana.javafx.util.DialogUtil;
@@ -8,11 +9,16 @@ import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.*;
+import javafx.scene.text.Font;
 import jfxtras.labs.scene.control.BeanPathAdapter;
 
 import java.awt.*;
@@ -21,6 +27,7 @@ import java.beans.MethodDescriptor;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,10 +61,11 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
 //        }
 
         root = new VBox();
+        final Label title = new Label(beanInfo.getBeanDescriptor().getDisplayName());
+        title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        root.getChildren().add(title);
 
-        root.getChildren().add(new Label(beanInfo.getBeanDescriptor().getDisplayName()));
-
-        // methods
+        // build methods context menu
         {
             ContextMenu contextMenu = new ContextMenu();
             Arrays.asList(beanInfo.getMethodDescriptors()).stream()
@@ -72,12 +80,16 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
             root.setOnMouseClicked(event -> contextMenu.show(root, Side.BOTTOM, 0, 0));
         }
 
-        // properties
+        // build properties form
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(Defaults.DEFAULT_INSETS);
+
+        ColumnConstraints column2 = new ColumnConstraints();
+        column2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().setAll(new ColumnConstraints(), column2); // second column gets any extra width
 
         root.getChildren().add(grid);
         int row = 0;
@@ -95,6 +107,29 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
                 field.requestFocus();
             }
 
+            if (Collection.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                Button button = new Button("...");
+                button.setOnAction(e -> {
+                    System.out.println(propertyDescriptor.getName());
+                    final Method readMethod = propertyDescriptor.getReadMethod();
+                    try {
+                        final Collection collection = (Collection) readMethod.invoke(target);
+                        Class itemClass = Object.class;
+                        //FIXME how do we get the item class if collection is empty ??
+                        if (!collection.isEmpty()) {
+                            itemClass = collection.iterator().next().getClass();
+                        }
+                        CollectionUI<Parent, ?> collectionUI = JfxUiBuilder.INSTANCE.buildCollectionUi(itemClass);
+                        collectionUI.setTarget(collection);
+                        DialogUtil.display(collectionUI, "Collection");
+
+                    } catch (Exception ex) {
+                        DialogUtil.showExceptionDialog(ex);
+                    }
+                });
+                grid.add(button, 2, row);
+            }
+
             propertyDescriptorControlMap.put(propertyDescriptor, field);
             controlPropertyDescriptorMap.put(field, propertyDescriptor);
 
@@ -104,7 +139,7 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
     }
 
     private void executeMethodRequested(MethodDescriptor md) {
-        System.out.print(md.getName());
+        System.out.println(md.getName());
         Method method = md.getMethod();
 
         final Class<?> returnType = method.getReturnType();

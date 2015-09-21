@@ -9,4 +9,6 @@ public interface UIBuilder<R> {
 
     <C> InstanceUI<R, C> buildInstanceUI(Class<C> clazz);
 
+    <C> CollectionUI<R, C> buildCollectionUi(Class<C> clazz);
+
 }

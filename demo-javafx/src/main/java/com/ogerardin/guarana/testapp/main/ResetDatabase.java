@@ -7,17 +7,18 @@ import com.ogerardin.guarana.testapp.model.PersonManager;
 /**
  * Created by Olivier on 27/05/15.
  */
-public class MainConsole {
+public class ResetDatabase {
 
     public static void main(String args[]) {
         PersonManager personManager = new PersonManagerDb4oImpl();
 
-        Person person = new Person("Gérardin", "Olivier");
-        personManager.save(person);
+        ((PersonManagerDb4oImpl)personManager).clearAll();
 
-        for (Person p : personManager.getAllpersons()) {
-            System.out.println(p);
-        }
+        personManager.save(new Person("GERARDIN", "Olivier"));
+        personManager.save(new Person("MARCEAU", "Marcel"));
+        personManager.save(new Person("OBAMA", "Barack"));
+
+        personManager.getAllpersons().forEach(System.out::println);
 
     }
 

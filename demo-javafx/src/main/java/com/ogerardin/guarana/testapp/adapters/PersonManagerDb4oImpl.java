@@ -29,7 +29,7 @@ public class PersonManagerDb4oImpl implements PersonManager {
         objectContainer.commit();
     }
 
-    public Collection<Person> getAllpersons() {
+    public Collection<Person> getAllPersons() {
         return objectContainer.query(Person.class);
     }
 

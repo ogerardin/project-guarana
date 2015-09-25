@@ -1,6 +1,6 @@
-package com.ogerardin.guarana.javafx.ui.builder;
+package com.ogerardin.guarana.javafx.ui;
 
-import com.ogerardin.guarana.core.Introspector;
+import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.ClassUI;
 import javafx.geometry.Side;
 import javafx.scene.Parent;

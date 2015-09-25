@@ -11,4 +11,6 @@ public interface UIBuilder<R> {
 
     <C> CollectionUI<R, C> buildCollectionUi(Class<C> clazz);
 
+    <K, V> MapUI<R, K, V> buildMapUI();
+
 }

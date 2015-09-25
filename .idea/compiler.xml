@@ -43,12 +43,15 @@
         <module name="demo-javafx" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="demo-business" target="1.5" />
       <module name="demo-javafx" target="1.8" />
-      <module name="guarana" target="1.5" />
-      <module name="guarana-core" target="1.5" />
+      <module name="guarana" target="1.8" />
+      <module name="guarana-core" target="1.8" />
       <module name="guarana-javafx" target="1.8" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-parameters" />
   </component>
 </project>

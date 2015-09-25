@@ -7,7 +7,7 @@ import java.util.Collection;
  */
 public interface PersonManager {
 
-    Collection<Person> getAllpersons();
+    Collection<Person> getAllPersons();
 
     Person save(Person person);
 }

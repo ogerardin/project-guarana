@@ -18,7 +18,7 @@ public class ResetDatabase {
         personManager.save(new Person("MARCEAU", "Marcel"));
         personManager.save(new Person("OBAMA", "Barack"));
 
-        personManager.getAllpersons().forEach(System.out::println);
+        personManager.getAllPersons().forEach(System.out::println);
 
     }
 

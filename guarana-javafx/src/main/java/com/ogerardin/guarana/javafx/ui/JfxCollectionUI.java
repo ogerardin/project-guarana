@@ -1,8 +1,10 @@
-package com.ogerardin.guarana.javafx.ui.builder;
+package com.ogerardin.guarana.javafx.ui;
 
-import com.ogerardin.guarana.core.Introspector;
+import com.ogerardin.guarana.core.config.ConfigManager;
+import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.InstanceUI;
+import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.collections.FXCollections;
 import javafx.scene.Parent;
@@ -57,7 +59,11 @@ public class JfxCollectionUI<T> implements CollectionUI<Parent, T> {
         tableView.setEditable(false);
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
             final String propertyName = propertyDescriptor.getName();
-            TableColumn column = new TableColumn(propertyDescriptor.getDisplayName());
+            String displayname = propertyDescriptor.getDisplayName();
+            if (propertyName.equals(displayname) && ConfigManager.getHumanizeProperties()) {
+                displayname = Introspector.humanize(propertyName);
+            }
+            TableColumn column = new TableColumn(displayname);
             column.setCellValueFactory(new PropertyValueFactory<>(propertyName));
             if (propertyName.equals("class")) {
                 column.setVisible(false);
@@ -72,7 +78,7 @@ public class JfxCollectionUI<T> implements CollectionUI<Parent, T> {
                     T item = row.getItem();
                     InstanceUI<Parent, T> instanceUI = JfxUiBuilder.INSTANCE.buildInstanceUI(itemClass);
                     instanceUI.setTarget(item);
-                    DialogUtil.display(instanceUI, "Collection");
+                    DialogUtil.display(instanceUI, "Item " + row.getIndex());
                 }
             });
             return row;

@@ -4,25 +4,49 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list id="5d9c2105-c5ae-48cd-9df4-f93a79011ba2" name="Default" comment="renamed demo-app to demo-javafx&#10;&#10;(cherry picked from commit 92a3d033a1bddbbb72acabcbc284669efbca3a63)&#10;&#10;# Conflicts:&#10;#&#9;demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx.java&#10;#&#9;demo-javafx/src/main/java/spring-config.xml&#10;#&#9;guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/inspector/InstanceInspector.java&#10;" />
-    <list default="true" id="4c7f9683-5790-4b5c-a921-3f722bc5b524" name="renamed demo-app to demo-javafx (cherry picked from commit 92a3d03)" comment="introduced parametrized factory UiBuilder">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/CollectionUI.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java" afterPath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java" />
+    <list default="true" id="5d9c2105-c5ae-48cd-9df4-f93a79011ba2" name="Default" comment="Introduced MapUI and JfxMethoidCallUI">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/config/ConfigManager.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/introspection/Introspector.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxMapUI.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxMethodCallUI.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxUI.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/MapUI.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/introspection/MethodCall.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/ShortDemoJfx.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/demo-javafx/src/main/java/guarana.properties" />
+      <change type="DELETED" beforePath="C:\GitHub\project-guarana\.idea\compiler.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\GitHub\project-guarana\demo-business\target\classes\com\ogerardin\guarana\testapp\model\PersonManager.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\GitHub\project-guarana\guarana-core\src\main\java\com\ogerardin\guarana\core\Introspector.java" afterPath="" />
+      <change type="DELETED" beforePath="C:\GitHub\project-guarana\guarana-javafx\guarana-javafx.iml" afterPath="" />
+      <change type="DELETED" beforePath="C:\GitHub\project-guarana\guarana-javafx\src\main\java\com\ogerardin\guarana\javafx\ui\MethodCallUI.java" afterPath="" />
+      <change type="DELETED" beforePath="C:\GitHub\project-guarana\guarana.iml" afterPath="" />
+      <change type="MOVED" beforePath="C:\GitHub\project-guarana\guarana-javafx\src\main\java\com\ogerardin\guarana\javafx\ui\builder\JfxClassUI.java" afterPath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxClassUI.java" />
+      <change type="MOVED" beforePath="C:\GitHub\project-guarana\guarana-javafx\src\main\java\com\ogerardin\guarana\javafx\ui\builder\JfxCollectionUI.java" afterPath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxCollectionUI.java" />
+      <change type="MOVED" beforePath="C:\GitHub\project-guarana\guarana-javafx\src\main\java\com\ogerardin\guarana\javafx\ui\builder\JfxInstanceUI.java" afterPath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxInstanceUI.java" />
+      <change type="MOVED" beforePath="C:\GitHub\project-guarana\guarana-javafx\src\main\java\com\ogerardin\guarana\javafx\ui\builder\JfxUiBuilder.java" afterPath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/JfxUiBuilder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data.db4o" afterPath="$PROJECT_DIR$/data.db4o" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/DialogUtil.java" afterPath="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/DialogUtil.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainDemoJfx.java" afterPath="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainDemoJfx.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/PersonManager.java" afterPath="$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/PersonManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java" afterPath="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/ResetDatabase.java" afterPath="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/ResetDatabase.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java" afterPath="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guarana-core/guarana-core.iml" afterPath="$PROJECT_DIR$/guarana-core/guarana-core.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="project-guarana.iws" />
-    <ignored path=".idea/workspace.xml" />
-    <ignored path="$PROJECT_DIR$/out/" />
-    <ignored path="$PROJECT_DIR$/target/" />
-    <ignored path=".idea/dataSources.local.xml" />
-    <ignored path="$PROJECT_DIR$/testapp/target/" />
-    <ignored path="$PROJECT_DIR$/guarana-core/target/" />
-    <ignored path="$PROJECT_DIR$/testapp-business/target/" />
-    <ignored path="$PROJECT_DIR$/testapp-app/target/" />
-    <ignored path="$PROJECT_DIR$/guarana-javafx/target/" />
-    <ignored path="$PROJECT_DIR$/demo-business/target/" />
-    <ignored path="$PROJECT_DIR$/demo-javafx/target/" />
+    <ignored path=".idea/" />
+    <manually-removed-from-ignored>
+      <directory path="$PROJECT_DIR$/target/" />
+      <directory path="$PROJECT_DIR$/guarana-javafx/target/" />
+      <directory path="$PROJECT_DIR$/demo-javafx/target/" />
+      <directory path="$PROJECT_DIR$/guarana-core/target/" />
+      <directory path="$PROJECT_DIR$/testapp-app/target/" />
+      <directory path="$PROJECT_DIR$/out/" />
+      <directory path="$PROJECT_DIR$/testapp-business/target/" />
+      <directory path="$PROJECT_DIR$/demo-business/target/" />
+      <directory path="$PROJECT_DIR$/testapp/target/" />
+    </manually-removed-from-ignored>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,43 +71,23 @@
   <component name="FileEditorManager">
     <leaf>
       <file leaf-file-name="JfxInstanceUI.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java">
+        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxInstanceUI.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="140" column="4" selection-start-line="140" selection-start-column="4" selection-end-line="140" selection-end-column="4" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JfxCollectionUI.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxCollectionUI.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="95" column="45" selection-start-line="95" selection-start-column="45" selection-end-line="95" selection-end-column="45" />
+              <caret line="99" column="52" selection-start-line="99" selection-start-column="52" selection-end-line="99" selection-end-column="52" />
               <folding>
-                <element signature="e#2962#2963#0" expanded="true" />
-                <element signature="e#2989#2990#0" expanded="true" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#1265#1294#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Person.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/Person.java">
+      <file leaf-file-name="JfxCollectionUI.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxCollectionUI.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ResetDatabase.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/ResetDatabase.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="9" column="28" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
+              <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -93,50 +97,88 @@
         <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="38" column="5" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
+              <caret line="24" column="46" selection-start-line="24" selection-start-column="46" selection-end-line="24" selection-end-column="46" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Introspector.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/introspection/Introspector.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="44" column="26" selection-start-line="44" selection-start-column="26" selection-end-line="44" selection-end-column="26" />
               <folding>
-                <element signature="e#921#922#0" expanded="true" />
-                <element signature="e#979#980#0" expanded="true" />
+                <element signature="imports" expanded="false" />
+                <element signature="method#Introspector#0;class#Introspector#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PersonManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/PersonManager.java">
+      <file leaf-file-name="JfxUiBuilder.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/JfxUiBuilder.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+              <caret line="14" column="14" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="14" />
+              <folding>
+                <element signature="method#buildCollectionUi#0;class#429:1000" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ShortDemoJfx.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/ShortDemoJfx.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="23" column="61" selection-start-line="23" selection-start-column="61" selection-end-line="23" selection-end-column="61" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainDemoJfx.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainDemoJfx.java">
+      <file leaf-file-name="ConfigManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/config/ConfigManager.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+              <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#576#577#0" expanded="true" />
+                <element signature="e#630#631#0" expanded="true" />
+                <element signature="e#683#684#0" expanded="true" />
+                <element signature="e#756#757#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-0.12878788">
+              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DialogUtil.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/DialogUtil.java">
+      <file leaf-file-name="guarana.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/guarana.properties">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="12" column="25" selection-start-line="12" selection-start-column="25" selection-end-line="12" selection-end-column="25" />
+              <caret line="0" column="23" selection-start-line="0" selection-start-column="23" selection-end-line="0" selection-end-column="23" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MethodCallUI.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/MethodCallUI.java">
+      <file leaf-file-name="JfxMethodCallUI.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxMethodCallUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.79965156">
-              <caret line="39" column="36" selection-start-line="39" selection-start-column="36" selection-end-line="39" selection-end-column="36" />
+            <state vertical-scroll-proportion="0.2672956">
+              <caret line="61" column="46" selection-start-line="61" selection-start-column="46" selection-end-line="61" selection-end-column="46" />
               <folding />
             </state>
           </provider>
@@ -169,21 +211,7 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/testapp-business/pom.xml" />
-        <option value="$PROJECT_DIR$/testapp-business/src/main/java/com/ogerardin/guarana/testapp/model/Person.java" />
-        <option value="$PROJECT_DIR$/testapp-app/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx.java" />
-        <option value="$PROJECT_DIR$/demo-business/pom.xml" />
-        <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/Person.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/guarana-javafx/pom.xml" />
-        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/inspector/Util.java" />
-        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/inspector/InstanceInspector.java" />
-        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/inspector/MethodUI.java" />
-        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/inspector/InstanceUI.java" />
-        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/MethodUI.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/Defaults.java" />
-        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/MethodCallUI.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/Image.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/Util.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/GuaranaUI.java" />
@@ -196,7 +224,6 @@
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/GenericInstanceUI.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/InstanceUI.java" />
         <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ClassInfo.java" />
-        <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/Introspector.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/ClassUI.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JavaFxUiBuilder.java" />
         <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/Renderable.java" />
@@ -206,11 +233,6 @@
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxClassUI.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/ImageUtil.java" />
         <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/CollectionUI.java" />
-        <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java" />
-        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java" />
-        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxUiBuilder.java" />
-        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxCollectionUI.java" />
-        <option value="$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/PersonManager.java" />
         <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java" />
         <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainConsole.java" />
         <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainConsole.java" />
@@ -218,8 +240,28 @@
         <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx2.java" />
         <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx.java" />
         <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainJfx.java" />
-        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainDemoJfx.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxCollectionUI.java" />
         <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/DialogUtil.java" />
+        <option value="$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/PersonManager.java" />
+        <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/Introspector.java" />
+        <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/introspection/Introspector.java" />
+        <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/introspection/MethodCall.java" />
+        <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/MapUI.java" />
+        <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java" />
+        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainDemoJfx.java" />
+        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/ShortDemoJfx.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxUiBuilder.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxMapUI.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/MethodCallUI.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxMethodCallUI.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/JfxUiBuilder.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxClassUI.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxUI.java" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxInstanceUI.java" />
+        <option value="$PROJECT_DIR$/demo-javafx/src/main/java/guarana.properties" />
+        <option value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxCollectionUI.java" />
+        <option value="$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/config/ConfigManager.java" />
       </list>
     </option>
   </component>
@@ -324,7 +366,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="PackagesPane" proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages ProjectPane="false" />
       <showMembers />
       <showModules />
@@ -346,55 +388,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="demo-javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="project-guarana" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="demo-business" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -405,6 +398,20 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="guarana-javafx" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="guarana-javafx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com.ogerardin.guarana.javafx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -449,19 +456,21 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="guarana-javafx" />
+              <option name="myItemId" value="guarana-core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="guarana-core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="com.ogerardin.guarana.javafx" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="builder" />
+              <option name="myItemId" value="com.ogerardin.guarana.core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -473,6 +482,32 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="guarana-core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com.ogerardin.guarana.core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="introspection" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="guarana-core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com.ogerardin.guarana.core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="config" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -516,6 +551,10 @@
               <option name="myItemId" value="com.ogerardin.guarana.testapp" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="adapters" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -543,6 +582,133 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="guarana-javafx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="guarana-javafx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javafx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="guarana-javafx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javafx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ui" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="demo-javafx" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="project-guarana" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="demo-business" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -552,10 +718,10 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.3816092" />
     <property name="FullScreen" value="false" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.completion" />
+    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.idea" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
     <property name="Downloaded.Files.Path.Enabled" value="false" />
@@ -595,6 +761,7 @@
       <recent name="$PROJECT_DIR$/guarana-javafx" />
     </key>
     <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="com.ogerardin.guarana.core.Introspector" />
       <recent name="com.ogerardin.guarana.javafx.util.DialogUtil" />
       <recent name="com.ogerardin.guarana.introspect.IntrospectUtil" />
       <recent name="com.ogerardin.guarana.javafx.ui.Defaults" />
@@ -619,21 +786,7 @@
       <recent name="com.ogerardin.guarana.javafx.ui" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.MainDemoJfx">
-    <configuration default="false" name="MainDemoJfx" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.ogerardin.guarana.testapp.main.MainDemoJfx" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-      <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="demo-javafx" />
-      <envs />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Application.ShortDemoJfx">
     <configuration default="false" name="MainDemoJfx" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.ogerardin.guarana.testapp.main.MainDemoJfx" />
       <option name="VM_PARAMETERS" />
@@ -650,6 +803,20 @@
     </configuration>
     <configuration default="false" name="ResetDatabase" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.ogerardin.guarana.testapp.main.ResetDatabase" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="demo-javafx" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="ShortDemoJfx" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.ogerardin.guarana.testapp.main.ShortDemoJfx" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -772,14 +939,15 @@
     </configuration>
     <list size="3">
       <item index="0" class="java.lang.String" itemvalue="Application.MainDemoJfx" />
-      <item index="1" class="java.lang.String" itemvalue="Application.MainDemoJfx" />
-      <item index="2" class="java.lang.String" itemvalue="Application.ResetDatabase" />
+      <item index="1" class="java.lang.String" itemvalue="Application.ResetDatabase" />
+      <item index="2" class="java.lang.String" itemvalue="Application.ShortDemoJfx" />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Application.MainDemoJfx" />
+      <list size="4">
+        <item index="0" class="java.lang.String" itemvalue="Application.ShortDemoJfx" />
         <item index="1" class="java.lang.String" itemvalue="Application.MainDemoJfx" />
-        <item index="2" class="java.lang.String" itemvalue="Application.ResetDatabase" />
+        <item index="2" class="java.lang.String" itemvalue="Application.MainDemoJfx" />
+        <item index="3" class="java.lang.String" itemvalue="Application.ResetDatabase" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
@@ -828,6 +996,8 @@
       <workItem from="1441626003726" duration="27154000" />
       <workItem from="1442563671768" duration="137000" />
       <workItem from="1442834067004" duration="11555000" />
+      <workItem from="1443011288954" duration="5896000" />
+      <workItem from="1443021633111" duration="20090000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1432644091789</created>
@@ -891,9 +1061,9 @@
     </servers>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="104656000" />
+    <option name="totallyTimeSpent" value="130642000" />
   </component>
-  <component name="TodoView">
+  <component name="TodoView" selected-index="4">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
     </todo-panel>
@@ -903,62 +1073,63 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="32" width="1696" height="1026" extended-state="1" />
+    <frame x="-8" y="32" width="1696" height="1026" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32897604" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3273743" sideWeight="0.48594132" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32849163" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3273743" sideWeight="0.48594132" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3988827" sideWeight="0.502445" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2029762" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3273743" sideWeight="0.49285713" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28268155" sideWeight="0.49266502" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32897604" sideWeight="0.49761903" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25810057" sideWeight="0.49285713" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27150837" sideWeight="0.49266502" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32897604" sideWeight="0.49761903" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23166259" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Duplicates" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22555012" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24420024" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32897604" sideWeight="0.49761903" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32849163" sideWeight="0.49761903" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19804402" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.17094018" sideWeight="0.5059347" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3888889" sideWeight="0.49755502" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38882682" sideWeight="0.49755502" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25611246" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Duplicates" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39144385" sideWeight="0.507326" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15934066" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3988827" sideWeight="0.502445" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2029762" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24420024" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2008547" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25611246" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Duplicates" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24420024" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19804402" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3991462" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3888889" sideWeight="0.49755502" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32897604" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3273743" sideWeight="0.48594132" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.38930482" sideWeight="0.492674" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17094018" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25810057" sideWeight="0.49285713" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27709496" sideWeight="0.49266502" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941177" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32897604" sideWeight="0.49761903" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23166259" sideWeight="0.49406528" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32849163" sideWeight="0.49761903" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.17094018" sideWeight="0.5059347" order="2" side_tool="true" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="UpdateCopyrightCheckinHandler">
@@ -985,7 +1156,8 @@
     <MESSAGE value="renamed demo-app to demo-javafx&#10;(cherry picked from commit 92a3d03)" />
     <MESSAGE value="introduced ListUI" />
     <MESSAGE value="introduced parametrized factory UiBuilder" />
-    <option name="LAST_COMMIT_MESSAGE" value="introduced parametrized factory UiBuilder" />
+    <MESSAGE value="Introduced MapUI and JfxMethoidCallUI" />
+    <option name="LAST_COMMIT_MESSAGE" value="Introduced MapUI and JfxMethoidCallUI" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -993,13 +1165,13 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java</url>
-          <line>115</line>
+          <url>file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/config/ConfigManager.java</url>
+          <line>14</line>
           <properties />
-          <option name="timeStamp" value="18" />
+          <option name="timeStamp" value="20" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="19" />
+      <option name="time" value="21" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1008,93 +1180,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/demo-javafx/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="27" column="20" selection-start-line="27" selection-start-column="20" selection-end-line="27" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/Node.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="392" column="16" selection-start-line="392" selection-start-column="16" selection-end-line="392" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/control/Label.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334">
-          <caret line="72" column="11" selection-start-line="72" selection-start-column="11" selection-end-line="72" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/control/MenuItem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334">
-          <caret line="304" column="22" selection-start-line="304" selection-start-column="22" selection-end-line="304" selection-end-column="22" />
-          <folding>
-            <element signature="e#10102#10103#0" expanded="false" />
-            <element signature="e#10148#10149#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/jre/lib/rt.jar!/com/sun/xml/internal/bind/v2/model/core/ClassInfo.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.17258883">
-          <caret line="11" column="17" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/Introspector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#292#309#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/jre/lib/rt.jar!/java/lang/reflect/Method.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.34856176">
-          <caret line="97" column="15" selection-start-line="97" selection-start-column="15" selection-end-line="97" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/control/Control.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.10881801">
-          <caret line="402" column="30" selection-start-line="402" selection-start-column="30" selection-end-line="402" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/stage/Window.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334">
-          <caret line="73" column="13" selection-start-line="73" selection-start-column="13" selection-end-line="73" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/layout/VBox.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="137" column="28" selection-start-line="137" selection-start-column="28" selection-end-line="137" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/layout/Pane.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="96" column="28" selection-start-line="96" selection-start-column="28" selection-end-line="96" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/layout/Region.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1643,17 +1728,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/Defaults.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="8" column="11" selection-start-line="8" selection-start-column="11" selection-end-line="8" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1661,7 +1735,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334">
           <caret line="145" column="11" selection-start-line="145" selection-start-column="11" selection-end-line="145" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1678,17 +1751,9 @@
         <state vertical-scroll-proportion="0.33333334">
           <caret line="99" column="11" selection-start-line="99" selection-start-column="11" selection-end-line="99" selection-end-column="11" />
           <folding>
-            <element signature="e#2148#2149#0" expanded="true" />
-            <element signature="e#2171#2172#0" expanded="true" />
+            <element signature="e#2148#2149#0" expanded="false" />
+            <element signature="e#2171#2172#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxClassUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1696,7 +1761,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1704,15 +1768,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="51" selection-start-line="5" selection-start-column="51" selection-end-line="5" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/InstanceUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1720,18 +1775,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.34811166">
           <caret line="84" column="18" selection-start-line="84" selection-start-column="18" selection-end-line="84" selection-end-column="18" />
-          <folding>
-            <element signature="e#2009#2010#0" expanded="true" />
-            <element signature="e#2076#2077#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.29402515">
-          <caret line="11" column="27" selection-start-line="11" selection-start-column="27" selection-end-line="11" selection-end-column="27" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1755,53 +1798,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="85" column="11" selection-start-line="85" selection-start-column="11" selection-end-line="85" selection-end-column="11" />
-          <folding>
-            <element signature="e#2723#2724#0" expanded="true" />
-            <element signature="e#2753#2754#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/CollectionUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxInstanceUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="140" column="4" selection-start-line="140" selection-start-column="4" selection-end-line="140" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxCollectionUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="95" column="45" selection-start-line="95" selection-start-column="45" selection-end-line="95" selection-end-column="45" />
-          <folding>
-            <element signature="e#2962#2963#0" expanded="true" />
-            <element signature="e#2989#2990#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/Person.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/PersonManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1809,7 +1805,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3327645">
           <caret line="71" column="40" selection-start-line="71" selection-start-column="40" selection-end-line="71" selection-end-column="40" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1817,7 +1812,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.17406143">
           <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1825,17 +1819,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.43686005">
           <caret line="37" column="22" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java">
+    <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/Person.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="38" column="5" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
+          <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
           <folding>
-            <element signature="e#921#922#0" expanded="true" />
-            <element signature="e#979#980#0" expanded="true" />
+            <element signature="e#392#393#0" expanded="false" />
+            <element signature="e#432#433#0" expanded="false" />
+            <element signature="e#482#483#0" expanded="false" />
+            <element signature="e#524#525#0" expanded="false" />
+            <element signature="e#559#560#0" expanded="false" />
+            <element signature="e#590#591#0" expanded="false" />
+            <element signature="e#626#627#0" expanded="false" />
+            <element signature="e#658#659#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1848,23 +1847,93 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/builder/JfxUiBuilder.java">
+    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/jre/lib/rt.jar!/java/lang/String.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.19381107">
-          <caret line="11" column="12" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="12" />
+        <state vertical-scroll-proportion="0.34745762">
+          <caret line="823" column="25" selection-start-line="823" selection-start-column="25" selection-end-line="823" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo-business/src/main/java/com/ogerardin/guarana/testapp/model/PersonManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.24717286">
+          <caret line="9" column="30" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/InstanceUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/introspection/MethodCall.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="11" column="29" selection-start-line="11" selection-start-column="29" selection-end-line="11" selection-end-column="29" />
           <folding>
-            <element signature="e#461#462#0" expanded="true" />
-            <element signature="e#513#514#0" expanded="true" />
-            <element signature="e#607#608#0" expanded="true" />
-            <element signature="e#662#663#0" expanded="true" />
+            <element signature="e#223#224#0" expanded="true" />
+            <element signature="e#259#260#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/CollectionUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/com/sun/javafx/property/PropertyReference.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="176" column="0" selection-start-line="176" selection-start-column="0" selection-end-line="176" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/MainDemoJfx.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <caret line="41" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/UIBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="13" column="26" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/jre/lib/rt.jar!/java/util/Map.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.51428574">
+          <caret line="195" column="21" selection-start-line="195" selection-start-column="21" selection-end-line="195" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/SocleDevJava/java/jdk1.8.0_25/javafx-src.zip!/javafx/scene/control/cell/PropertyValueFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.39871383">
+          <caret line="146" column="0" selection-start-line="146" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1872,15 +1941,147 @@
     <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/util/DialogUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="12" column="25" selection-start-line="12" selection-start-column="25" selection-end-line="12" selection-end-column="25" />
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/MethodCallUI.java">
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxMapUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.79965156">
-          <caret line="39" column="36" selection-start-line="39" selection-start-column="36" selection-end-line="39" selection-end-column="36" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="11" column="84" selection-start-line="11" selection-start-column="84" selection-end-line="11" selection-end-column="84" />
+          <folding>
+            <element signature="class#MapEntry#0;class#JfxMapUI#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/ui/MapUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/Defaults.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="8" column="11" selection-start-line="8" selection-start-column="11" selection-end-line="8" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxClassUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="46" column="1" selection-start-line="46" selection-start-column="1" selection-end-line="46" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxInstanceUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="99" column="52" selection-start-line="99" selection-start-column="52" selection-end-line="99" selection-end-column="52" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#1265#1294#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/adapters/PersonManagerDb4oImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="24" column="46" selection-start-line="24" selection-start-column="46" selection-end-line="24" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/com/ogerardin/guarana/testapp/main/ShortDemoJfx.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="23" column="61" selection-start-line="23" selection-start-column="61" selection-end-line="23" selection-end-column="61" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo-javafx/src/main/java/guarana.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="23" selection-start-line="0" selection-start-column="23" selection-end-line="0" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/introspection/Introspector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="44" column="26" selection-start-line="44" selection-start-column="26" selection-end-line="44" selection-end-column="26" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="method#Introspector#0;class#Introspector#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/JfxUiBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="14" column="14" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="14" />
+          <folding>
+            <element signature="method#buildCollectionUi#0;class#429:1000" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxCollectionUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-core/src/main/java/com/ogerardin/guarana/core/config/ConfigManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#576#577#0" expanded="true" />
+            <element signature="e#630#631#0" expanded="true" />
+            <element signature="e#683#684#0" expanded="true" />
+            <element signature="e#756#757#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.12878788">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guarana-javafx/src/main/java/com/ogerardin/guarana/javafx/ui/JfxMethodCallUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2672956">
+          <caret line="61" column="46" selection-start-line="61" selection-start-column="46" selection-end-line="61" selection-end-column="46" />
           <folding />
         </state>
       </provider>
@@ -1937,11 +2138,12 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>guarana-javafx</last-edited>
+          <last-edited>demo-business</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.3816092" />
+                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>

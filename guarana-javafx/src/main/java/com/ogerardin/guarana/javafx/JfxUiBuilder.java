@@ -1,9 +1,10 @@
-package com.ogerardin.guarana.javafx.ui.builder;
+package com.ogerardin.guarana.javafx;
 
-import com.ogerardin.guarana.core.ui.ClassUI;
-import com.ogerardin.guarana.core.ui.CollectionUI;
-import com.ogerardin.guarana.core.ui.InstanceUI;
-import com.ogerardin.guarana.core.ui.UIBuilder;
+import com.ogerardin.guarana.core.ui.*;
+import com.ogerardin.guarana.javafx.ui.JfxClassUI;
+import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
+import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
+import com.ogerardin.guarana.javafx.ui.JfxMapUI;
 import javafx.scene.Parent;
 
 /**
@@ -26,5 +27,11 @@ public enum JfxUiBuilder implements UIBuilder<Parent> {
         public <C> CollectionUI<Parent, C> buildCollectionUi(Class<C> itemClass) {
             return new JfxCollectionUI(itemClass);
         }
+
+        @Override
+        public <K, V> MapUI<Parent, K, V> buildMapUI() {
+            return new JfxMapUI<>();
+        }
     }
+
 }

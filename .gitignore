@@ -1,4 +1,3 @@
-.idea/
 target/
 *.iml
 logs/application.log
@@ -7,3 +6,5 @@ RUNNING_PID
 logs/
 .boot
 .ivy
+.idea/workspace.xml
+.idea/Maven*.xml

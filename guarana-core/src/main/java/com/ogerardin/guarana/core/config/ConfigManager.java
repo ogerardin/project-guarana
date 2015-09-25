@@ -1,31 +1,31 @@
 package com.ogerardin.guarana.core.config;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.SystemConfiguration;
 
 /**
  * Created by oge on 24/09/2015.
  */
 public class ConfigManager {
 
-    private static Properties allproperties = new Properties();
-
+    static CompositeConfiguration config = new CompositeConfiguration();
     static {
-        InputStream stream = ConfigManager.class.getClassLoader().getResourceAsStream("guarana.properties");
         try {
-            allproperties.load(stream);
-        } catch (IOException e) {
+            config.addConfiguration(new SystemConfiguration());
+            config.addConfiguration(new PropertiesConfiguration("guarana.properties"));
+        } catch (ConfigurationException e) {
             e.printStackTrace();
         }
     }
 
     public static String getProperty(String name) {
-        return allproperties.getProperty(name);
+        return config.getString(name);
     }
 
     public static boolean getHumanizeProperties() {
-        return Boolean.valueOf(getProperty("humanizeProperties"));
+        return config.getBoolean("humanizeProperties", true);
     }
 
 }

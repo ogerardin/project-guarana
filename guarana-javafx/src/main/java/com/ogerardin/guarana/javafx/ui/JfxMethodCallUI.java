@@ -18,7 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,15 +32,15 @@ import java.util.Map;
 public class JfxMethodCallUI implements Renderable<Parent> {
 
     private final VBox root;
-    private final Method method;
+    private final Executable executable;
 
-    public JfxMethodCallUI(Method method) {
-        this.method = method;
+    public JfxMethodCallUI(Executable executable) {
+        this.executable = executable;
 
         root = new VBox();
-        final Label title = new Label(Introspector.humanize(method.getName()));
+        final Label title = new Label(Introspector.humanize(executable.getName()));
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        title.setTooltip(new Tooltip(method.toGenericString()));
+        title.setTooltip(new Tooltip(executable.toGenericString()));
         root.getChildren().add(title);
 
         // build params list
@@ -57,7 +58,7 @@ public class JfxMethodCallUI implements Renderable<Parent> {
         int row = 0;
 
         Map<String, Object> params = new HashMap<>();
-        for (Parameter param : method.getParameters()) {
+        for (Parameter param : executable.getParameters()) {
 
             params.put(param.getName(), null);
 
@@ -84,7 +85,7 @@ public class JfxMethodCallUI implements Renderable<Parent> {
             row++;
         }
 
-        Button go = new Button("Go");
+        Button go = new Button(executable instanceof Constructor ? "Create" : "Go");
         go.setOnAction(event -> {
             // TODO: gather params and invoke method
         });

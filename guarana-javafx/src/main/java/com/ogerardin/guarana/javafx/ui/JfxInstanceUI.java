@@ -19,6 +19,7 @@ import jfxtras.labs.scene.control.BeanPathAdapter;
 import java.beans.BeanInfo;
 import java.beans.MethodDescriptor;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -129,28 +130,54 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
                     }
                 })
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
+        Arrays.asList(beanInfo.getBeanDescriptor().getBeanClass().getDeclaredConstructors()).stream()
+                .map(constructor -> new MenuItem(constructor.toGenericString()) {
+                    {
+                        setOnAction(event -> executeConstructorRequested(constructor));
+                    }
+                })
+                .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         return contextMenu;
+    }
+
+    private <T> void executeConstructorRequested(Constructor<T> constructor) {
+        System.out.println(constructor.toGenericString());
+
+        T instance;
+        if (constructor.getParameterCount() ==0) {
+            try {
+                instance = constructor.newInstance();
+                DialogUtil.displayInstance((Class<T>) beanInfo.getClass(), instance, "New Instance");
+            } catch (Exception e) {
+                e.printStackTrace();
+                DialogUtil.displayException(e);
+            }
+        }
+        else {
+            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(constructor);
+            DialogUtil.display(methodCallUI);
+        }
     }
 
     private void executeMethodRequested(MethodDescriptor md) {
         System.out.println(md.getName());
         Method method = md.getMethod();
 
-        final Class<T> returnType = (Class<T>) method.getReturnType();
+        final Class returnType = (Class) method.getReturnType();
 
-        T result;
+        Object result;
         // if no arg, execute immediately, otherwise display arg dialog
         if (method.getParameterCount() == 0) {
             try {
-                result = (T) method.invoke(target);
+                result = method.invoke(target);
                 DialogUtil.displayInstance(returnType, result, "Result");
             } catch (Exception e) {
+                e.printStackTrace();
                 DialogUtil.displayException(e);
             }
         } else {
             JfxMethodCallUI methodCallUI = new JfxMethodCallUI(method);
             DialogUtil.display(methodCallUI);
-            //...
         }
     }
 

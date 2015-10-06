@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2015 Olivier Gérardin
+ */
+
 package com.ogerardin.guarana.testapp.adapters;
 
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
 import com.db4o.config.Configuration;
+import com.ogerardin.guarana.testapp.model.Event;
 import com.ogerardin.guarana.testapp.model.Person;
 import com.ogerardin.guarana.testapp.model.PersonManager;
 
@@ -22,10 +27,8 @@ public class PersonManagerDb4oImpl implements PersonManager {
     }
 
     public void clearAll() {
-        final ObjectSet<Person> persons = objectContainer.query(Person.class);
-        for (Person p: persons) {
-            objectContainer.delete(p);
-        }
+        objectContainer.query(Person.class).forEach(objectContainer::delete);
+        objectContainer.query(Event.class).forEach(objectContainer::delete);
         objectContainer.commit();
     }
 
@@ -33,8 +36,19 @@ public class PersonManagerDb4oImpl implements PersonManager {
         return objectContainer.query(Person.class);
     }
 
+    @Override
+    public Collection<Event> getAllEvents() {
+        return objectContainer.query(Event.class);
+    }
+
     public Person save(Person person) {
         objectContainer.store(person);
         return person;
+    }
+
+    @Override
+    public Event save(Event event) {
+        objectContainer.store(event);
+        return event;
     }
 }

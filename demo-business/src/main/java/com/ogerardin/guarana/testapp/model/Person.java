@@ -1,6 +1,8 @@
-package com.ogerardin.guarana.testapp.model;
+/*
+ * Copyright (c) 2015 Olivier Gérardin
+ */
 
-import com.google.common.base.MoreObjects;
+package com.ogerardin.guarana.testapp.model;
 
 /**
  * Created by Olivier on 26/05/15.
@@ -32,9 +34,9 @@ public class Person {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("firstName", firstName)
-                .add("lastName", lastName)
-                .toString();
+        return "Person{" +
+                "lastName='" + lastName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                '}';
     }
 }

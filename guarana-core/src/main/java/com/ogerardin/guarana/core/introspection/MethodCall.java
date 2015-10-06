@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Olivier Gérardin
+ */
+
 package com.ogerardin.guarana.core.introspection;
 
 import java.lang.reflect.Method;

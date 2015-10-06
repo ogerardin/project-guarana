@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Olivier Gérardin
+ */
+
 package com.ogerardin.guarana.javafx.util;
 
 import javafx.scene.image.Image;

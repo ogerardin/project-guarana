@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Olivier Gérardin
+ */
+
 package com.ogerardin.guarana.javafx.ui;
 
 import com.ogerardin.guarana.core.introspection.Introspector;
@@ -74,14 +78,17 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
                 continue;
             }
 
+            final Class<?> propertyType = propertyDescriptor.getPropertyType();
+            final Method readMethod = propertyDescriptor.getReadMethod();
             final String humanizedName = Introspector.humanize(propertyDescriptor.getDisplayName());
             Label label = new Label(humanizedName);
+            label.setTooltip(new Tooltip(propertyDescriptor.toString()));
             grid.add(label, 0, row);
 
             TextField field = new TextField();
             grid.add(field, 1, row);
             //FIXME: for now only editable String properties generate an editable text field
-            if (Introspector.isReadOnly(propertyDescriptor) || propertyDescriptor.getPropertyType() != String.class) {
+            if (Introspector.isReadOnly(propertyDescriptor) || propertyType != String.class) {
                 field.setEditable(false);
             }
             if (row == 0) {
@@ -89,25 +96,18 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
             }
 
             // if it's a collection, add a button to open as list
-            if (Collection.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+            if (Collection.class.isAssignableFrom(propertyType)) {
                 Button button = new Button("...");
                 button.setOnAction(e -> {
-                    System.out.println(propertyDescriptor.getName());
-                    final Method readMethod = propertyDescriptor.getReadMethod();
-                    try {
-                        final Collection collection = (Collection) readMethod.invoke(target);
-                        Class itemClass = Object.class;
-                        //FIXME how do we get the item class if collection is empty ??
-                        if (!collection.isEmpty()) {
-                            itemClass = collection.iterator().next().getClass();
-                        }
-                        CollectionUI<Parent, ?> collectionUI = JfxUiBuilder.INSTANCE.buildCollectionUi(itemClass);
-                        collectionUI.setTarget(collection);
-                        DialogUtil.display(collectionUI, humanizedName);
-
-                    } catch (Exception ex) {
-                        DialogUtil.displayException(ex);
-                    }
+                    zoomCollection(readMethod, humanizedName);
+                });
+                grid.add(button, 2, row);
+            }
+            // otherwise add a button to zoom on property
+            else {
+                Button button = new Button("...");
+                button.setOnAction(e -> {
+                    zoomProperty(propertyType, readMethod, humanizedName);
                 });
                 grid.add(button, 2, row);
             }
@@ -117,7 +117,36 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
 
             row++;
         }
+    }
 
+    private void zoomCollection(Method readMethod, String title) {
+        try {
+            final Collection collection = (Collection) readMethod.invoke(target);
+            Class<?> itemClass = Object.class;
+            //FIXME how do we get the item class if collection is empty ??
+            if (!collection.isEmpty()) {
+                itemClass = collection.iterator().next().getClass();
+            }
+            CollectionUI<Parent, ?> collectionUI = getCollectionUI(itemClass);
+            collectionUI.setTarget(collection);
+            DialogUtil.display(collectionUI, title);
+
+        } catch (Exception ex) {
+            DialogUtil.displayException(ex);
+        }
+    }
+
+    private static <I> CollectionUI<Parent, I> getCollectionUI(Class<I> itemClass) {
+        return JfxUiBuilder.INSTANCE.buildCollectionUi(itemClass);
+    }
+
+    private <P> void zoomProperty(Class<P> propertyType, Method readMethod, String title) {
+        try {
+            final P value = (P) readMethod.invoke(target);
+            DialogUtil.displayInstance(propertyType, value, title);
+        } catch (Exception ex) {
+            DialogUtil.displayException(ex);
+        }
     }
 
     private ContextMenu getContextMenu(BeanInfo beanInfo) {

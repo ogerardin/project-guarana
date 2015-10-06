@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Olivier Gérardin
+ */
+
 package com.ogerardin.guarana.javafx.ui;
 
 import com.ogerardin.guarana.core.introspection.Introspector;

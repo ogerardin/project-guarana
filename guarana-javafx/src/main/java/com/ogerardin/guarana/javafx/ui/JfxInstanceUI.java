@@ -4,18 +4,20 @@
 
 package com.ogerardin.guarana.javafx.ui;
 
+import com.ogerardin.guarana.core.config.ConfigManager;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import jfxtras.labs.scene.control.BeanPathAdapter;
@@ -48,9 +50,29 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
         beanInfo = Introspector.getClassInfo(clazz);
 
         root = new VBox();
-        final Label title = new Label(beanInfo.getBeanDescriptor().getDisplayName());
+        final String className = beanInfo.getBeanDescriptor().getBeanClass().getSimpleName();
+        String displayName = beanInfo.getBeanDescriptor().getDisplayName();
+        if (displayName.equals(className) && ConfigManager.getHumanizeClassNames()) {
+            displayName = Introspector.humanize(className);
+        }
+        final Label title = new Label(displayName);
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         root.getChildren().add(title);
+
+        // set the title label as a source for drag and drop
+        title.setOnDragDetected(event -> {
+            Dragboard dragboard = title.startDragAndDrop(TransferMode.LINK);
+            ClipboardContent content = new ClipboardContent();
+            content.putString(title.getText());
+            dragboard.setContent(content);
+            event.consume();
+        });
+        title.setOnDragDone(event -> {
+            if (event.getTransferMode() == TransferMode.LINK) {
+                // drag and drop done successfully, nothing to do here
+            }
+            event.consume();
+        });
 
         // build methods context menu
         {
@@ -112,6 +134,30 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
                 grid.add(button, 2, row);
             }
 
+            // set the field as a target for drag and drop
+            field.setOnDragOver(event -> {
+                event.acceptTransferModes(TransferMode.LINK);
+                event.consume();
+            });
+            field.setOnDragEntered(event -> {
+                field.setCursor(Cursor.CROSSHAIR);
+                event.consume();
+            });
+            field.setOnDragExited(event -> {
+                field.setCursor(Cursor.DEFAULT);
+                event.consume();
+            });
+            field.setOnDragDropped(event -> {
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+                if (db.hasString()) {
+                    System.out.println(db.getString());
+                    success = true;
+                }
+                event.setDropCompleted(success);
+                event.consume();
+            });
+
             propertyDescriptorControlMap.put(propertyDescriptor, field);
             controlPropertyDescriptorMap.put(field, propertyDescriptor);
 
@@ -151,14 +197,16 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
 
     private ContextMenu getContextMenu(BeanInfo beanInfo) {
         ContextMenu contextMenu = new ContextMenu();
+        // add methods
         Arrays.asList(beanInfo.getMethodDescriptors()).stream()
                 .filter(md -> !Introspector.isGetterOrSetter(md))
-                .map(md -> new MenuItem(md.getDisplayName()) {
+                .map(md -> new MenuItem(md.getMethod().toGenericString()) {
                     {
                         setOnAction(event -> executeMethodRequested(md));
                     }
                 })
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
+        // add constructors
         Arrays.asList(beanInfo.getBeanDescriptor().getBeanClass().getDeclaredConstructors()).stream()
                 .map(constructor -> new MenuItem(constructor.toGenericString()) {
                     {

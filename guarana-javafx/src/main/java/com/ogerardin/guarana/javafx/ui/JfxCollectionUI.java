@@ -63,11 +63,11 @@ public class JfxCollectionUI<T> implements CollectionUI<Parent, T> {
         tableView.setEditable(false);
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
             final String propertyName = propertyDescriptor.getName();
-            String displayname = propertyDescriptor.getDisplayName();
-            if (propertyName.equals(displayname) && ConfigManager.getHumanizeProperties()) {
-                displayname = Introspector.humanize(propertyName);
+            String displayName = propertyDescriptor.getDisplayName();
+            if (propertyName.equals(displayName) && ConfigManager.getHumanizePropertyNames()) {
+                displayName = Introspector.humanize(propertyName);
             }
-            TableColumn column = new TableColumn(displayname);
+            TableColumn column = new TableColumn(displayName);
             column.setCellValueFactory(new PropertyValueFactory<>(propertyName));
             if (propertyName.equals("class")) {
                 column.setVisible(false);

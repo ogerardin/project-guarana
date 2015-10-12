@@ -28,8 +28,12 @@ public class ConfigManager {
         return config.getString(name);
     }
 
-    public static boolean getHumanizeProperties() {
-        return config.getBoolean("humanizeProperties", true);
+    public static boolean getHumanizePropertyNames() {
+        return config.getBoolean("humanizePropertyNames", true);
+    }
+
+    public static boolean getHumanizeClassNames() {
+        return config.getBoolean("humanizeClassNames", true);
     }
 
 }

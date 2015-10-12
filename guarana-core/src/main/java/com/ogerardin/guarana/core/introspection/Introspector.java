@@ -37,9 +37,9 @@ public class Introspector {
         return beanInfo;
     }
 
-    public static String humanize(String propertyName) {
+    public static String humanize(String name) {
         // split "camelCase" to "camel" "Case"
-        final String[] parts = propertyName.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+        final String[] parts = name.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
         // fix case of each part and join into a space-separated string
         return Arrays.stream(parts)
                 .map(part -> part.substring(0, 1).toUpperCase() + part.substring(1).toLowerCase())

@@ -52,7 +52,7 @@ public class JfxMethodCallUI implements Renderable<Parent> {
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(Defaults.DEFAULT_INSETS);
+        grid.setPadding(Const.DEFAULT_INSETS);
 
         ColumnConstraints column2 = new ColumnConstraints();
         column2.setHgrow(Priority.ALWAYS);

@@ -12,6 +12,7 @@ import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.ClipboardContent;
@@ -60,19 +61,7 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
         root.getChildren().add(title);
 
         // set the title label as a source for drag and drop
-        title.setOnDragDetected(event -> {
-            Dragboard dragboard = title.startDragAndDrop(TransferMode.LINK);
-            ClipboardContent content = new ClipboardContent();
-            content.putString(title.getText());
-            dragboard.setContent(content);
-            event.consume();
-        });
-        title.setOnDragDone(event -> {
-            if (event.getTransferMode() == TransferMode.LINK) {
-                // drag and drop done successfully, nothing to do here
-            }
-            event.consume();
-        });
+        setDragDropSource(title);
 
         // build methods context menu
         {
@@ -86,7 +75,7 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(Defaults.DEFAULT_INSETS);
+        grid.setPadding(Const.DEFAULT_INSETS);
 
         ColumnConstraints column2 = new ColumnConstraints();
         column2.setHgrow(Priority.ALWAYS);
@@ -135,34 +124,58 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
             }
 
             // set the field as a target for drag and drop
-            field.setOnDragOver(event -> {
-                event.acceptTransferModes(TransferMode.LINK);
-                event.consume();
-            });
-            field.setOnDragEntered(event -> {
-                field.setCursor(Cursor.CROSSHAIR);
-                event.consume();
-            });
-            field.setOnDragExited(event -> {
-                field.setCursor(Cursor.DEFAULT);
-                event.consume();
-            });
-            field.setOnDragDropped(event -> {
-                Dragboard db = event.getDragboard();
-                boolean success = false;
-                if (db.hasString()) {
-                    System.out.println(db.getString());
-                    success = true;
-                }
-                event.setDropCompleted(success);
-                event.consume();
-            });
+            setDragDropTarget(field);
 
             propertyDescriptorControlMap.put(propertyDescriptor, field);
             controlPropertyDescriptorMap.put(field, propertyDescriptor);
 
             row++;
         }
+    }
+
+    private void setDragDropSource(Node source) {
+        source.setOnDragDetected(event -> {
+            Dragboard dragboard = source.startDragAndDrop(TransferMode.LINK);
+            ClipboardContent content = new ClipboardContent();
+            // FIXME should put a serializable ID of the object, not the object
+            content.put(Const.DATA_FORMAT_OBJECT_REFERENCE, target);
+            dragboard.setContent(content);
+            event.consume();
+        });
+        source.setOnDragDone(event -> {
+            if (event.getTransferMode() == TransferMode.LINK) {
+                // drag and drop done successfully, nothing to do here
+            }
+            event.consume();
+        });
+    }
+
+    private static void setDragDropTarget(TextField field) {
+        field.setOnDragOver(event -> {
+            event.acceptTransferModes(TransferMode.LINK);
+            event.consume();
+        });
+        field.setOnDragEntered(event -> {
+            field.setCursor(Cursor.CROSSHAIR);
+            event.consume();
+        });
+        field.setOnDragExited(event -> {
+            field.setCursor(Cursor.DEFAULT);
+            event.consume();
+        });
+        field.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasContent(Const.DATA_FORMAT_OBJECT_REFERENCE)) {
+                Object reference = db.getContent(Const.DATA_FORMAT_OBJECT_REFERENCE);
+                System.out.println(reference);
+                //FIXME actually set the reference
+                field.setText(reference.toString());
+                success = true;
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
     }
 
     private void zoomCollection(Method readMethod, String title) {

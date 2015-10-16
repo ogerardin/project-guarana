@@ -4,8 +4,8 @@
 
 package com.ogerardin.guarana.javafx.ui;
 
-import com.ogerardin.guarana.core.object_registry.Identifier;
-import com.ogerardin.guarana.core.object_registry.ObjectRegistry;
+import com.ogerardin.guarana.core.registry.Identifier;
+import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import javafx.geometry.Insets;
 import javafx.scene.input.DataFormat;
 

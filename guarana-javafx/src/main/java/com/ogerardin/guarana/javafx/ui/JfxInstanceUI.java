@@ -6,8 +6,8 @@ package com.ogerardin.guarana.javafx.ui;
 
 import com.ogerardin.guarana.core.config.ConfigManager;
 import com.ogerardin.guarana.core.introspection.Introspector;
-import com.ogerardin.guarana.core.object_registry.Identifier;
-import com.ogerardin.guarana.core.object_registry.ObjectRegistry;
+import com.ogerardin.guarana.core.registry.Identifier;
+import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
@@ -172,6 +172,7 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
                 Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
                 System.out.println(identifier);
                 Object source = ObjectRegistry.INSTANCE.get(identifier);
+                // FIXME set actual value
                 field.setText(source.toString());
                 success = true;
             }

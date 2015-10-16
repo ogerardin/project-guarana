@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.core.object_registry;
+package com.ogerardin.guarana.core.registry;
 
 import java.io.Serializable;
 import java.util.UUID;

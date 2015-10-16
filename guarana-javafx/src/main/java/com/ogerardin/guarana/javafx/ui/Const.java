@@ -4,6 +4,8 @@
 
 package com.ogerardin.guarana.javafx.ui;
 
+import com.ogerardin.guarana.core.object_registry.Identifier;
+import com.ogerardin.guarana.core.object_registry.ObjectRegistry;
 import javafx.geometry.Insets;
 import javafx.scene.input.DataFormat;
 
@@ -14,6 +16,10 @@ public interface Const {
 
     Insets DEFAULT_INSETS = new Insets(25, 25, 25, 25);
 
-    // custom clipboard format for drag-and-drop
-    DataFormat DATA_FORMAT_OBJECT_REFERENCE = new DataFormat("com.ogerardin.guarana.core.ObjectReference");
+    /**
+     * Custom clipboard format for drag-and-drop.
+     * Associated content is expected to be an {@link Identifier} that is the key to the source object in the
+     * {@link ObjectRegistry}.
+     */
+    DataFormat DATA_FORMAT_OBJECT_IDENTIFIER = new DataFormat("application/x.object-reference");
 }

@@ -6,6 +6,8 @@ package com.ogerardin.guarana.javafx.ui;
 
 import com.ogerardin.guarana.core.config.ConfigManager;
 import com.ogerardin.guarana.core.introspection.Introspector;
+import com.ogerardin.guarana.core.object_registry.Identifier;
+import com.ogerardin.guarana.core.object_registry.ObjectRegistry;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
@@ -61,7 +63,7 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
         root.getChildren().add(title);
 
         // set the title label as a source for drag and drop
-        setDragDropSource(title);
+        configureDragDropSource(title);
 
         // build methods context menu
         {
@@ -124,7 +126,7 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
             }
 
             // set the field as a target for drag and drop
-            setDragDropTarget(field);
+            configureDragDropTarget(field);
 
             propertyDescriptorControlMap.put(propertyDescriptor, field);
             controlPropertyDescriptorMap.put(field, propertyDescriptor);
@@ -133,12 +135,12 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
         }
     }
 
-    private void setDragDropSource(Node source) {
+    private void configureDragDropSource(Node source) {
         source.setOnDragDetected(event -> {
             Dragboard dragboard = source.startDragAndDrop(TransferMode.LINK);
             ClipboardContent content = new ClipboardContent();
-            // FIXME should put a serializable ID of the object, not the object
-            content.put(Const.DATA_FORMAT_OBJECT_REFERENCE, target);
+            Identifier identifier = ObjectRegistry.INSTANCE.put(target);
+            content.put(Const.DATA_FORMAT_OBJECT_IDENTIFIER, identifier);
             dragboard.setContent(content);
             event.consume();
         });
@@ -150,7 +152,7 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
         });
     }
 
-    private static void setDragDropTarget(TextField field) {
+    private static void configureDragDropTarget(TextField field) {
         field.setOnDragOver(event -> {
             event.acceptTransferModes(TransferMode.LINK);
             event.consume();
@@ -166,11 +168,11 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
         field.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
-            if (db.hasContent(Const.DATA_FORMAT_OBJECT_REFERENCE)) {
-                Object reference = db.getContent(Const.DATA_FORMAT_OBJECT_REFERENCE);
-                System.out.println(reference);
-                //FIXME actually set the reference
-                field.setText(reference.toString());
+            if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)) {
+                Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
+                System.out.println(identifier);
+                Object source = ObjectRegistry.INSTANCE.get(identifier);
+                field.setText(source.toString());
                 success = true;
             }
             event.setDropCompleted(success);
@@ -276,8 +278,8 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
         if (this.target != null) {
             unbind(this.target);
         }
-        bind(target);
         this.target = target;
+        bind(target);
     }
 
     private void unbind(T target) {

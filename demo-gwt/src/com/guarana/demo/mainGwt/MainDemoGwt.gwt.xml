@@ -1,19 +1,18 @@
-<!--
-  ~ Copyright (c) 2015 Olivier Gérardin
-  -->
-
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.0//EN"
         "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd">
-<module rename-to="MySampleApplication">
+<module rename-to="MainGwt">
 
     <!-- Inherit the core Web Toolkit stuff.                  -->
     <inherits name='com.google.gwt.user.User'/>
+    <inherits name="com.ogerardin.guarana.gwt.Core"/>
 
     <!-- Specify the app entry point class.                   -->
-    <entry-point class='com.mySampleApplication.client.MySampleApplication'/>
+    <entry-point class='com.guarana.demo.mainGwt.client.MainDemoGwt'/>
 
 
     <!-- Specify the app servlets.                   -->
-    <servlet path='/MySampleApplicationService' class='com.mySampleApplication.server.MySampleApplicationServiceImpl'/>
+<!--
+    <servlet path='/MainGwtService' class='com.guarana.demo.mainGwt.server.MainGwtServiceImpl'/>
+-->
 
 </module>

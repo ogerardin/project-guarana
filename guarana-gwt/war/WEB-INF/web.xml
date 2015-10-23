@@ -10,11 +10,11 @@
            version="3.0">
 
     <servlet>
-        <servlet-name>MySampleApplication MySampleApplicationService</servlet-name>
-        <servlet-class>com.mySampleApplication.server.MySampleApplicationServiceImpl</servlet-class>
+        <servlet-name>GuaranaService</servlet-name>
+        <servlet-class>com.ogerardin.guarana.gwt.server.GuaranaServiceImpl</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>MySampleApplication MySampleApplicationService</servlet-name>
-        <url-pattern>/MySampleApplication/MySampleApplicationService</url-pattern>
+        <servlet-name>GuaranaService</servlet-name>
+        <url-pattern>/Core/guarana</url-pattern>
     </servlet-mapping>
 </web-app>

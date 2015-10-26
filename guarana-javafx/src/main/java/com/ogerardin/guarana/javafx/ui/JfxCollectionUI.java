@@ -17,6 +17,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -54,7 +55,7 @@ public class JfxCollectionUI<T> implements CollectionUI<Parent, T> {
 //        }
 
         root = new VBox();
-        final Label title = new Label(beanInfo.getBeanDescriptor().getDisplayName() + "*");
+        final Label title = new Label(beanInfo.getBeanDescriptor().getDisplayName() + "...");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         root.getChildren().add(title);
 
@@ -77,14 +78,32 @@ public class JfxCollectionUI<T> implements CollectionUI<Parent, T> {
 
         tableView.setRowFactory(tv -> {
             TableRow<T> row = new TableRow<>();
-            row.setOnMouseClicked(e -> {
-                if (e.getClickCount() == 2 && (!row.isEmpty())) {
-                    T item = row.getItem();
-                    InstanceUI<Parent, T> instanceUI = JfxUiBuilder.INSTANCE.buildInstanceUI(itemClass);
-                    instanceUI.setTarget(item);
-                    DialogUtil.display(instanceUI, "Item " + row.getIndex());
+            row.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                    // double-click
+                    String itemTitle;
+                    T item = null;
+                    if (!row.isEmpty()) {
+                        itemTitle = "Item " + row.getIndex();
+                        item = row.getItem();
+                    } else {
+                        itemTitle = "New Item";
+                        try {
+                            // try no-arg constructor.
+                            item = itemClass.newInstance();
+                        } catch (Exception e) {
+                            DialogUtil.displayException(e);
+                        }
+                    }
+                    if (item != null) {
+                        InstanceUI<Parent, T> instanceUI = JfxUiBuilder.INSTANCE.buildInstanceUI(itemClass);
+                        instanceUI.setTarget(item);
+                        DialogUtil.display(instanceUI, itemTitle);
+                    }
                 }
             });
+            //TODO set context menu for row
+            //TODO set row as drag-and-drop source
             return row;
         });
 

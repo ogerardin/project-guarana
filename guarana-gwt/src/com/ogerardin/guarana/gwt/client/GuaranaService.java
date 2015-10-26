@@ -10,8 +10,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("guarana")
 public interface GuaranaService extends RemoteService {
-    // Sample interface method of remote interface
-    String getMessage(String msg);
+
+    String getVersion();
 
     String introspect(String className) throws GuaranaServiceException;
 

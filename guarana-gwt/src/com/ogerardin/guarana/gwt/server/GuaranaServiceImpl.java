@@ -9,9 +9,10 @@ import com.ogerardin.guarana.gwt.client.GuaranaService;
 import com.ogerardin.guarana.gwt.client.GuaranaServiceException;
 
 public class GuaranaServiceImpl extends RemoteServiceServlet implements GuaranaService {
-    // Implementation of sample interface method
-    public String getMessage(String msg) {
-        return "Client said: \"" + msg + "\"<br>Server answered: \"Hi!\"";
+
+    @Override
+    public String getVersion() {
+        return "0.01";
     }
 
     @Override

@@ -13,6 +13,6 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>GuaranaService</servlet-name>
-        <url-pattern>/Core/guarana</url-pattern>
+        <url-pattern>/MainDemoGwt/guarana</url-pattern>
     </servlet-mapping>
 </web-app>

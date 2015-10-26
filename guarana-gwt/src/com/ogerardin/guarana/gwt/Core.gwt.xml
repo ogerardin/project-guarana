@@ -10,7 +10,7 @@
     <inherits name='com.google.gwt.user.User'/>
 
     <!-- Specify the app entry point class.                   -->
-    <entry-point class='com.ogerardin.guarana.gwt.client.CoreApp'/>
+    <entry-point class='com.ogerardin.guarana.gwt.client.CoreInit'/>
 
 
     <!-- Specify the app servlets.                   -->

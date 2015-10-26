@@ -3,39 +3,51 @@ package com.guarana.demo.mainGwt.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.ogerardin.guarana.gwt.client.GuaranaService;
+import com.ogerardin.guarana.gwt.client.GuaranaServiceException;
 
-/**
- * Entry point classes define <code>onModuleLoad()</code>
- */
 public class MainDemoGwt implements EntryPoint {
 
-    /**
-     * This is the entry point method.
-     */
     public void onModuleLoad() {
-        final Button button = new Button("Click me");
-        final Label label = new Label();
+        final TextBox textBox = new TextBox();
+        final Button button = new Button("Introspect");
+        final Label label = new Label("---");
 
         button.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                if (label.getText().equals("")) {
-                    label.setText("bla");
-                } else {
-                    label.setText("");
+                try {
+                    GuaranaService.App.getInstance().introspect(textBox.getValue(), new MyAsyncCallback(label));
+                } catch (GuaranaServiceException e) {
+                    e.printStackTrace();
                 }
             }
         });
 
-        // Assume that the host HTML has elements defined whose
-        // IDs are "slot1", "slot2".  In a real app, you probably would not want
-        // to hard-code IDs.  Instead, you could, for example, search for all
-        // elements with a particular CSS class and replace them with widgets.
-        //
-        RootPanel.get("slot1").add(button);
-        RootPanel.get("slot2").add(label);
+        RootPanel.get("slot1").add(textBox);
+        RootPanel.get("slot2").add(button);
+        RootPanel.get("slot3").add(label);
     }
 
+    private static class MyAsyncCallback implements AsyncCallback<String> {
+        private final Label label;
+
+        public MyAsyncCallback(Label label) {
+            this.label = label;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            label.setText(caught.toString());
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            label.setText(result);
+        }
+    }
 }

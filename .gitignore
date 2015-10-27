@@ -6,3 +6,4 @@ RUNNING_PID
 logs/
 .boot
 .ivy
+out/

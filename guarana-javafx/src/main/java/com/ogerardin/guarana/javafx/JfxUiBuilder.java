@@ -11,7 +11,7 @@ import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import com.ogerardin.guarana.javafx.ui.JfxMapUI;
 import javafx.scene.Parent;
 
-/**
+/*
  * Created by oge on 07/09/2015.
  */
 public enum JfxUiBuilder implements UIBuilder<Parent> {
@@ -24,12 +24,12 @@ public enum JfxUiBuilder implements UIBuilder<Parent> {
 
         @Override
         public <C> InstanceUI<Parent, C> buildInstanceUI(Class<C> clazz) {
-            return new JfxInstanceUI(clazz);
+            return new JfxInstanceUI<>(clazz);
         }
 
         @Override
         public <C> CollectionUI<Parent, C> buildCollectionUi(Class<C> itemClass) {
-            return new JfxCollectionUI(itemClass);
+            return new JfxCollectionUI<>(itemClass);
         }
 
         @Override

@@ -12,10 +12,7 @@ import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.collections.FXCollections;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
@@ -27,10 +24,10 @@ import java.beans.PropertyDescriptor;
 import java.util.Collection;
 import java.util.List;
 
-/**
+/*
  * Created by Olivier on 29/05/15.
  */
-public class JfxCollectionUI<T> implements CollectionUI<Parent, T> {
+public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T> {
 
     protected final BeanInfo beanInfo;
     private final Class<T> itemClass;
@@ -79,8 +76,8 @@ public class JfxCollectionUI<T> implements CollectionUI<Parent, T> {
         tableView.setRowFactory(tv -> {
             TableRow<T> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
+                // Handle double-click
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                    // double-click
                     String itemTitle;
                     T item = null;
                     if (!row.isEmpty()) {
@@ -102,8 +99,14 @@ public class JfxCollectionUI<T> implements CollectionUI<Parent, T> {
                     }
                 }
             });
-            //TODO set context menu for row
-            //TODO set row as drag-and-drop source
+
+            //Set context menu for row
+            ContextMenu contextMenu = getContextMenu(beanInfo, row::getItem);
+            row.setContextMenu(contextMenu);
+
+            //Set row as drag-and-drop source
+            configureDragDropSource(row, row::getItem);
+
             return row;
         });
 

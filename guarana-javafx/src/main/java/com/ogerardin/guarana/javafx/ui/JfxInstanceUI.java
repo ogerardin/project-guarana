@@ -112,7 +112,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             }
 
             // set the field as a target for drag and drop
-            configureDragDropTarget(field);
+            configureDragDropTarget(field, propertyDescriptor, () -> target);
 
             propertyDescriptorControlMap.put(propertyDescriptor, field);
             controlPropertyDescriptorMap.put(field, propertyDescriptor);

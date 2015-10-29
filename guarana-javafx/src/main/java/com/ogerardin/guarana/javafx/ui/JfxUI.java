@@ -9,6 +9,7 @@ import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import com.ogerardin.guarana.core.ui.Wrapper;
 import com.ogerardin.guarana.javafx.util.DialogUtil;
+import javafx.event.Event;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
@@ -20,6 +21,7 @@ import javafx.scene.input.TransferMode;
 
 import java.beans.BeanInfo;
 import java.beans.MethodDescriptor;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -52,21 +54,24 @@ public abstract class JfxUI {
             dragboard.setContent(content);
             event.consume();
         });
-        source.setOnDragDone(event -> {
-            if (event.getTransferMode() == TransferMode.LINK) {
-                // drag and drop done successfully, nothing to do here
-            }
-            event.consume();
-        });
+        // drag done: nothing to do, just consume the event
+        source.setOnDragDone(Event::consume);
     }
 
-    static void configureDragDropTarget(TextField field) {
+    static <T> void configureDragDropTarget(TextField field, PropertyDescriptor propertyDescriptor, Wrapper<T> wrapper) {
         field.setOnDragOver(event -> {
             event.acceptTransferModes(TransferMode.LINK);
             event.consume();
         });
         field.setOnDragEntered(event -> {
-            field.setCursor(Cursor.CROSSHAIR);
+            Dragboard db = event.getDragboard();
+            T target = wrapper.getInstance();
+            if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)
+                    && handleDragDroppedUsingIdentifier(propertyDescriptor, db, target, true)) {
+                System.out.println("ACCEPT");
+//                event.acceptTransferModes(TransferMode.LINK);
+//                field.setCursor(Cursor.CROSSHAIR);
+            }
             event.consume();
         });
         field.setOnDragExited(event -> {
@@ -75,20 +80,48 @@ public abstract class JfxUI {
         });
         field.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
+            T target = wrapper.getInstance();
             boolean success = false;
             if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)) {
-                Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
-                System.out.println(identifier);
-                Object source = ObjectRegistry.INSTANCE.get(identifier);
-                // FIXME set actual value
-                field.setText(source.toString());
-                success = true;
+                success = handleDragDroppedUsingIdentifier(propertyDescriptor, db, target, false);
             }
             event.setDropCompleted(success);
             event.consume();
         });
     }
 
+    private static <T> boolean handleDragDroppedUsingIdentifier(PropertyDescriptor propertyDescriptor, Dragboard db,
+                                                                T target, boolean validateOnly) {
+        // retrieve identifier from dragboard and associated source object in registry
+        Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
+        Object source = ObjectRegistry.INSTANCE.get(identifier);
+        System.out.println(identifier + " -> " + source.toString());
+
+        // if only validating, assert type compatibility between source object and target property
+        Class targetPropertyClass = propertyDescriptor.getPropertyType();
+        if (validateOnly) {
+            System.out.println(targetPropertyClass);
+            System.out.println(source.getClass());
+            return targetPropertyClass.isAssignableFrom(source.getClass());
+        }
+
+        // invoke property setter on target instance
+        try {
+            final Method writeMethod = propertyDescriptor.getWriteMethod();
+            writeMethod.invoke(target, source);
+            //field.setText(source.toString());
+        } catch (Exception e) {
+            DialogUtil.displayException(e);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * A specialized MenuItem that triggers a method call
+     *
+     * @param <T> type of the target object
+     */
     private static class MethodMenuItem<T> extends MenuItem {
         public MethodMenuItem(MethodDescriptor md, Wrapper<T> wrapper) {
             super(md.getMethod().toGenericString());
@@ -96,6 +129,10 @@ public abstract class JfxUI {
         }
     }
 
+    /**
+     * A specialized menuItem that triggers a constructor call
+     * @param <T> the target class
+     */
     private static class ConstructorMenuItem<T> extends MenuItem {
         public ConstructorMenuItem(Constructor<T> constructor) {
             super(constructor.toGenericString());
@@ -105,7 +142,6 @@ public abstract class JfxUI {
 
     private static <T> void executeConstructorRequested(Constructor<T> constructor) {
         System.out.println(constructor.toGenericString());
-
         T instance;
         if (constructor.getParameterCount() == 0) {
             try {

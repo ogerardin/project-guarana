@@ -6,44 +6,37 @@ package com.ogerardin.guarana.javafx.ui;
 
 import com.ogerardin.guarana.core.config.ConfigManager;
 import com.ogerardin.guarana.core.introspection.Introspector;
-import com.ogerardin.guarana.core.registry.Identifier;
-import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import jfxtras.labs.scene.control.BeanPathAdapter;
 
 import java.beans.BeanInfo;
-import java.beans.MethodDescriptor;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
+/*
  * Created by Olivier on 29/05/15.
  */
-public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
+public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
 
     protected final BeanInfo beanInfo;
 
-    protected Map<PropertyDescriptor, Control> propertyDescriptorControlMap = new HashMap<PropertyDescriptor, Control>();
-    protected Map<Control, PropertyDescriptor> controlPropertyDescriptorMap = new HashMap<Control, PropertyDescriptor>();
+    protected Map<PropertyDescriptor, Control> propertyDescriptorControlMap = new HashMap<>();
+    protected Map<Control, PropertyDescriptor> controlPropertyDescriptorMap = new HashMap<>();
 
     private final VBox root;
 
@@ -63,14 +56,11 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
         root.getChildren().add(title);
 
         // set the title label as a source for drag and drop
-        configureDragDropSource(title);
+        configureDragDropSource(title, () -> target);
 
         // build methods context menu
-        {
-            ContextMenu contextMenu = getContextMenu(beanInfo);
-            title.setContextMenu(contextMenu);
-            //root.setOnMouseClicked(event -> contextMenu.show(root, Side.BOTTOM, 0, 0));
-        }
+        ContextMenu contextMenu = getContextMenu(beanInfo, () -> target);
+        title.setContextMenu(contextMenu);
 
         // build properties form
         GridPane grid = new GridPane();
@@ -111,17 +101,13 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(propertyType)) {
                 Button button = new Button("...");
-                button.setOnAction(e -> {
-                    zoomCollection(readMethod, humanizedName);
-                });
+                button.setOnAction(e -> zoomCollection(readMethod, humanizedName));
                 grid.add(button, 2, row);
             }
             // otherwise add a button to zoom on property
             else {
                 Button button = new Button("...");
-                button.setOnAction(e -> {
-                    zoomProperty(propertyType, readMethod, humanizedName);
-                });
+                button.setOnAction(e -> zoomProperty(propertyType, readMethod, humanizedName));
                 grid.add(button, 2, row);
             }
 
@@ -133,52 +119,6 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
 
             row++;
         }
-    }
-
-    private void configureDragDropSource(Node source) {
-        source.setOnDragDetected(event -> {
-            Dragboard dragboard = source.startDragAndDrop(TransferMode.LINK);
-            ClipboardContent content = new ClipboardContent();
-            Identifier identifier = ObjectRegistry.INSTANCE.put(target);
-            content.put(Const.DATA_FORMAT_OBJECT_IDENTIFIER, identifier);
-            dragboard.setContent(content);
-            event.consume();
-        });
-        source.setOnDragDone(event -> {
-            if (event.getTransferMode() == TransferMode.LINK) {
-                // drag and drop done successfully, nothing to do here
-            }
-            event.consume();
-        });
-    }
-
-    private static void configureDragDropTarget(TextField field) {
-        field.setOnDragOver(event -> {
-            event.acceptTransferModes(TransferMode.LINK);
-            event.consume();
-        });
-        field.setOnDragEntered(event -> {
-            field.setCursor(Cursor.CROSSHAIR);
-            event.consume();
-        });
-        field.setOnDragExited(event -> {
-            field.setCursor(Cursor.DEFAULT);
-            event.consume();
-        });
-        field.setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-            if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)) {
-                Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
-                System.out.println(identifier);
-                Object source = ObjectRegistry.INSTANCE.get(identifier);
-                // FIXME set actual value
-                field.setText(source.toString());
-                success = true;
-            }
-            event.setDropCompleted(success);
-            event.consume();
-        });
     }
 
     private void zoomCollection(Method readMethod, String title) {
@@ -211,69 +151,6 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
         }
     }
 
-    private ContextMenu getContextMenu(BeanInfo beanInfo) {
-        ContextMenu contextMenu = new ContextMenu();
-        // add methods
-        Arrays.asList(beanInfo.getMethodDescriptors()).stream()
-                .filter(md -> !Introspector.isGetterOrSetter(md))
-                .map(md -> new MenuItem(md.getMethod().toGenericString()) {
-                    {
-                        setOnAction(event -> executeMethodRequested(md));
-                    }
-                })
-                .forEach(menuItem -> contextMenu.getItems().add(menuItem));
-        // add constructors
-        Arrays.asList(beanInfo.getBeanDescriptor().getBeanClass().getDeclaredConstructors()).stream()
-                .map(constructor -> new MenuItem(constructor.toGenericString()) {
-                    {
-                        setOnAction(event -> executeConstructorRequested(constructor));
-                    }
-                })
-                .forEach(menuItem -> contextMenu.getItems().add(menuItem));
-        return contextMenu;
-    }
-
-    private <T> void executeConstructorRequested(Constructor<T> constructor) {
-        System.out.println(constructor.toGenericString());
-
-        T instance;
-        if (constructor.getParameterCount() ==0) {
-            try {
-                instance = constructor.newInstance();
-                DialogUtil.displayInstance((Class<T>) beanInfo.getClass(), instance, "New Instance");
-            } catch (Exception e) {
-                e.printStackTrace();
-                DialogUtil.displayException(e);
-            }
-        }
-        else {
-            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(constructor);
-            DialogUtil.display(methodCallUI);
-        }
-    }
-
-    private void executeMethodRequested(MethodDescriptor md) {
-        System.out.println(md.getName());
-        Method method = md.getMethod();
-
-        final Class returnType = (Class) method.getReturnType();
-
-        Object result;
-        // if no arg, execute immediately, otherwise display arg dialog
-        if (method.getParameterCount() == 0) {
-            try {
-                result = method.invoke(target);
-                DialogUtil.displayInstance(returnType, result, "Result");
-            } catch (Exception e) {
-                e.printStackTrace();
-                DialogUtil.displayException(e);
-            }
-        } else {
-            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(method);
-            DialogUtil.display(methodCallUI);
-        }
-    }
-
 
     public void setTarget(T target) {
         if (this.target != null) {
@@ -296,7 +173,7 @@ public class JfxInstanceUI<T> implements InstanceUI<Parent, T> {
                 TextField textField = (TextField) control;
 
                 if (textField.isEditable()) {
-                    BeanPathAdapter<T> beanPathAdapter = new BeanPathAdapter<T>(target);
+                    BeanPathAdapter<T> beanPathAdapter = new BeanPathAdapter<>(target);
                     String propertyName = propertyDescriptor.getName();
                     beanPathAdapter.bindBidirectional(propertyName, textField.textProperty());
                 } else {

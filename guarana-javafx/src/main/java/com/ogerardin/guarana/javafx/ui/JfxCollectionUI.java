@@ -12,7 +12,10 @@ import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.collections.FXCollections;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
@@ -95,14 +98,13 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
                     if (item != null) {
                         InstanceUI<Parent, T> instanceUI = JfxUiBuilder.INSTANCE.buildInstanceUI(itemClass);
                         instanceUI.setTarget(item);
-                        DialogUtil.display(instanceUI, itemTitle);
+                        DialogUtil.display(instanceUI, row, itemTitle);
                     }
                 }
             });
 
             //Set context menu for row
-            ContextMenu contextMenu = getContextMenu(beanInfo, row::getItem);
-            row.setContextMenu(contextMenu);
+            configureContextMenu(row, beanInfo, row::getItem);
 
             //Set row as drag-and-drop source
             configureDragDropSource(row, row::getItem);

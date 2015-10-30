@@ -7,14 +7,17 @@ package com.ogerardin.guarana.javafx.util;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.core.ui.Renderable;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/**
+/*
  * Created by oge on 09/09/2015.
  */
-public class DialogUtil {
+public enum DialogUtil {
+    ;
 
     public static void displayException(Throwable e) {
         final InstanceUI<Parent, Throwable> exceptionInstanceUI = JfxUiBuilder.INSTANCE.buildInstanceUI(Throwable.class);
@@ -22,51 +25,90 @@ public class DialogUtil {
         display(exceptionInstanceUI, "Caught Exception");
     }
 
-    public static void display(Renderable<Parent> renderable, String title) {
-        Stage stage = new Stage();
-        display(renderable, stage, title);
-    }
+    //// display variants
 
-    public static void display(Renderable<Parent> renderable, Stage stage, String title) {
-        stage.setTitle(title);
-        display(renderable, stage);
-    }
+    public static void display(Renderable<Parent> renderable, Stage stage, Node parent, String title) {
+        if (stage == null) {
+            stage = new Stage();
+            if (parent != null) {
+                final Stage finalStage = stage;
+                stage.setOnShowing(event -> {
+                    Bounds boundsInScreen = parent.localToScreen(parent.getBoundsInLocal());
+                    finalStage.setX(boundsInScreen.getMinX());
+                    finalStage.setY(boundsInScreen.getMinY());
+                });
 
-    public static void display(Renderable<Parent> renderable, Stage stage) {
-        Scene scene = new Scene(renderable.render());
+            }
+        }
+        if (title != null) {
+            stage.setTitle(title);
+        }
+        Parent root = renderable.render();
+        Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
 
+    public static void display(Renderable<Parent> renderable, Node parent, String title) {
+        display(renderable, null, parent, title);
+    }
+
+    public static void display(Renderable<Parent> renderable, String title) {
+        display(renderable, null, null, title);
+    }
+
+    public static void display(Renderable<Parent> renderable, Stage stage, String title) {
+        display(renderable, stage, null, title);
+    }
+
+    public static void display(Renderable<Parent> renderable, Stage stage) {
+        display(renderable, stage, null, null);
+    }
+
+    public static void display(Renderable<Parent> renderable, Node parent) {
+        display(renderable, null, parent, null);
+    }
+
     public static void display(Renderable<Parent> renderable) {
-        Stage stage = new Stage();
-        display(renderable, stage);
+        display(renderable, null, null, null);
+    }
+
+
+    //// displayInstance variants
+
+    public static <T> void displayInstance(T target, Class<T> targetClass, Stage stage, Node parent, String title) {
+        // build instanceUI for the target class and display it in stage
+        final InstanceUI<Parent, T> ui = JfxUiBuilder.INSTANCE.buildInstanceUI(targetClass);
+        ui.setTarget(target);
+        display(ui, stage, parent, title);
     }
 
     public static <T> void displayInstance(T target) {
-        displayInstance((Class<T>) target.getClass(), target);
+        displayInstance(target, (Class<T>) target.getClass(), null, null, null);
     }
 
-    public static <T> void displayInstance(Class<T> targetClass, T target) {
-        Stage stage = new Stage();
-        displayInstance(targetClass, target, stage);
+    public static <T> void displayInstance(T target, Class<T> targetClass, Node parent) {
+        displayInstance(target, targetClass, null, parent, null);
     }
 
-    public static <T> void displayInstance(Class<T> targetClass, T target, Stage stage) {
-        final InstanceUI<Parent, T> ui = JfxUiBuilder.INSTANCE.buildInstanceUI(targetClass);
-        ui.setTarget(target);
-        display(ui, stage);
-
+    public static <T> void displayInstance(T target, Class<T> targetClass) {
+        displayInstance(target, targetClass, null, null, null);
     }
 
-    public static <T> void displayInstance(Class<T> targetClass, T target, String title) {
-        Stage stage = new Stage();
-        displayInstance(targetClass, target, stage, title);
+    public static <T> void displayInstance(T target, Class<T> targetClass, Stage stage) {
+        displayInstance(target, targetClass, stage, null, null);
     }
 
-    public static <T> void displayInstance(Class<T> targetClass, T target, Stage stage, String title) {
-        stage.setTitle(title);
-        displayInstance(targetClass, target, stage);
+    public static <T> void displayInstance(T target, Class<T> targetClass, Node parent, String title) {
+        displayInstance(target, targetClass, null, parent, title);
+    }
+
+    public static <T> void displayInstance(T target, Class<T> targetClass, String title) {
+        displayInstance(target, targetClass, null, null, title);
+    }
+
+    public static <T> void displayInstance(T target, Class<T> targetClass, Stage stage, String title) {
+        displayInstance(target, targetClass, stage, null, title);
     }
 
 }

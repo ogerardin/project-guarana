@@ -11,6 +11,7 @@ import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
@@ -59,8 +60,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
         configureDragDropSource(title, () -> target);
 
         // build methods context menu
-        ContextMenu contextMenu = getContextMenu(beanInfo, () -> target);
-        title.setContextMenu(contextMenu);
+        configureContextMenu(title, beanInfo, () -> target);
 
         // build properties form
         GridPane grid = new GridPane();
@@ -101,13 +101,13 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(propertyType)) {
                 Button button = new Button("...");
-                button.setOnAction(e -> zoomCollection(readMethod, humanizedName));
+                button.setOnAction(e -> zoomCollection(button, readMethod, humanizedName));
                 grid.add(button, 2, row);
             }
             // otherwise add a button to zoom on property
             else {
                 Button button = new Button("...");
-                button.setOnAction(e -> zoomProperty(propertyType, readMethod, humanizedName));
+                button.setOnAction(e -> zoomProperty(button, propertyType, readMethod, humanizedName));
                 grid.add(button, 2, row);
             }
 
@@ -121,7 +121,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
         }
     }
 
-    private void zoomCollection(Method readMethod, String title) {
+    private void zoomCollection(Button button, Method readMethod, String title) {
         try {
             final Collection collection = (Collection) readMethod.invoke(target);
             Class<?> itemClass = Object.class;
@@ -131,7 +131,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             }
             CollectionUI<Parent, ?> collectionUI = getCollectionUI(itemClass);
             collectionUI.setTarget(collection);
-            DialogUtil.display(collectionUI, title);
+            DialogUtil.display(collectionUI, button, title);
 
         } catch (Exception ex) {
             DialogUtil.displayException(ex);
@@ -142,10 +142,10 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
         return JfxUiBuilder.INSTANCE.buildCollectionUi(itemClass);
     }
 
-    private <P> void zoomProperty(Class<P> propertyType, Method readMethod, String title) {
+    private <P> void zoomProperty(Node button, Class<P> propertyType, Method readMethod, String title) {
         try {
             final P value = (P) readMethod.invoke(target);
-            DialogUtil.displayInstance(propertyType, value, title);
+            DialogUtil.displayInstance(value, propertyType, button, title);
         } catch (Exception ex) {
             DialogUtil.displayException(ex);
         }

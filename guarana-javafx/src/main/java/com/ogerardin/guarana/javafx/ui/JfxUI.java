@@ -7,12 +7,14 @@ package com.ogerardin.guarana.javafx.ui;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
+import com.ogerardin.guarana.core.ui.Renderable;
 import com.ogerardin.guarana.core.ui.Wrapper;
 import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.event.Event;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ClipboardContent;
@@ -29,9 +31,9 @@ import java.util.Arrays;
 /*
  * Created by oge on 24/09/2015.
  */
-public abstract class JfxUI {
+public abstract class JfxUI implements Renderable<Parent> {
 
-    static <T> ContextMenu getContextMenu(BeanInfo beanInfo, Wrapper<T> wrapper) {
+    static <T> void configureContextMenu(Control control, BeanInfo beanInfo, Wrapper<T> wrapper) {
         ContextMenu contextMenu = new ContextMenu();
         // add methods
         Arrays.asList(beanInfo.getMethodDescriptors()).stream()
@@ -42,7 +44,7 @@ public abstract class JfxUI {
         Arrays.asList(beanInfo.getBeanDescriptor().getBeanClass().getDeclaredConstructors()).stream()
                 .map(constructor -> new ConstructorMenuItem(constructor))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
-        return contextMenu;
+        control.setContextMenu(contextMenu);
     }
 
     static <T> void configureDragDropSource(Node source, Wrapper<T> wrapper) {
@@ -60,24 +62,22 @@ public abstract class JfxUI {
 
     static <T> void configureDragDropTarget(TextField field, PropertyDescriptor propertyDescriptor, Wrapper<T> wrapper) {
         field.setOnDragOver(event -> {
-            event.acceptTransferModes(TransferMode.LINK);
-            event.consume();
-        });
-        field.setOnDragEntered(event -> {
+            // for some reason you can't accept the transfer in the DragEntered handler, you have to do it
+            // in the DragOver handler
             Dragboard db = event.getDragboard();
             T target = wrapper.getInstance();
             if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)
                     && handleDragDroppedUsingIdentifier(propertyDescriptor, db, target, true)) {
-                System.out.println("ACCEPT");
-//                event.acceptTransferModes(TransferMode.LINK);
+                event.acceptTransferModes(TransferMode.LINK);
+                // cursor is changed accordingly by default, no need
 //                field.setCursor(Cursor.CROSSHAIR);
             }
             event.consume();
         });
-        field.setOnDragExited(event -> {
-            field.setCursor(Cursor.DEFAULT);
-            event.consume();
-        });
+//        field.setOnDragExited(event -> {
+//            field.setCursor(Cursor.DEFAULT);
+//            event.consume();
+//        });
         field.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             T target = wrapper.getInstance();
@@ -100,8 +100,6 @@ public abstract class JfxUI {
         // if only validating, assert type compatibility between source object and target property
         Class targetPropertyClass = propertyDescriptor.getPropertyType();
         if (validateOnly) {
-            System.out.println(targetPropertyClass);
-            System.out.println(source.getClass());
             return targetPropertyClass.isAssignableFrom(source.getClass());
         }
 
@@ -146,7 +144,7 @@ public abstract class JfxUI {
         if (constructor.getParameterCount() == 0) {
             try {
                 instance = constructor.newInstance();
-                DialogUtil.displayInstance(constructor.getDeclaringClass(), instance, "New Instance");
+                DialogUtil.displayInstance(instance, constructor.getDeclaringClass(), "New Instance");
             } catch (Exception e) {
                 e.printStackTrace();
                 DialogUtil.displayException(e);
@@ -167,7 +165,7 @@ public abstract class JfxUI {
         if (method.getParameterCount() == 0) {
             try {
                 R result = (R) method.invoke(target);
-                DialogUtil.displayInstance(returnType, result, "Result");
+                DialogUtil.displayInstance(result, returnType, "Result");
             } catch (Exception e) {
                 e.printStackTrace();
                 DialogUtil.displayException(e);

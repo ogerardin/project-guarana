@@ -1,7 +1,8 @@
 package com.ogerardin.guarana.core.ui;
 
-/*
- * Created by olivier on 28/10/2015.
+/**
+ * @author olivier
+ * @since 28/10/2015
  */
 public interface Wrapper<T> {
 

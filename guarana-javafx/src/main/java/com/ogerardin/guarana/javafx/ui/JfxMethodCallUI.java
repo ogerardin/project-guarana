@@ -31,9 +31,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Olivier on 05/06/15.
+ * @author Olivier
+ * @since 05/06/15
  */
-public class JfxMethodCallUI implements Renderable<Parent> {
+public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
 
     private final VBox root;
     private final Executable executable;
@@ -82,10 +83,13 @@ public class JfxMethodCallUI implements Renderable<Parent> {
                 button.setOnAction(e -> {
                     CollectionUI<Parent, Object> collectionUI = JfxUiBuilder.INSTANCE.buildCollectionUi(Object.class);
                     collectionUI.setTarget(new ArrayList<>());
-                    DialogUtil.display(collectionUI, "Collection parameter");
+                    DialogUtil.display(collectionUI, button, "Collection parameter");
                 });
                 grid.add(button, 2, row);
             }
+
+            // TODO set the field as a target for drag and drop
+
             row++;
         }
 

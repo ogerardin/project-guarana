@@ -10,7 +10,8 @@ import javafx.geometry.Insets;
 import javafx.scene.input.DataFormat;
 
 /**
- * Created by Olivier on 05/06/15.
+ * @author Olivier
+ * @since 05/06/15
  */
 public interface Const {
 

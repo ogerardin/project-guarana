@@ -12,7 +12,8 @@ import com.ogerardin.guarana.testapp.model.PersonManager;
 import java.util.Date;
 
 /**
- * Created by Olivier on 27/05/15.
+ * @author Olivier
+ * @since 27/05/15
  */
 public class ResetDatabase {
 

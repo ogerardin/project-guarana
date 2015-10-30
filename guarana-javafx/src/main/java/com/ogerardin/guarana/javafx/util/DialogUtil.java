@@ -13,8 +13,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/*
- * Created by oge on 09/09/2015.
+/**
+ * @author oge
+ * @since 09/09/2015
  */
 public enum DialogUtil {
     ;

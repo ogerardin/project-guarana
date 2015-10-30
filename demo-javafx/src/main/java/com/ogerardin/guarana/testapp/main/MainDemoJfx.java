@@ -5,9 +5,9 @@
 package com.ogerardin.guarana.testapp.main;
 
 /**
- * Created by Olivier on 28/05/15.
+ * @author Olivier
+ * @since 28/05/15
  */
-
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.core.ui.UIBuilder;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;

@@ -6,7 +6,6 @@ package com.ogerardin.guarana.testapp.adapters;
 
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
-import com.db4o.ObjectSet;
 import com.db4o.config.Configuration;
 import com.ogerardin.guarana.testapp.model.Event;
 import com.ogerardin.guarana.testapp.model.Person;
@@ -15,7 +14,8 @@ import com.ogerardin.guarana.testapp.model.PersonManager;
 import java.util.Collection;
 
 /**
- * Created by Olivier on 26/05/15.
+ * @author Olivier
+ * @since 26/05/15
  */
 public class PersonManagerDb4oImpl implements PersonManager {
 

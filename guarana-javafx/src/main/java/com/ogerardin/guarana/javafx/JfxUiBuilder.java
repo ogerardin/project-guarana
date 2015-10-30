@@ -9,13 +9,21 @@ import com.ogerardin.guarana.javafx.ui.JfxClassUI;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import com.ogerardin.guarana.javafx.ui.JfxMapUI;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.stage.Stage;
 
-/*
- * Created by oge on 07/09/2015.
+/**
+ * UIBuilder implementation for JavaFX. The chosen renderable type is {@link Parent} as it can be the root of a
+ * {@link Node} tree and can be put inside a {@link Stage}
+ * @author oge
+ * @since 07/09/2015
  */
 public enum JfxUiBuilder implements UIBuilder<Parent> {
 
+    /**
+     * Single instance
+     */
     INSTANCE {
         @Override
         public ClassUI<Parent> buildClassUI(Class clazz) {

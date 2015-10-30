@@ -28,8 +28,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-/*
- * Created by oge on 24/09/2015.
+/**
+ * @author oge
+ * @since 24/09/2015
  */
 public abstract class JfxUI implements Renderable<Parent> {
 

@@ -1,7 +1,8 @@
 package com.ogerardin.guarana.gwt.client;
 
 /**
- * Created by olivier on 24/10/2015.
+ * @author olivier
+ * @since 24/10/2015
  */
 public class GuaranaServiceException extends Exception {
 

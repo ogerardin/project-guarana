@@ -29,8 +29,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-/*
- * Created by Olivier on 29/05/15.
+/**
+ * @author Olivier
+ * @since 29/05/15
  */
 public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
 

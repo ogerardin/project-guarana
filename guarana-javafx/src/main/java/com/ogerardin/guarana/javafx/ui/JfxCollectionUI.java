@@ -27,8 +27,9 @@ import java.beans.PropertyDescriptor;
 import java.util.Collection;
 import java.util.List;
 
-/*
- * Created by Olivier on 29/05/15.
+/**
+ * @author Olivier
+ * @since 29/05/15
  */
 public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T> {
 

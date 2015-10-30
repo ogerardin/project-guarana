@@ -11,7 +11,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Created by Olivier on 29/05/15.
+ * @author Olivier
+ * @since 29/05/15
  */
 public class JfxMapUI<K, V> extends JfxCollectionUI<JfxMapUI.MapEntry> implements MapUI<Parent, K, V> {
 

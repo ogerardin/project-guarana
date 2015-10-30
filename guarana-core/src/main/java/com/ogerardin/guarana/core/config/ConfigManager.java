@@ -10,7 +10,8 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
 
 /**
- * Created by oge on 24/09/2015.
+ * @author oge
+ * @since 24/09/2015
  */
 public class ConfigManager {
 

@@ -5,7 +5,8 @@
 package com.ogerardin.guarana.testapp.model;
 
 /**
- * Created by Olivier on 26/05/15.
+ * @author Olivier
+ * @since 26/05/15
  */
 public class Person {
     private String lastName;

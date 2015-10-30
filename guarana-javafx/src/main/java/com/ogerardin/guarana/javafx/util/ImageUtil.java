@@ -15,7 +15,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Created by Olivier on 02/06/15.
+ * @author Olivier
+ * @since 02/06/15
  */
 public final class ImageUtil {
 

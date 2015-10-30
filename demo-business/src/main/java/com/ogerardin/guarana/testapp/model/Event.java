@@ -7,7 +7,8 @@ package com.ogerardin.guarana.testapp.model;
 import java.util.Date;
 
 /**
- * Created by oge on 06/10/2015.
+ * @author oge
+ * @since 06/10/2015
  */
 public class Event {
 

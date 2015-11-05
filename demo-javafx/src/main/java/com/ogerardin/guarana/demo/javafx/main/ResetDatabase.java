@@ -2,12 +2,12 @@
  * Copyright (c) 2015 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.testapp.main;
+package com.ogerardin.guarana.demo.javafx.main;
 
-import com.ogerardin.guarana.testapp.adapters.PersonManagerDb4oImpl;
-import com.ogerardin.guarana.testapp.model.Event;
-import com.ogerardin.guarana.testapp.model.Person;
-import com.ogerardin.guarana.testapp.model.PersonManager;
+import com.ogerardin.guarana.demo.javafx.adapters.PersonManagerDb4oImpl;
+import com.ogerardin.guarana.demo.model.Event;
+import com.ogerardin.guarana.demo.model.Person;
+import com.ogerardin.guarana.demo.model.PersonManager;
 
 import java.util.Date;
 

@@ -2,18 +2,19 @@
  * Copyright (c) 2015 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.testapp.main;
+package com.ogerardin.guarana.demo.javafx.main;
 
 /**
  * @author Olivier
  * @since 28/05/15
  */
+
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.core.ui.UIBuilder;
+import com.ogerardin.guarana.demo.javafx.adapters.PersonManagerDb4oImpl;
+import com.ogerardin.guarana.demo.model.PersonManager;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import com.ogerardin.guarana.javafx.util.DialogUtil;
-import com.ogerardin.guarana.testapp.adapters.PersonManagerDb4oImpl;
-import com.ogerardin.guarana.testapp.model.PersonManager;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.stage.Stage;

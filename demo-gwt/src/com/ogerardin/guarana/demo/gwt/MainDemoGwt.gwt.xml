@@ -7,12 +7,12 @@
     <inherits name="com.ogerardin.guarana.gwt.Core"/>
 
     <!-- Specify the app entry point class.                   -->
-    <entry-point class='com.guarana.demo.mainGwt.client.MainDemoGwt'/>
+    <entry-point class='com.ogerardin.guarana.demo.gwt.client.MainDemoGwt'/>
 
 
     <!-- Specify the app servlets.                   -->
 <!--
-    <servlet path='/MainGwtService' class='com.guarana.demo.mainGwt.server.MainGwtServiceImpl'/>
+    <servlet path='/MainGwtService' class='com.guarana.demo.gwt.server.MainGwtServiceImpl'/>
 -->
 
 </module>

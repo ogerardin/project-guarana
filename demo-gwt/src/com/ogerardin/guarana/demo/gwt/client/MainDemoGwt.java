@@ -1,4 +1,4 @@
-package com.guarana.demo.mainGwt.client;
+package com.ogerardin.guarana.demo.gwt.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.dom.client.ClickEvent;

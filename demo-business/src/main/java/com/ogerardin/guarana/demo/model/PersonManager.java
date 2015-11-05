@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.testapp.model;
+package com.ogerardin.guarana.demo.model;
 
 import java.util.Collection;
 

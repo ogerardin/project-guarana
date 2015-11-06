@@ -5,6 +5,7 @@
 package com.ogerardin.guarana.javafx.ui;
 
 import com.ogerardin.guarana.core.ui.MapUI;
+import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import javafx.scene.Parent;
 
 import java.util.Map;
@@ -18,8 +19,8 @@ public class JfxMapUI<K, V> extends JfxCollectionUI<JfxMapUI.MapEntry> implement
 
     private Map<K, V> target;
 
-    public JfxMapUI() {
-        super(MapEntry.class);
+    public JfxMapUI(JfxUiBuilder builder) {
+        super(builder, MapEntry.class);
     }
 
     @Override

@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2015 Olivier Gérardin
+ */
+
+package com.ogerardin.guarana.core.config;
+
+import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.SystemConfiguration;
+
+/**
+ * @author oge
+ * @since 24/09/2015
+ */
+public class Configuration extends CompositeConfiguration {
+
+    /**
+     * Build default configuration by using system properties and properties from a file named "guarana.properties"
+     */
+    public Configuration() {
+        try {
+            addConfiguration(new SystemConfiguration());
+            addConfiguration(new PropertiesConfiguration("guarana.properties"));
+        } catch (ConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean getHumanizePropertyNames() {
+        return getBoolean("humanizePropertyNames", true);
+    }
+
+    public boolean getHumanizeClassNames() {
+        return getBoolean("humanizeClassNames", true);
+    }
+
+}
+

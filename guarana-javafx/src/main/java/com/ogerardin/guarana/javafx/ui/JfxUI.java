@@ -4,12 +4,13 @@
 
 package com.ogerardin.guarana.javafx.ui;
 
+import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import com.ogerardin.guarana.core.ui.Renderable;
 import com.ogerardin.guarana.core.ui.Wrapper;
-import com.ogerardin.guarana.javafx.util.DialogUtil;
+import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -20,6 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import org.apache.commons.lang.Validate;
 
 import java.beans.BeanInfo;
 import java.beans.MethodDescriptor;
@@ -34,7 +36,14 @@ import java.util.Arrays;
  */
 public abstract class JfxUI implements Renderable<Parent> {
 
-    static <T> void configureContextMenu(Control control, BeanInfo beanInfo, Wrapper<T> wrapper) {
+    private final JfxUiBuilder builder;
+
+    public JfxUI(JfxUiBuilder builder) {
+        Validate.notNull(builder);
+        this.builder = builder;
+    }
+
+    <T> void configureContextMenu(Control control, BeanInfo beanInfo, Wrapper<T> wrapper) {
         ContextMenu contextMenu = new ContextMenu();
         // add methods
         Arrays.asList(beanInfo.getMethodDescriptors()).stream()
@@ -61,7 +70,7 @@ public abstract class JfxUI implements Renderable<Parent> {
         source.setOnDragDone(Event::consume);
     }
 
-    static <T> void configureDragDropTarget(TextField field, PropertyDescriptor propertyDescriptor, Wrapper<T> wrapper) {
+    <T> void configureDragDropTarget(TextField field, PropertyDescriptor propertyDescriptor, Wrapper<T> wrapper) {
         field.setOnDragOver(event -> {
             // for some reason you can't accept the transfer in the DragEntered handler, you have to do it
             // in the DragOver handler
@@ -91,8 +100,8 @@ public abstract class JfxUI implements Renderable<Parent> {
         });
     }
 
-    private static <T> boolean handleDragDroppedUsingIdentifier(PropertyDescriptor propertyDescriptor, Dragboard db,
-                                                                T target, boolean validateOnly) {
+    private <T> boolean handleDragDroppedUsingIdentifier(PropertyDescriptor propertyDescriptor, Dragboard db,
+                                                         T target, boolean validateOnly) {
         // retrieve identifier from dragboard and associated source object in registry
         Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
         Object source = ObjectRegistry.INSTANCE.get(identifier);
@@ -110,10 +119,18 @@ public abstract class JfxUI implements Renderable<Parent> {
             writeMethod.invoke(target, source);
             //field.setText(source.toString());
         } catch (Exception e) {
-            DialogUtil.displayException(e);
+            getBuilder().displayException(e);
             return false;
         }
         return true;
+    }
+
+    public JfxUiBuilder getBuilder() {
+        return builder;
+    }
+
+    protected Configuration getConfiguration() {
+        return getBuilder().getConfiguration();
     }
 
     /**
@@ -121,7 +138,7 @@ public abstract class JfxUI implements Renderable<Parent> {
      *
      * @param <T> type of the target object
      */
-    private static class MethodMenuItem<T> extends MenuItem {
+    private class MethodMenuItem<T> extends MenuItem {
         public MethodMenuItem(MethodDescriptor md, Wrapper<T> wrapper) {
             super(md.getMethod().toGenericString());
             setOnAction(event -> executeMethodRequested(md, wrapper));
@@ -132,31 +149,31 @@ public abstract class JfxUI implements Renderable<Parent> {
      * A specialized menuItem that triggers a constructor call
      * @param <T> the target class
      */
-    private static class ConstructorMenuItem<T> extends MenuItem {
+    private class ConstructorMenuItem<T> extends MenuItem {
         public ConstructorMenuItem(Constructor<T> constructor) {
             super(constructor.toGenericString());
             setOnAction(event -> executeConstructorRequested(constructor));
         }
     }
 
-    private static <T> void executeConstructorRequested(Constructor<T> constructor) {
+    private <T> void executeConstructorRequested(Constructor<T> constructor) {
         System.out.println(constructor.toGenericString());
         T instance;
         if (constructor.getParameterCount() == 0) {
             try {
                 instance = constructor.newInstance();
-                DialogUtil.displayInstance(instance, constructor.getDeclaringClass(), "New Instance");
+                getBuilder().displayInstance(instance, constructor.getDeclaringClass(), "New Instance");
             } catch (Exception e) {
                 e.printStackTrace();
-                DialogUtil.displayException(e);
+                getBuilder().displayException(e);
             }
         } else {
-            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(constructor);
-            DialogUtil.display(methodCallUI);
+            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), constructor);
+            JfxUiBuilder.display(methodCallUI);
         }
     }
 
-    private static <T, R> void executeMethodRequested(MethodDescriptor md, Wrapper<T> wrapper) {
+    private <T, R> void executeMethodRequested(MethodDescriptor md, Wrapper<T> wrapper) {
         System.out.println(md.getName());
         Method method = md.getMethod();
 
@@ -166,14 +183,14 @@ public abstract class JfxUI implements Renderable<Parent> {
         if (method.getParameterCount() == 0) {
             try {
                 R result = (R) method.invoke(target);
-                DialogUtil.displayInstance(result, returnType, "Result");
+                getBuilder().displayInstance(result, returnType, "Result");
             } catch (Exception e) {
                 e.printStackTrace();
-                DialogUtil.displayException(e);
+                getBuilder().displayException(e);
             }
         } else {
-            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(method);
-            DialogUtil.display(methodCallUI);
+            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), method);
+            JfxUiBuilder.display(methodCallUI);
         }
     }
 

@@ -4,12 +4,10 @@
 
 package com.ogerardin.guarana.javafx.ui;
 
-import com.ogerardin.guarana.core.config.ConfigManager;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
-import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -44,13 +42,15 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
 
     private T target;
 
-    public JfxInstanceUI(Class<T> clazz) {
+    public JfxInstanceUI(JfxUiBuilder builder, Class<T> clazz) {
+        super(builder);
+
         beanInfo = Introspector.getClassInfo(clazz);
 
         root = new VBox();
         final String className = beanInfo.getBeanDescriptor().getBeanClass().getSimpleName();
         String displayName = beanInfo.getBeanDescriptor().getDisplayName();
-        if (displayName.equals(className) && ConfigManager.getHumanizeClassNames()) {
+        if (displayName.equals(className) && getConfiguration().getHumanizeClassNames()) {
             displayName = Introspector.humanize(className);
         }
         final Label title = new Label(displayName);
@@ -132,23 +132,23 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             }
             CollectionUI<Parent, ?> collectionUI = getCollectionUI(itemClass);
             collectionUI.setTarget(collection);
-            DialogUtil.display(collectionUI, button, title);
+            JfxUiBuilder.display(collectionUI, button, title);
 
         } catch (Exception ex) {
-            DialogUtil.displayException(ex);
+            getBuilder().displayException(ex);
         }
     }
 
-    private static <I> CollectionUI<Parent, I> getCollectionUI(Class<I> itemClass) {
-        return JfxUiBuilder.INSTANCE.buildCollectionUi(itemClass);
+    private <I> CollectionUI<Parent, I> getCollectionUI(Class<I> itemClass) {
+        return getBuilder().buildCollectionUi(itemClass);
     }
 
-    private <P> void zoomProperty(Node button, Class<P> propertyType, Method readMethod, String title) {
+    private <P> void zoomProperty(Node parent, Class<P> propertyType, Method readMethod, String title) {
         try {
             final P value = (P) readMethod.invoke(target);
-            DialogUtil.displayInstance(value, propertyType, button, title);
+            getBuilder().displayInstance(value, propertyType, parent, title);
         } catch (Exception ex) {
-            DialogUtil.displayException(ex);
+            getBuilder().displayException(ex);
         }
     }
 

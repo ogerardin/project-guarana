@@ -8,7 +8,6 @@ import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.Renderable;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
-import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -39,7 +38,8 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
     private final VBox root;
     private final Executable executable;
 
-    public JfxMethodCallUI(Executable executable) {
+    public JfxMethodCallUI(JfxUiBuilder builder, Executable executable) {
+        super(builder);
         this.executable = executable;
 
         root = new VBox();
@@ -81,9 +81,9 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
             if (Collection.class.isAssignableFrom(param.getType())) {
                 Button button = new Button("...");
                 button.setOnAction(e -> {
-                    CollectionUI<Parent, Object> collectionUI = JfxUiBuilder.INSTANCE.buildCollectionUi(Object.class);
+                    CollectionUI<Parent, Object> collectionUI = getBuilder().buildCollectionUi(Object.class);
                     collectionUI.setTarget(new ArrayList<>());
-                    DialogUtil.display(collectionUI, button, "Collection parameter");
+                    JfxUiBuilder.display(collectionUI, button, "Collection parameter");
                 });
                 grid.add(button, 2, row);
             }

@@ -4,12 +4,10 @@
 
 package com.ogerardin.guarana.javafx.ui;
 
-import com.ogerardin.guarana.core.config.ConfigManager;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
-import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.collections.FXCollections;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -40,7 +38,8 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
     private final VBox root;
     private final TableView<T> tableView;
 
-    public JfxCollectionUI(Class<T> itemClass) {
+    public JfxCollectionUI(JfxUiBuilder builder, Class<T> itemClass) {
+        super(builder);
 
         beanInfo = Introspector.getClassInfo(itemClass);
         this.itemClass = itemClass;
@@ -66,7 +65,7 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
             final String propertyName = propertyDescriptor.getName();
             String displayName = propertyDescriptor.getDisplayName();
-            if (propertyName.equals(displayName) && ConfigManager.getHumanizePropertyNames()) {
+            if (propertyName.equals(displayName) && getConfiguration().getHumanizePropertyNames()) {
                 displayName = Introspector.humanize(propertyName);
             }
             TableColumn column = new TableColumn(displayName);
@@ -93,13 +92,13 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
                             // try no-arg constructor.
                             item = itemClass.newInstance();
                         } catch (Exception e) {
-                            DialogUtil.displayException(e);
+                            getBuilder().displayException(e);
                         }
                     }
                     if (item != null) {
-                        InstanceUI<Parent, T> instanceUI = JfxUiBuilder.INSTANCE.buildInstanceUI(itemClass);
+                        InstanceUI<Parent, T> instanceUI = builder.buildInstanceUI(itemClass);
                         instanceUI.setTarget(item);
-                        DialogUtil.display(instanceUI, row, itemTitle);
+                        JfxUiBuilder.display(instanceUI, row, itemTitle);
                     }
                 }
             });
@@ -116,7 +115,6 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
         root.getChildren().add(tableView);
 
     }
-
 
 
     @Override

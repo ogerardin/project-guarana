@@ -10,40 +10,43 @@ package com.ogerardin.guarana.demo.javafx.main;
  */
 
 import com.ogerardin.guarana.core.ui.InstanceUI;
-import com.ogerardin.guarana.core.ui.UIBuilder;
 import com.ogerardin.guarana.demo.javafx.adapters.PersonManagerDb4oImpl;
 import com.ogerardin.guarana.demo.model.PersonManager;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
-import com.ogerardin.guarana.javafx.util.DialogUtil;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 
 public class MainDemoJfx extends Application {
 
+    private static JfxUiBuilder uiBuilder;
+    private static PersonManager personManager;
+
     @Override
     public void start(Stage primaryStage) {
 
-        final PersonManager personManager = new PersonManagerDb4oImpl();
-
-        // 1) obtain instance of UiBuilder
-        final UIBuilder uiBuilder = JfxUiBuilder.INSTANCE;
-
-        // 2) build UI for PersonManager
+        // Build UI for PersonManager
         final InstanceUI<Parent, PersonManager> ui = uiBuilder.buildInstanceUI(PersonManager.class);
 
-        // 3) bind UI to instance
+        // Bind UI to instance
         ui.setTarget(personManager);
 
-        // 4) display
-        DialogUtil.display(ui, primaryStage, "Hello Guarana!");
+        // Display
+        JfxUiBuilder.display(ui, primaryStage, "Hello Guarana!");
     }
 
     public static void main(String[] args) {
+
+        personManager = new PersonManagerDb4oImpl();
+
+        // Obtain instance of UiBuilder
+        uiBuilder = new JfxUiBuilder();
+
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-            DialogUtil.displayException(e);
+            uiBuilder.displayException(e);
             System.exit(1);
         });
+
         launch(args);
     }
 }

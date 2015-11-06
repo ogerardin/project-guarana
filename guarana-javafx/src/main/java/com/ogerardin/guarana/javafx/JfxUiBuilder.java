@@ -68,6 +68,13 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
     // utility methods
     //
 
+    public void displayException(Throwable e) {
+        final InstanceUI<Parent, Throwable> exceptionInstanceUI = buildInstanceUI(Throwable.class);
+        exceptionInstanceUI.setTarget(e);
+        display(exceptionInstanceUI, "Caught Exception");
+    }
+
+
     public static void display(Renderable<Parent> renderable, Node parent, String title) {
         display(renderable, null, parent, title);
     }
@@ -86,12 +93,6 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
 
     public static void display(Renderable<Parent> renderable) {
         display(renderable, null, null, null);
-    }
-
-    public void displayException(Throwable e) {
-        final InstanceUI<Parent, Throwable> exceptionInstanceUI = buildInstanceUI(Throwable.class);
-        exceptionInstanceUI.setTarget(e);
-        display(exceptionInstanceUI, "Caught Exception");
     }
 
     public static void display(Renderable<Parent> renderable, String title) {

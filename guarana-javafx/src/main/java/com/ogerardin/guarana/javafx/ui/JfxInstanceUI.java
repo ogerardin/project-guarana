@@ -78,7 +78,9 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
         int row = 0;
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
             // ignore "class" property
-            if (propertyDescriptor.getName().equals("class")) {
+            String propertyName = propertyDescriptor.getName();
+            if (propertyName.equals("class")
+                    | getConfiguration().forClass(clazz).isHiddenProperty(propertyName)) {
                 continue;
             }
 

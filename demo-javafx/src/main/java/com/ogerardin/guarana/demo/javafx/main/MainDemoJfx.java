@@ -12,6 +12,7 @@ package com.ogerardin.guarana.demo.javafx.main;
 import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.demo.javafx.adapters.PersonManagerDb4oImpl;
+import com.ogerardin.guarana.demo.model.Person;
 import com.ogerardin.guarana.demo.model.PersonManager;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import javafx.application.Application;
@@ -26,11 +27,11 @@ public class MainDemoJfx extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        final InstanceUI<Parent, PersonManager> ui = uiBuilder.buildInstanceUI(PersonManager.class);
+        InstanceUI<Parent, PersonManager> ui = uiBuilder.buildInstanceUI(PersonManager.class);
 
         ui.setTarget(personManager);
 
-        JfxUiBuilder.display(ui, primaryStage, "Hello Guarana!");
+        uiBuilder.display(ui, primaryStage, "Hello Guarana!");
     }
 
     public static void main(String[] args) {
@@ -39,6 +40,8 @@ public class MainDemoJfx extends Application {
 
         Configuration config = new Configuration();
         config.forClass(Throwable.class).hideProperties("localizedMessage");
+        config.forClass(Person.class).hideProperties("fullNameLastFirst", "fullNameFirstLast");
+        config.forClass(Person.class).setToString(Person::getFullNameLastFirst);
 
         uiBuilder = new JfxUiBuilder(config);
 

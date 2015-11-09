@@ -83,7 +83,7 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
                 button.setOnAction(e -> {
                     CollectionUI<Parent, Object> collectionUI = getBuilder().buildCollectionUi(Object.class);
                     collectionUI.setTarget(new ArrayList<>());
-                    JfxUiBuilder.display(collectionUI, button, "Collection parameter");
+                    getBuilder().display(collectionUI, button, "Collection parameter");
                 });
                 grid.add(button, 2, row);
             }

@@ -17,8 +17,9 @@ import java.beans.BeanInfo;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-/*
- * Created by oge on 07/09/2015.
+/**
+ * @author oge
+ * @since 07/09/2015.
  */
 @Deprecated
 public class JfxClassUI extends Label implements ClassUI<Parent> {

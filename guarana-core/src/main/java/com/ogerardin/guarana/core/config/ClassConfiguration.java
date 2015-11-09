@@ -12,11 +12,13 @@ import java.util.Set;
  * @author olivier
  * @since 07/11/2015.
  */
-public class ClassConfiguration {
+public class ClassConfiguration<C> {
 
     private final Set<String> hiddenProperties = new HashSet<>();
+    private ToString<C> toString;
 
-    public ClassConfiguration(Class<?> clazz) {
+    public ClassConfiguration(Class<C> clazz) {
+        hiddenProperties.add("class");
     }
 
     public ClassConfiguration hideProperties(String... propertyNames) {
@@ -26,5 +28,13 @@ public class ClassConfiguration {
 
     public boolean isHiddenProperty(String propertyName) {
         return hiddenProperties.contains(propertyName);
+    }
+
+    public void setToString(ToString<C> toString) {
+        this.toString = toString;
+    }
+
+    public String toString(C value) {
+        return (toString != null) ? toString.toString(value) : value.toString();
     }
 }

@@ -69,8 +69,10 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
                 displayName = Introspector.humanize(propertyName);
             }
             TableColumn column = new TableColumn(displayName);
+
             column.setCellValueFactory(new PropertyValueFactory<>(propertyName));
-            if (propertyName.equals("class")) {
+
+            if (builder.getConfiguration().forClass(itemClass).isHiddenProperty(propertyName)) {
                 column.setVisible(false);
             }
             tableView.getColumns().add(column);
@@ -98,7 +100,7 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
                     if (item != null) {
                         InstanceUI<Parent, T> instanceUI = builder.buildInstanceUI(itemClass);
                         instanceUI.setTarget(item);
-                        JfxUiBuilder.display(instanceUI, row, itemTitle);
+                        getBuilder().display(instanceUI, row, itemTitle);
                     }
                 }
             });

@@ -26,7 +26,10 @@ import org.apache.commons.lang.Validate;
  */
 public class JfxUiBuilder implements UIBuilder<Parent> {
 
+    private static final String GUARANA_DEFAULT_CSS = "/guarana-default.css";
+
     private final Configuration configuration;
+    private String defaultStylesheet;
 
     /**
      * Builds a JfxBuilder with a default configuration
@@ -41,7 +44,13 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
     public JfxUiBuilder(Configuration configuration) {
         Validate.notNull(configuration);
         this.configuration = configuration;
+        this.defaultStylesheet = getClass().getResource(GUARANA_DEFAULT_CSS).toExternalForm();
     }
+
+    public String getDefaultStylesheet() {
+        return defaultStylesheet;
+    }
+
 
     @Override
     public <C> InstanceUI<Parent, C> buildInstanceUI(Class<C> clazz) {
@@ -75,31 +84,31 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
     }
 
 
-    public static void display(Renderable<Parent> renderable, Node parent, String title) {
+    public void display(Renderable<Parent> renderable, Node parent, String title) {
         display(renderable, null, parent, title);
     }
 
-    public static void display(Renderable<Parent> renderable, Stage stage, String title) {
+    public void display(Renderable<Parent> renderable, Stage stage, String title) {
         display(renderable, stage, null, title);
     }
 
-    public static void display(Renderable<Parent> renderable, Stage stage) {
+    public void display(Renderable<Parent> renderable, Stage stage) {
         display(renderable, stage, null, null);
     }
 
-    public static void display(Renderable<Parent> renderable, Node parent) {
+    public void display(Renderable<Parent> renderable, Node parent) {
         display(renderable, null, parent, null);
     }
 
-    public static void display(Renderable<Parent> renderable) {
+    public void display(Renderable<Parent> renderable) {
         display(renderable, null, null, null);
     }
 
-    public static void display(Renderable<Parent> renderable, String title) {
+    public void display(Renderable<Parent> renderable, String title) {
         display(renderable, null, null, title);
     }
 
-    public static void display(Renderable<Parent> renderable, Stage stage, Node parent, String title) {
+    public void display(Renderable<Parent> renderable, Stage stage, Node parent, String title) {
         if (stage == null) {
             stage = new Stage();
             if (parent != null) {
@@ -117,6 +126,7 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
         }
         Parent root = renderable.render();
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(getDefaultStylesheet());
         stage.setScene(scene);
         stage.show();
     }

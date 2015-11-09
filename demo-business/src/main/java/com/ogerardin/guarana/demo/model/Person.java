@@ -12,7 +12,7 @@ public class Person {
     private String lastName;
     private String firstName;
 
-    public Person(String firstName, String lastName) {
+    public Person(String lastName, String firstName) {
         this.lastName = lastName;
         this.firstName = firstName;
     }
@@ -40,4 +40,13 @@ public class Person {
                 ", firstName='" + firstName + '\'' +
                 '}';
     }
+
+    public String getFullNameLastFirst() {
+        return getLastName() + ", " + getFirstName();
+    }
+
+    public String getFullNameFirstLast() {
+        return getFirstName() + " " + getLastName();
+    }
+
 }

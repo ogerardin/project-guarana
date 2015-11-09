@@ -40,10 +40,10 @@ public class Configuration extends CompositeConfiguration {
         return getBoolean("humanizeClassNames", true);
     }
 
-    public ClassConfiguration forClass(Class<?> clazz) {
-        ClassConfiguration classConfig = classConfigurationMap.get(clazz);
+    public <C> ClassConfiguration<C> forClass(Class<C> clazz) {
+        ClassConfiguration<C> classConfig = classConfigurationMap.get(clazz);
         if (classConfig == null) {
-            classConfig = new ClassConfiguration(clazz);
+            classConfig = new ClassConfiguration<>(clazz);
             classConfigurationMap.put(clazz, classConfig);
         }
         return classConfig;

@@ -17,7 +17,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -70,7 +69,7 @@ public abstract class JfxUI implements Renderable<Parent> {
         source.setOnDragDone(Event::consume);
     }
 
-    <T> void configureDragDropTarget(TextField field, PropertyDescriptor propertyDescriptor, Wrapper<T> wrapper) {
+    <T> void configureDragDropTarget(Control field, PropertyDescriptor propertyDescriptor, Wrapper<T> wrapper) {
         field.setOnDragOver(event -> {
             // for some reason you can't accept the transfer in the DragEntered handler, you have to do it
             // in the DragOver handler
@@ -79,15 +78,9 @@ public abstract class JfxUI implements Renderable<Parent> {
             if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)
                     && handleDragDroppedUsingIdentifier(propertyDescriptor, db, target, true)) {
                 event.acceptTransferModes(TransferMode.LINK);
-                // cursor is changed accordingly by default, no need
-//                field.setCursor(Cursor.CROSSHAIR);
             }
             event.consume();
         });
-//        field.setOnDragExited(event -> {
-//            field.setCursor(Cursor.DEFAULT);
-//            event.consume();
-//        });
         field.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             T target = wrapper.getInstance();
@@ -105,7 +98,7 @@ public abstract class JfxUI implements Renderable<Parent> {
         // retrieve identifier from dragboard and associated source object in registry
         Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
         Object source = ObjectRegistry.INSTANCE.get(identifier);
-        System.out.println(identifier + " -> " + source.toString());
+//        System.out.println(identifier + " -> " + source.toString());
 
         // if only validating, assert type compatibility between source object and target property
         Class targetPropertyClass = propertyDescriptor.getPropertyType();
@@ -169,7 +162,7 @@ public abstract class JfxUI implements Renderable<Parent> {
             }
         } else {
             JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), constructor);
-            JfxUiBuilder.display(methodCallUI);
+            getBuilder().display(methodCallUI);
         }
     }
 
@@ -190,7 +183,7 @@ public abstract class JfxUI implements Renderable<Parent> {
             }
         } else {
             JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), method);
-            JfxUiBuilder.display(methodCallUI);
+            getBuilder().display(methodCallUI);
         }
     }
 

@@ -4,6 +4,7 @@
 
 package com.ogerardin.guarana.javafx.ui;
 
+import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.InstanceUI;
@@ -79,8 +80,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
             // ignore "class" property
             String propertyName = propertyDescriptor.getName();
-            if (propertyName.equals("class")
-                    | getConfiguration().forClass(clazz).isHiddenProperty(propertyName)) {
+            if (getConfiguration().forClass(clazz).isHiddenProperty(propertyName)) {
                 continue;
             }
 
@@ -92,14 +92,15 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             grid.add(label, 0, row);
 
             TextField field = new TextField();
-            grid.add(field, 1, row);
             //FIXME: for now only editable String properties generate an editable text field
             if (Introspector.isReadOnly(propertyDescriptor) || propertyType != String.class) {
                 field.setEditable(false);
+                field.getStyleClass().add("copyable-label");
             }
             if (row == 0) {
                 field.requestFocus();
             }
+            grid.add(field, 1, row);
 
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(propertyType)) {
@@ -124,7 +125,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
         }
     }
 
-    private void zoomCollection(Button button, Method readMethod, String title) {
+    private void zoomCollection(Node parent, Method readMethod, String title) {
         try {
             final Collection collection = (Collection) readMethod.invoke(target);
             Class<?> itemClass = Object.class;
@@ -134,7 +135,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             }
             CollectionUI<Parent, ?> collectionUI = getCollectionUI(itemClass);
             collectionUI.setTarget(collection);
-            JfxUiBuilder.display(collectionUI, button, title);
+            getBuilder().display(collectionUI, parent, title);
 
         } catch (Exception ex) {
             getBuilder().displayException(ex);
@@ -174,7 +175,6 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
 
             if (control instanceof TextField) {
                 TextField textField = (TextField) control;
-
                 if (textField.isEditable()) {
                     BeanPathAdapter<T> beanPathAdapter = new BeanPathAdapter<>(target);
                     String propertyName = propertyDescriptor.getName();
@@ -182,14 +182,14 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
                 } else {
                     //FIXME we should bind (unidirectionally) and not just set property value
                     try {
-                        textField.setText(propertyDescriptor.getReadMethod().invoke(target).toString());
+                        final Object value = propertyDescriptor.getReadMethod().invoke(target);
+                        ClassConfiguration classConfig = getConfiguration().forClass(propertyDescriptor.getPropertyType());
+                        textField.setText(classConfig.toString(value));
                     } catch (Exception ignored) {
+                        ignored.printStackTrace(System.err);
                     }
                 }
-
-
             }
-
         }
     }
 

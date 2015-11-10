@@ -78,8 +78,8 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
         root.getChildren().add(grid);
         int row = 0;
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-            // ignore "class" property
             String propertyName = propertyDescriptor.getName();
+            // ignore hidden properties
             if (getConfiguration().forClass(clazz).isHiddenProperty(propertyName)) {
                 continue;
             }
@@ -97,9 +97,9 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
                 field.setEditable(false);
                 field.getStyleClass().add("copyable-label");
             }
-            if (row == 0) {
-                field.requestFocus();
-            }
+//            if (row == 0) {
+//                field.requestFocus();
+//            }
             grid.add(field, 1, row);
 
             // if it's a collection, add a button to open as list

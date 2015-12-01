@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
+ * Common abstract superclass for Java FX renderable classes.
  * @author oge
  * @since 24/09/2015
  */
@@ -56,7 +57,7 @@ public abstract class JfxUI implements Renderable<Parent> {
         control.setContextMenu(contextMenu);
     }
 
-    static <T> void configureDragDropSource(Node source, Wrapper<T> wrapper) {
+    static <T> void configureDragSource(Node source, Wrapper<T> wrapper) {
         source.setOnDragDetected(event -> {
             Dragboard dragboard = source.startDragAndDrop(TransferMode.LINK);
             ClipboardContent content = new ClipboardContent();
@@ -69,8 +70,19 @@ public abstract class JfxUI implements Renderable<Parent> {
         source.setOnDragDone(Event::consume);
     }
 
-    <T> void configureDragDropTarget(Control field, PropertyDescriptor propertyDescriptor, Wrapper<T> wrapper) {
-        field.setOnDragOver(event -> {
+    /**
+     * Configures the specified control so that it becomes a target for drag-and-drop operations. The control will
+     * accept custom content type "application/x.object-reference" for linking; the content value is expected to be
+     * an {@link Identifier} which will be resolved to actual object reference through {@link ObjectRegistry} and
+     * used to set the specified property.
+     *
+     * @param control            The visual element that will be enabled as a drag-and-drop target
+     * @param propertyDescriptor the property the will be affected by the drop operation
+     * @param wrapper            wrapper used to retrieve the target instance
+     * @param <T>                The target type as returned by the wrapper
+     */
+    <T> void configureDropTarget(Control control, PropertyDescriptor propertyDescriptor, Wrapper<T> wrapper) {
+        control.setOnDragOver(event -> {
             // for some reason you can't accept the transfer in the DragEntered handler, you have to do it
             // in the DragOver handler
             Dragboard db = event.getDragboard();
@@ -81,7 +93,7 @@ public abstract class JfxUI implements Renderable<Parent> {
             }
             event.consume();
         });
-        field.setOnDragDropped(event -> {
+        control.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             T target = wrapper.getInstance();
             boolean success = false;
@@ -98,7 +110,9 @@ public abstract class JfxUI implements Renderable<Parent> {
         // retrieve identifier from dragboard and associated source object in registry
         Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
         Object source = ObjectRegistry.INSTANCE.get(identifier);
-//        System.out.println(identifier + " -> " + source.toString());
+        if (source == null) {
+            return false;
+        }
 
         // if only validating, assert type compatibility between source object and target property
         Class targetPropertyClass = propertyDescriptor.getPropertyType();

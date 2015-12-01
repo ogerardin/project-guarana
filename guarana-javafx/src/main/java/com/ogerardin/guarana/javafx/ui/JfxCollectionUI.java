@@ -109,7 +109,7 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
             configureContextMenu(row, beanInfo, row::getItem);
 
             //Set row as drag-and-drop source
-            configureDragDropSource(row, row::getItem);
+            configureDragSource(row, row::getItem);
 
             return row;
         });

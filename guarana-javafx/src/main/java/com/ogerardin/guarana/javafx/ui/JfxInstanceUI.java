@@ -59,7 +59,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
         root.getChildren().add(title);
 
         // set the title label as a source for drag and drop
-        configureDragDropSource(title, () -> target);
+        configureDragSource(title, () -> target);
 
         // build methods context menu
         configureContextMenu(title, beanInfo, () -> target);
@@ -116,7 +116,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             }
 
             // set the field as a target for drag and drop
-            configureDragDropTarget(field, propertyDescriptor, () -> target);
+            configureDropTarget(field, propertyDescriptor, () -> target);
 
             propertyDescriptorControlMap.put(propertyDescriptor, field);
             controlPropertyDescriptorMap.put(field, propertyDescriptor);

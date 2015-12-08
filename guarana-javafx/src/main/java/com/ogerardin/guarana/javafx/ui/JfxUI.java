@@ -75,7 +75,6 @@ public abstract class JfxUI implements Renderable<Parent> {
      * accept custom content type "application/x.object-reference" for linking; the content value is expected to be
      * an {@link Identifier} which will be resolved to actual object reference through {@link ObjectRegistry} and
      * used to set the specified property.
-     *
      * @param control            The visual element that will be enabled as a drag-and-drop target
      * @param propertyDescriptor the property the will be affected by the drop operation
      * @param wrapper            wrapper used to retrieve the target instance
@@ -84,7 +83,7 @@ public abstract class JfxUI implements Renderable<Parent> {
     <T> void configureDropTarget(Control control, PropertyDescriptor propertyDescriptor, Wrapper<T> wrapper) {
         control.setOnDragOver(event -> {
             // for some reason you can't accept the transfer in the DragEntered handler, you have to do it
-            // in the DragOver handler
+            // in the DragOver handler (which is called whenever the pointer moves inside the target)
             Dragboard db = event.getDragboard();
             T target = wrapper.getInstance();
             if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)
@@ -111,6 +110,7 @@ public abstract class JfxUI implements Renderable<Parent> {
         Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
         Object source = ObjectRegistry.INSTANCE.get(identifier);
         if (source == null) {
+            System.err.println("Identifier not found in object registry: " + identifier);
             return false;
         }
 
@@ -142,7 +142,6 @@ public abstract class JfxUI implements Renderable<Parent> {
 
     /**
      * A specialized MenuItem that triggers a method call
-     *
      * @param <T> type of the target object
      */
     private class MethodMenuItem<T> extends MenuItem {
@@ -163,6 +162,14 @@ public abstract class JfxUI implements Renderable<Parent> {
         }
     }
 
+    /**
+     * Called when the user requests the Instanciation of a class through a specific constructor.
+     * If the constructor doesn't take any arguments, it is called immediately; otherwise a dialog is
+     * displayed to let the user provide the arguments.
+     *
+     * @param <T>         the target type
+     * @param constructor the constructor to call
+     */
     private <T> void executeConstructorRequested(Constructor<T> constructor) {
         System.out.println(constructor.toGenericString());
         T instance;
@@ -180,6 +187,14 @@ public abstract class JfxUI implements Renderable<Parent> {
         }
     }
 
+    /**
+     * Called when the user requests the execution of a method. If the method doesn't take any arguments,
+     * it is executed immediately; otherwise a dialog is displayed to let the user provide the arguments.
+     * @param md the descriptor of the method to execute
+     * @param wrapper a wrapper used to obtain the target object
+     * @param <T> the target type
+     * @param <R> the return type of the method
+     */
     private <T, R> void executeMethodRequested(MethodDescriptor md, Wrapper<T> wrapper) {
         System.out.println(md.getName());
         Method method = md.getMethod();

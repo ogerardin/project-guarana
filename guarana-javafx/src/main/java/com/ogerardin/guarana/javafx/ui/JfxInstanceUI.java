@@ -4,6 +4,8 @@
 
 package com.ogerardin.guarana.javafx.ui;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
@@ -21,11 +23,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import jfxtras.labs.scene.control.BeanPathAdapter;
 
+import java.beans.BeanDescriptor;
 import java.beans.BeanInfo;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,8 +38,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
 
     protected final BeanInfo beanInfo;
 
-    protected Map<PropertyDescriptor, Control> propertyDescriptorControlMap = new HashMap<>();
-    protected Map<Control, PropertyDescriptor> controlPropertyDescriptorMap = new HashMap<>();
+    protected BiMap<Control, PropertyDescriptor> controlPropertyDescriptorMap = HashBiMap.create();
 
     private final VBox root;
 
@@ -49,8 +50,9 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
         beanInfo = Introspector.getClassInfo(clazz);
 
         root = new VBox();
-        final String className = beanInfo.getBeanDescriptor().getBeanClass().getSimpleName();
-        String displayName = beanInfo.getBeanDescriptor().getDisplayName();
+        final BeanDescriptor beanDescriptor = beanInfo.getBeanDescriptor();
+        final String className = beanDescriptor.getBeanClass().getSimpleName();
+        String displayName = beanDescriptor.getDisplayName();
         if (displayName.equals(className) && getConfiguration().getHumanizeClassNames()) {
             displayName = Introspector.humanize(className);
         }
@@ -71,9 +73,9 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
         grid.setVgap(10);
         grid.setPadding(Const.DEFAULT_INSETS);
 
-        ColumnConstraints column2 = new ColumnConstraints();
-        column2.setHgrow(Priority.ALWAYS);
-        grid.getColumnConstraints().setAll(new ColumnConstraints(), column2); // second column gets any extra width
+        ColumnConstraints column = new ColumnConstraints();
+        column.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().setAll(new ColumnConstraints(), column); // second column gets any extra width
 
         root.getChildren().add(grid);
         int row = 0;
@@ -118,7 +120,6 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             // set the field as a target for drag and drop
             configureDropTarget(field, propertyDescriptor, () -> target);
 
-            propertyDescriptorControlMap.put(propertyDescriptor, field);
             controlPropertyDescriptorMap.put(field, propertyDescriptor);
 
             row++;
@@ -174,21 +175,24 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             PropertyDescriptor propertyDescriptor = entry.getValue();
 
             if (control instanceof TextField) {
-                TextField textField = (TextField) control;
-                if (textField.isEditable()) {
-                    BeanPathAdapter<T> beanPathAdapter = new BeanPathAdapter<>(target);
-                    String propertyName = propertyDescriptor.getName();
-                    beanPathAdapter.bindBidirectional(propertyName, textField.textProperty());
-                } else {
-                    //FIXME we should bind (unidirectionally) and not just set property value
-                    try {
-                        final Object value = propertyDescriptor.getReadMethod().invoke(target);
-                        ClassConfiguration classConfig = getConfiguration().forClass(propertyDescriptor.getPropertyType());
-                        textField.setText(classConfig.toString(value));
-                    } catch (Exception ignored) {
-                        ignored.printStackTrace(System.err);
-                    }
-                }
+                bindTextField((TextField) control, propertyDescriptor, target);
+            }
+        }
+    }
+
+    private void bindTextField(TextField textField, PropertyDescriptor propertyDescriptor, T target) {
+        if (textField.isEditable()) {
+            BeanPathAdapter<T> beanPathAdapter = new BeanPathAdapter<>(target);
+            String propertyName = propertyDescriptor.getName();
+            beanPathAdapter.bindBidirectional(propertyName, textField.textProperty());
+        } else {
+            //FIXME we should bind (unidirectionally) and not just set property value
+            try {
+                final Object value = propertyDescriptor.getReadMethod().invoke(target);
+                ClassConfiguration classConfig = getConfiguration().forClass(propertyDescriptor.getPropertyType());
+                textField.setText(classConfig.toString(value));
+            } catch (Exception ignored) {
+                ignored.printStackTrace(System.err);
             }
         }
     }

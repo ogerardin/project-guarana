@@ -4,6 +4,8 @@
 
 package com.ogerardin.guarana.core.config;
 
+import com.ogerardin.guarana.core.ui.InstanceUI;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +18,7 @@ public class ClassConfiguration<C> {
 
     private final Set<String> hiddenProperties = new HashSet<>();
     private ToString<C> toString;
+    private Class uiClass;
 
     public ClassConfiguration(Class<C> clazz) {
         hiddenProperties.add("class");
@@ -35,6 +38,18 @@ public class ClassConfiguration<C> {
     }
 
     public String toString(C value) {
-        return (toString != null) ? toString.toString(value) : value.toString();
+        if (value == null) {
+            return "null";
+        } else {
+            return (toString != null) ? toString.toString(value) : value.toString();
+        }
+    }
+
+    public Class getUiClass() {
+        return uiClass;
+    }
+
+    public <U extends InstanceUI> void setUiClass(Class<U> uiClass) {
+        this.uiClass = uiClass;
     }
 }

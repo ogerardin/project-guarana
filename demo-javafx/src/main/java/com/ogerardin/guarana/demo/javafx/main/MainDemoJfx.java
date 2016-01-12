@@ -12,12 +12,15 @@ package com.ogerardin.guarana.demo.javafx.main;
 import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.demo.javafx.adapters.PersonManagerDb4oImpl;
+import com.ogerardin.guarana.demo.javafx.ui.JfxDateUi;
 import com.ogerardin.guarana.demo.model.Person;
 import com.ogerardin.guarana.demo.model.PersonManager;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+
+import java.util.Date;
 
 public class MainDemoJfx extends Application {
 
@@ -42,6 +45,7 @@ public class MainDemoJfx extends Application {
         config.forClass(Throwable.class).hideProperties("localizedMessage");
         config.forClass(Person.class).hideProperties("fullNameLastFirst", "fullNameFirstLast");
         config.forClass(Person.class).setToString(Person::getFullNameLastFirst);
+        config.forClass(Date.class).setUiClass(JfxDateUi.class);
 
         uiBuilder = new JfxUiBuilder(config);
 

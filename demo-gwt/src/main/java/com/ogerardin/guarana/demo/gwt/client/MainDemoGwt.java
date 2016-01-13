@@ -1,13 +1,14 @@
 package com.ogerardin.guarana.demo.gwt.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.ogerardin.guarana.gwt.client.GuaranaService;
-import com.ogerardin.guarana.gwt.client.GuaranaServiceException;
+import com.ogerardin.guarana.gwt.client.GuaranaServiceAsync;
 
 public class MainDemoGwt implements EntryPoint {
 
@@ -16,11 +17,10 @@ public class MainDemoGwt implements EntryPoint {
         final Button button = new Button("Introspect");
         final Label label = new Label("---");
 
-        button.addClickHandler(event -> {
-            try {
-                GuaranaService.App.getInstance().introspect(textBox.getValue(), new MyAsyncCallback(label));
-            } catch (GuaranaServiceException e) {
-                e.printStackTrace();
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                GuaranaServiceAsync.Util.getInstance().introspect(textBox.getValue(), new MyAsyncCallback(label));
             }
         });
 

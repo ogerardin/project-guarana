@@ -11,8 +11,8 @@
 
 
     <!-- Specify the app servlets.                   -->
-<!--
-    <servlet path='/MainGwtService' class='com.guarana.demo.gwt.server.MainGwtServiceImpl'/>
--->
+    <!--
+        <servlet path='/MainGwtService' class='com.guarana.demo.gwt.server.MainGwtServiceImpl'/>
+    -->
 
 </module>

@@ -10,7 +10,7 @@ import java.util.Collection;
  * @author Olivier
  * @since 26/05/15
  */
-public interface PersonManager {
+public interface DemoManager {
 
     Collection<Person> getAllPersons();
 

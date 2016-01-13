@@ -118,7 +118,19 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             }
 
             // set the field as a target for drag and drop
-            configureDropTarget(field, propertyDescriptor, () -> target);
+            //configureDropTarget(field, propertyDescriptor, () -> target);
+
+            configureDropTarget(field,
+                    value -> {
+                        Class targetPropertyClass = propertyDescriptor.getPropertyType();
+                        //noinspection unchecked
+                        return targetPropertyClass.isAssignableFrom(value.getClass());
+                    },
+                    value -> {
+                        Method writeMethod = propertyDescriptor.getWriteMethod();
+                        writeMethod.invoke(target, value);
+                        propertyUpdated(propertyDescriptor, value);
+                    });
 
             controlPropertyDescriptorMap.put(field, propertyDescriptor);
 
@@ -189,16 +201,31 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             //FIXME we should bind (unidirectionally) and not just set property value
             try {
                 final Object value = propertyDescriptor.getReadMethod().invoke(target);
-                ClassConfiguration classConfig = getConfiguration().forClass(propertyDescriptor.getPropertyType());
-                textField.setText(classConfig.toString(value));
+                fieldSetValue(textField, propertyDescriptor, value);
             } catch (Exception ignored) {
                 ignored.printStackTrace(System.err);
             }
         }
     }
 
+    private void fieldSetValue(TextField textField, PropertyDescriptor propertyDescriptor, Object value) {
+        ClassConfiguration classConfig = getConfiguration().forClass(propertyDescriptor.getPropertyType());
+        textField.setText(classConfig.toString(value));
+    }
+
     @Override
     public Parent render() {
         return root;
+    }
+
+    protected void propertyUpdated(PropertyDescriptor propertyDescriptor, Object value) {
+        Control control = controlPropertyDescriptorMap.inverse().get(propertyDescriptor);
+        if (control instanceof TextField) {
+            fieldSetValue(((TextField) control), propertyDescriptor, value);
+        }
+    }
+
+    protected T getTarget() {
+        return target;
     }
 }

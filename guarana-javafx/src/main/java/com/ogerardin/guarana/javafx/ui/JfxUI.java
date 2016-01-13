@@ -24,7 +24,6 @@ import org.apache.commons.lang.Validate;
 
 import java.beans.BeanInfo;
 import java.beans.MethodDescriptor;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -70,66 +69,47 @@ public abstract class JfxUI implements Renderable<Parent> {
         source.setOnDragDone(Event::consume);
     }
 
-    /**
-     * Configures the specified control so that it becomes a target for drag-and-drop operations. The control will
-     * accept custom content type "application/x.object-reference" for linking; the content value is expected to be
-     * an {@link Identifier} which will be resolved to actual object reference through {@link ObjectRegistry} and
-     * used to set the specified property.
-     * @param control            The visual element that will be enabled as a drag-and-drop target
-     * @param propertyDescriptor the property the will be affected by the drop operation
-     * @param wrapper            wrapper used to retrieve the target instance
-     * @param <T>                The target type as returned by the wrapper
-     */
-    <T> void configureDropTarget(Control control, PropertyDescriptor propertyDescriptor, Wrapper<T> wrapper) {
+    void configureDropTarget(Control control, ValueValidator valueValidator, ValueSetter valueSetter) {
         control.setOnDragOver(event -> {
             // for some reason you can't accept the transfer in the DragEntered handler, you have to do it
             // in the DragOver handler (which is called whenever the pointer moves inside the target)
             Dragboard db = event.getDragboard();
-            T target = wrapper.getInstance();
-            if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)
-                    && handleDragDroppedUsingIdentifier(propertyDescriptor, db, target, true)) {
-                event.acceptTransferModes(TransferMode.LINK);
+            if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)) {
+                // retrieve identifier from dragboard and associated source object in registry
+                Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
+                Object source = ObjectRegistry.INSTANCE.get(identifier);
+                if (source == null) {
+                    System.err.println("Identifier not found in object registry: " + identifier);
+                    return;
+                }
+                if (valueValidator.validateValue(source)) {
+                    event.acceptTransferModes(TransferMode.LINK);
+                }
             }
             event.consume();
         });
         control.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
-            T target = wrapper.getInstance();
-            boolean success = false;
             if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)) {
-                success = handleDragDroppedUsingIdentifier(propertyDescriptor, db, target, false);
+                // retrieve identifier from dragboard and associated source object in registry
+                Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
+                Object source = ObjectRegistry.INSTANCE.get(identifier);
+                if (source == null) {
+                    System.err.println("Identifier not found in object registry: " + identifier);
+                    return;
+                }
+
+                boolean completed = false;
+                try {
+                    valueSetter.setValue(source);
+                    completed = true;
+                } catch (Exception e) {
+                    getBuilder().displayException(e);
+                }
+                event.setDropCompleted(completed);
             }
-            event.setDropCompleted(success);
             event.consume();
         });
-    }
-
-    private <T> boolean handleDragDroppedUsingIdentifier(PropertyDescriptor propertyDescriptor, Dragboard db,
-                                                         T target, boolean validateOnly) {
-        // retrieve identifier from dragboard and associated source object in registry
-        Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
-        Object source = ObjectRegistry.INSTANCE.get(identifier);
-        if (source == null) {
-            System.err.println("Identifier not found in object registry: " + identifier);
-            return false;
-        }
-
-        // if only validating, assert type compatibility between source object and target property
-        Class targetPropertyClass = propertyDescriptor.getPropertyType();
-        if (validateOnly) {
-            return targetPropertyClass.isAssignableFrom(source.getClass());
-        }
-
-        // invoke property setter on target instance
-        try {
-            final Method writeMethod = propertyDescriptor.getWriteMethod();
-            writeMethod.invoke(target, source);
-            //field.setText(source.toString());
-        } catch (Exception e) {
-            getBuilder().displayException(e);
-            return false;
-        }
-        return true;
     }
 
     public JfxUiBuilder getBuilder() {

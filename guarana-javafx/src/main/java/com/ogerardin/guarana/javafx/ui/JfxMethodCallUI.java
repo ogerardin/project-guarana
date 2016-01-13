@@ -4,6 +4,7 @@
 
 package com.ogerardin.guarana.javafx.ui;
 
+import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.Renderable;
@@ -37,6 +38,7 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
 
     private final VBox root;
     private final Executable executable;
+    private final Map<String, Object> params;
 
     public JfxMethodCallUI(JfxUiBuilder builder, Executable executable) {
         super(builder);
@@ -62,7 +64,7 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
         root.getChildren().add(grid);
         int row = 0;
 
-        Map<String, Object> params = new HashMap<>();
+        params = new HashMap<>();
         for (Parameter param : executable.getParameters()) {
 
             params.put(param.getName(), null);
@@ -88,7 +90,14 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
                 grid.add(button, 2, row);
             }
 
-            // TODO set the field as a target for drag and drop
+            // set the field as a target for drag and drop
+            configureDropTarget(field,
+                    value -> param.getType().isAssignableFrom(value.getClass()),
+                    value -> {
+                        params.put(param.getName(), value);
+                        ClassConfiguration classConfig = getConfiguration().forClass(value.getClass());
+                        field.setText(classConfig.toString(value));
+                    });
 
             row++;
         }
@@ -104,4 +113,5 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
     public Parent render() {
         return root;
     }
+
 }

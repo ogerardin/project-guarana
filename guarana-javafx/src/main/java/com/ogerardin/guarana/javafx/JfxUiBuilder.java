@@ -56,15 +56,13 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
     @Override
     public <C> InstanceUI<Parent, C> buildInstanceUI(Class<C> clazz) {
         ClassConfiguration<C> classConfiguration = configuration.forClass(clazz);
-        Class<InstanceUI> uiClass = classConfiguration.getUiClass();
+        Class<InstanceUI<Parent, C>> uiClass = classConfiguration.getUiClass();
         if (uiClass != null) {
-            InstanceUI<Parent, C> uiInstance = null;
             try {
-                uiInstance = uiClass.newInstance();
+                return uiClass.newInstance();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            return uiInstance;
         }
         return new JfxInstanceUI<>(this, clazz);
     }

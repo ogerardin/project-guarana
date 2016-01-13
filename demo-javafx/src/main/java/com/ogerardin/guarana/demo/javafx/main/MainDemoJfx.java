@@ -11,10 +11,10 @@ package com.ogerardin.guarana.demo.javafx.main;
 
 import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.ui.InstanceUI;
-import com.ogerardin.guarana.demo.javafx.adapters.PersonManagerDb4oImpl;
+import com.ogerardin.guarana.demo.javafx.adapters.DemoManagerDb4OImpl;
 import com.ogerardin.guarana.demo.javafx.ui.JfxDateUi;
+import com.ogerardin.guarana.demo.model.DemoManager;
 import com.ogerardin.guarana.demo.model.Person;
-import com.ogerardin.guarana.demo.model.PersonManager;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import javafx.application.Application;
 import javafx.scene.Parent;
@@ -25,21 +25,21 @@ import java.util.Date;
 public class MainDemoJfx extends Application {
 
     private static JfxUiBuilder uiBuilder;
-    private static PersonManager personManager;
+    private static DemoManager demoManager;
 
     @Override
     public void start(Stage primaryStage) {
 
-        InstanceUI<Parent, PersonManager> ui = uiBuilder.buildInstanceUI(PersonManager.class);
+        InstanceUI<Parent, DemoManager> ui = uiBuilder.buildInstanceUI(DemoManager.class);
 
-        ui.setTarget(personManager);
+        ui.setTarget(demoManager);
 
         uiBuilder.display(ui, primaryStage, "Hello Guarana!");
     }
 
     public static void main(String[] args) {
 
-        personManager = new PersonManagerDb4oImpl();
+        demoManager = new DemoManagerDb4OImpl();
 
         Configuration config = new Configuration();
         config.forClass(Throwable.class).hideProperties("localizedMessage");

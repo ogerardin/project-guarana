@@ -7,9 +7,9 @@ package com.ogerardin.guarana.demo.javafx.adapters;
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.config.Configuration;
+import com.ogerardin.guarana.demo.model.DemoManager;
 import com.ogerardin.guarana.demo.model.Event;
 import com.ogerardin.guarana.demo.model.Person;
-import com.ogerardin.guarana.demo.model.PersonManager;
 
 import java.util.Collection;
 
@@ -17,11 +17,11 @@ import java.util.Collection;
  * @author Olivier
  * @since 26/05/15
  */
-public class PersonManagerDb4oImpl implements PersonManager {
+public class DemoManagerDb4OImpl implements DemoManager {
 
     private final ObjectContainer objectContainer;
 
-    public PersonManagerDb4oImpl() {
+    public DemoManagerDb4OImpl() {
         Configuration configuration = Db4o.newConfiguration();
         objectContainer = Db4o.openFile(configuration, "data.db4o");
     }

@@ -17,7 +17,7 @@ public class CoreInit implements EntryPoint {
     public void onModuleLoad() {
         final Label label = new Label();
 
-        GuaranaService.App.getInstance().getVersion(new MyAsyncCallback(label));
+        GuaranaServiceAsync.Util.getInstance().getVersion(new MyAsyncCallback(label));
 
         RootPanel.get().add(label);
     }

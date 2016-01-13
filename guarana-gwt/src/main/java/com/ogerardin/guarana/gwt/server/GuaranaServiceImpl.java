@@ -5,6 +5,7 @@
 package com.ogerardin.guarana.gwt.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.ogerardin.guarana.core.Guarana;
 import com.ogerardin.guarana.gwt.client.GuaranaService;
 import com.ogerardin.guarana.gwt.client.GuaranaServiceException;
 
@@ -12,7 +13,7 @@ public class GuaranaServiceImpl extends RemoteServiceServlet implements GuaranaS
 
     @Override
     public String getVersion() {
-        return "0.01";
+        return Guarana.getImplementationVersion();
     }
 
     @Override

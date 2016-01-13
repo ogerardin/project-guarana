@@ -23,13 +23,6 @@
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>exo</id>
-            <url>http://nexus.luxbourse.local:8081/nexus/content/repositories/exoplatform/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.ogerardin.guarana</groupId>
@@ -69,6 +62,16 @@
                     <compileSourcesArtifacts>
                         <artifact>com.ogerardin.guarana:guarana-gwt</artifact>
                     </compileSourcesArtifacts>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <port>9090</port>
+                    <path>/</path>
                 </configuration>
             </plugin>
         </plugins>

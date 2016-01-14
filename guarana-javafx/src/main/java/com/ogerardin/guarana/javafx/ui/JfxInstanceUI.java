@@ -6,11 +6,13 @@ package com.ogerardin.guarana.javafx.ui;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
+import com.ogerardin.guarana.javafx.binding.Bindings;
+import javafx.beans.property.Property;
+import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -21,7 +23,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import jfxtras.labs.scene.control.BeanPathAdapter;
 
 import java.beans.BeanDescriptor;
 import java.beans.BeanInfo;
@@ -171,47 +172,60 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
 
     public void setTarget(T target) {
         if (this.target != null) {
-            unbind(this.target);
+            unbind();
         }
         this.target = target;
         bind(target);
     }
 
-    private void unbind(T target) {
-        //TODO
+    private void unbind() {
+        for (Map.Entry<Control, PropertyDescriptor> entry : controlPropertyDescriptorMap.entrySet()) {
+            Control control = entry.getKey();
+            if (control instanceof TextField) {
+                ((TextField) control).textProperty().unbind();
+            }
+        }
     }
 
     private void bind(T target) {
+        JavaBeanObjectPropertyBuilder jfxPropertyBuilder = JavaBeanObjectPropertyBuilder.create();
+        jfxPropertyBuilder.bean(target);
+
         for (Map.Entry<Control, PropertyDescriptor> entry : controlPropertyDescriptorMap.entrySet()) {
             Control control = entry.getKey();
             PropertyDescriptor propertyDescriptor = entry.getValue();
 
+            // TODO handle other field types
             if (control instanceof TextField) {
-                bindTextField((TextField) control, propertyDescriptor, target);
+                jfxPropertyBuilder.name(propertyDescriptor.getName());
+                Property jfxProperty = null;
+                try {
+                    jfxProperty = jfxPropertyBuilder.build();
+                } catch (NoSuchMethodException e) {
+                    System.err.println("WARNING: " + e.toString());
+                }
+
+                if (jfxProperty == null) {
+                    // failed to create JavaFX Property: just set the field value (no binding)
+                    try {
+                        Object value = propertyDescriptor.getReadMethod().invoke(target);
+                        Bindings.fieldSetValue(getConfiguration(), (TextField) control, propertyDescriptor, value);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    continue;
+                }
+
+                if (propertyDescriptor.getPropertyType() == String.class) {
+                    ((TextField) control).textProperty().bindBidirectional(jfxProperty);
+                } else {
+                    //TODO handle other property types
+                    System.err.println("ERROR: no binding for type " + propertyDescriptor.getPropertyType());
+                }
             }
         }
     }
 
-    private void bindTextField(TextField textField, PropertyDescriptor propertyDescriptor, T target) {
-        if (textField.isEditable()) {
-            BeanPathAdapter<T> beanPathAdapter = new BeanPathAdapter<>(target);
-            String propertyName = propertyDescriptor.getName();
-            beanPathAdapter.bindBidirectional(propertyName, textField.textProperty());
-        } else {
-            //FIXME we should bind (unidirectionally) and not just set property value
-            try {
-                final Object value = propertyDescriptor.getReadMethod().invoke(target);
-                fieldSetValue(textField, propertyDescriptor, value);
-            } catch (Exception ignored) {
-                ignored.printStackTrace(System.err);
-            }
-        }
-    }
-
-    private void fieldSetValue(TextField textField, PropertyDescriptor propertyDescriptor, Object value) {
-        ClassConfiguration classConfig = getConfiguration().forClass(propertyDescriptor.getPropertyType());
-        textField.setText(classConfig.toString(value));
-    }
 
     @Override
     public Parent render() {
@@ -221,7 +235,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
     protected void propertyUpdated(PropertyDescriptor propertyDescriptor, Object value) {
         Control control = controlPropertyDescriptorMap.inverse().get(propertyDescriptor);
         if (control instanceof TextField) {
-            fieldSetValue(((TextField) control), propertyDescriptor, value);
+            Bindings.fieldSetValue(getConfiguration(), ((TextField) control), propertyDescriptor, value);
         }
     }
 

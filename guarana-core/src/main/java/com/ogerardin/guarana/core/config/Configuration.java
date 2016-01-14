@@ -26,7 +26,7 @@ public class Configuration extends CompositeConfiguration {
     public Configuration() {
         try {
             addConfiguration(new SystemConfiguration());
-            addConfiguration(new PropertiesConfiguration("guarana.properties"));
+            addConfiguration(new PropertiesConfiguration(getClass().getResource("/guarana.properties")));
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }

@@ -9,6 +9,8 @@ import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.Renderable;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -24,11 +26,10 @@ import javafx.scene.text.FontWeight;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @author Olivier
@@ -37,12 +38,11 @@ import java.util.Map;
 public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
 
     private final VBox root;
-    private final Executable executable;
-    private final Map<String, Object> params;
+    private final Map<String, Property> params;
+    private Consumer onSuccess = null;
 
     public JfxMethodCallUI(JfxUiBuilder builder, Executable executable) {
         super(builder);
-        this.executable = executable;
 
         root = new VBox();
         final Label title = new Label(Introspector.humanize(executable.getName()));
@@ -67,13 +67,17 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
         params = new HashMap<>();
         for (Parameter param : executable.getParameters()) {
 
-            params.put(param.getName(), null);
+            final SimpleStringProperty jfxProperty = new SimpleStringProperty();
+            params.put(param.getName(), jfxProperty);
 
             final String humanizedName = Introspector.humanize(param.getName());
             Label label = new Label(humanizedName);
             grid.add(label, 0, row);
 
             TextField field = new TextField();
+
+            field.textProperty().bindBidirectional(jfxProperty);
+
             grid.add(field, 1, row);
             if (row == 0) {
                 field.requestFocus();
@@ -94,7 +98,7 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
             configureDropTarget(field,
                     value -> param.getType().isAssignableFrom(value.getClass()),
                     value -> {
-                        params.put(param.getName(), value);
+                        //params.put(param.getName(), value);
                         ClassConfiguration classConfig = getConfiguration().forClass(value.getClass());
                         field.setText(classConfig.toString(value));
                     });
@@ -104,14 +108,43 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
 
         Button go = new Button(executable instanceof Constructor ? "Create" : "Go");
         go.setOnAction(event -> {
-            // TODO: gather params and invoke method
+            try {
+                List paramValues = getParamValues(executable);
+                if (executable instanceof Constructor) {
+                    Object instance = ((Constructor) executable).newInstance(paramValues.toArray());
+                    if (onSuccess != null) {
+                        onSuccess.accept(instance);
+                    }
+                } else if (executable instanceof Method) {
+                    Object result = ((Method) executable).invoke(paramValues);
+                    if (onSuccess != null) {
+                        onSuccess.accept(result);
+                    }
+                }
+            } catch (Exception e) {
+                getBuilder().displayException(e);
+            }
         });
         root.getChildren().add(go);
+    }
+
+    private List getParamValues(Executable executable) {
+        List paramValues = new ArrayList();
+        for (Parameter param : executable.getParameters()) {
+            Property property = params.get(param.getName());
+            Object paramValue = property.getValue();
+            paramValues.add(paramValue);
+        }
+        return paramValues;
     }
 
     @Override
     public Parent render() {
         return root;
+    }
+
+    public void setOnSuccess(Consumer handler) {
+        this.onSuccess = handler;
     }
 
 }

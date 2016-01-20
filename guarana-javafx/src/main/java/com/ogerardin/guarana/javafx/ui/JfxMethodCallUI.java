@@ -75,7 +75,6 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
             grid.add(label, 0, row);
 
             TextField field = new TextField();
-
             field.textProperty().bindBidirectional(jfxProperty);
 
             grid.add(field, 1, row);
@@ -100,6 +99,7 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
                     value -> {
                         //params.put(param.getName(), value);
                         ClassConfiguration classConfig = getConfiguration().forClass(value.getClass());
+                        //FIXME set param value, not just field text ! (see JfxInstanceUI)
                         field.setText(classConfig.toString(value));
                     });
 

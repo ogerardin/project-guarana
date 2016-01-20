@@ -22,6 +22,7 @@ import javafx.scene.text.FontWeight;
 
 import java.beans.BeanInfo;
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -127,7 +128,12 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
     @Override
     public void setTarget(Collection<? extends T> target) {
         //FIXME only list supported currently
-        tableView.setItems(FXCollections.observableList((List<T>)target));
+        if (target instanceof List) {
+            tableView.setItems(FXCollections.observableList((List<T>) target));
+        }
+        else {
+            tableView.setItems(FXCollections.observableList(new ArrayList<T>(target)));
+        }
         this.target = (Collection<T>) target;
     }
 }

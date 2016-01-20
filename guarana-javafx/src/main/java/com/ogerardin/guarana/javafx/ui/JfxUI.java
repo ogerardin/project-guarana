@@ -8,8 +8,8 @@ import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
+import com.ogerardin.guarana.core.ui.MapUI;
 import com.ogerardin.guarana.core.ui.Renderable;
-import com.ogerardin.guarana.core.ui.Wrapper;
 import com.ogerardin.guarana.javafx.JfxUiBuilder;
 import javafx.event.Event;
 import javafx.scene.Node;
@@ -17,6 +17,9 @@ import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -27,6 +30,7 @@ import java.beans.MethodDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 /**
  * Common abstract superclass for Java FX renderable classes.
@@ -35,6 +39,9 @@ import java.util.Arrays;
  */
 public abstract class JfxUI implements Renderable<Parent> {
 
+    Image ICON_CONSTRUCTOR = new Image("call_class_16.png");
+    Image ICON_METHOD = new Image("call_method_16.png");
+
     private final JfxUiBuilder builder;
 
     public JfxUI(JfxUiBuilder builder) {
@@ -42,25 +49,34 @@ public abstract class JfxUI implements Renderable<Parent> {
         this.builder = builder;
     }
 
-    <T> void configureContextMenu(Control control, BeanInfo beanInfo, Wrapper<T> wrapper) {
+    <T> void configureContextMenu(Control control, BeanInfo beanInfo, Supplier<T> targetSupplier) {
         ContextMenu contextMenu = new ContextMenu();
         // add methods
         Arrays.asList(beanInfo.getMethodDescriptors()).stream()
                 .filter(md -> !Introspector.isGetterOrSetter(md))
-                .map(md -> new MethodMenuItem<>(md, wrapper))
+                .map(md -> new MethodMenuItem<>(md, targetSupplier, new ImageView(ICON_METHOD)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
+
+        contextMenu.getItems().add(new SeparatorMenuItem());
         // add constructors
         Arrays.asList(beanInfo.getBeanDescriptor().getBeanClass().getDeclaredConstructors()).stream()
-                .map(constructor -> new ConstructorMenuItem(constructor))
+                .map(c -> new ConstructorMenuItem<>(c, new ImageView(ICON_CONSTRUCTOR)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         control.setContextMenu(contextMenu);
+
+        contextMenu.getItems().add(new SeparatorMenuItem());
+        // add other items
+        Arrays.asList(Introspector.getClassInfo(this.getClass()).getMethodDescriptors()).stream()
+                .filter(md -> md.getName().equals("displayObjectRegistry"))
+                .map(md -> new MethodMenuItem<>(md, () -> this, null))
+                .forEach(menuItem -> contextMenu.getItems().add(menuItem));
     }
 
-    static <T> void configureDragSource(Node source, Wrapper<T> wrapper) {
+    static <T> void configureDragSource(Node source, Supplier<T> targetSupplier) {
         source.setOnDragDetected(event -> {
             Dragboard dragboard = source.startDragAndDrop(TransferMode.LINK);
             ClipboardContent content = new ClipboardContent();
-            Identifier identifier = ObjectRegistry.INSTANCE.put(wrapper.getInstance());
+            Identifier identifier = ObjectRegistry.INSTANCE.put(targetSupplier.get());
             content.put(Const.DATA_FORMAT_OBJECT_IDENTIFIER, identifier);
             dragboard.setContent(content);
             event.consume();
@@ -125,9 +141,12 @@ public abstract class JfxUI implements Renderable<Parent> {
      * @param <T> type of the target object
      */
     private class MethodMenuItem<T> extends MenuItem {
-        public MethodMenuItem(MethodDescriptor md, Wrapper<T> wrapper) {
+        public MethodMenuItem(MethodDescriptor md, Supplier<T> supplier, ImageView icon) {
             super(md.getMethod().toGenericString());
-            setOnAction(event -> executeMethodRequested(md, wrapper));
+            setOnAction(event -> executeMethodRequested(md, supplier));
+            if (icon != null) {
+                setGraphic(icon);
+            }
         }
     }
 
@@ -136,9 +155,12 @@ public abstract class JfxUI implements Renderable<Parent> {
      * @param <T> the target class
      */
     private class ConstructorMenuItem<T> extends MenuItem {
-        public ConstructorMenuItem(Constructor<T> constructor) {
+        public ConstructorMenuItem(Constructor<T> constructor, ImageView icon) {
             super(constructor.toGenericString());
             setOnAction(event -> executeConstructorRequested(constructor));
+            if (icon != null) {
+                setGraphic(icon);
+            }
         }
     }
 
@@ -146,12 +168,11 @@ public abstract class JfxUI implements Renderable<Parent> {
      * Called when the user requests the Instanciation of a class through a specific constructor.
      * If the constructor doesn't take any arguments, it is called immediately; otherwise a dialog is
      * displayed to let the user provide the arguments.
-     *
      * @param <T>         the target type
      * @param constructor the constructor to call
      */
     private <T> void executeConstructorRequested(Constructor<T> constructor) {
-        System.out.println(constructor.toGenericString());
+//        System.out.println(constructor.toGenericString());
         T instance;
         if (constructor.getParameterCount() == 0) {
             try {
@@ -172,22 +193,26 @@ public abstract class JfxUI implements Renderable<Parent> {
     /**
      * Called when the user requests the execution of a method. If the method doesn't take any arguments,
      * it is executed immediately; otherwise a dialog is displayed to let the user provide the arguments.
-     * @param md the descriptor of the method to execute
-     * @param wrapper a wrapper used to obtain the target object
      * @param <T> the target type
      * @param <R> the return type of the method
+     * @param md the descriptor of the method to execute
+     * @param targetSupplier a Supplier used to obtain the target object
      */
-    private <T, R> void executeMethodRequested(MethodDescriptor md, Wrapper<T> wrapper) {
-        System.out.println(md.getName());
+    private <T, R> void executeMethodRequested(MethodDescriptor md, Supplier<T> targetSupplier) {
+//        System.out.println(md.getName());
         Method method = md.getMethod();
 
-        final T target = wrapper.getInstance();
+        final T target = targetSupplier.get();
         final Class<R> returnType = (Class<R>) method.getReturnType();
         // if no arg, execute immediately, otherwise display arg dialog
         if (method.getParameterCount() == 0) {
             try {
                 R result = (R) method.invoke(target);
-                getBuilder().displayInstance(result, returnType, "Result");
+                // if the method returns something, display it
+                if (returnType != Void.TYPE) {
+                    getBuilder().displayInstance(result, returnType, "Result");
+                }
+                // TODO better handling of returned object
             } catch (Exception e) {
                 e.printStackTrace();
                 getBuilder().displayException(e);
@@ -196,6 +221,13 @@ public abstract class JfxUI implements Renderable<Parent> {
             JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), method);
             getBuilder().display(methodCallUI);
         }
+    }
+
+    @SuppressWarnings("unused")
+    public void displayObjectRegistry() {
+        MapUI<Parent, Identifier, Object> ui = builder.buildMapUI();
+        ui.setTarget(ObjectRegistry.INSTANCE.getMap());
+        builder.display(ui);
     }
 
 }

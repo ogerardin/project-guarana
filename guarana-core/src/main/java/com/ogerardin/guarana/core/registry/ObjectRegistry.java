@@ -7,6 +7,9 @@ package com.ogerardin.guarana.core.registry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * A simple registry that maintains a bidirectional map of {@link Identifier} to {@link Object}.
  */
@@ -38,5 +41,13 @@ public enum ObjectRegistry {
      */
     public Object get(Identifier identifier) {
         return map.get(identifier);
+    }
+
+    public Set<Map.Entry<Identifier, Object>> getEntrySet() {
+        return map.entrySet();
+    }
+
+    public Map<Identifier, Object> getMap() {
+        return map;
     }
 }

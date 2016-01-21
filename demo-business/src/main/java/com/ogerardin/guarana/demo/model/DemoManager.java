@@ -12,6 +12,8 @@ import java.util.Collection;
  */
 public interface DemoManager {
 
+    void clearAll();
+
     Collection<Person> getAllPersons();
 
     Collection<Event> getAllEvents();
@@ -19,4 +21,6 @@ public interface DemoManager {
     Person save(Person person);
 
     Event save(Event event);
+
+    void resetDemo();
 }

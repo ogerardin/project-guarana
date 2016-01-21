@@ -106,8 +106,8 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
             row++;
         }
 
-        Button go = new Button(executable instanceof Constructor ? "Create" : "Go");
-        go.setOnAction(event -> {
+        Button goButton = new Button(executable instanceof Constructor ? "Create" : "Go");
+        goButton.setOnAction(event -> {
             try {
                 List paramValues = getParamValues(executable);
                 if (executable instanceof Constructor) {
@@ -121,11 +121,12 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
                         onSuccess.accept(result);
                     }
                 }
+                getBuilder().hide(this);
             } catch (Exception e) {
                 getBuilder().displayException(e);
             }
         });
-        root.getChildren().add(go);
+        root.getChildren().add(goButton);
     }
 
     private List getParamValues(Executable executable) {

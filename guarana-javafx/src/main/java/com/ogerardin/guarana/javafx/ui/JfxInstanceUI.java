@@ -74,9 +74,9 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
         grid.setVgap(10);
         grid.setPadding(Const.DEFAULT_INSETS);
 
-        ColumnConstraints column = new ColumnConstraints();
-        column.setHgrow(Priority.ALWAYS);
-        grid.getColumnConstraints().setAll(new ColumnConstraints(), column); // second column gets any extra width
+        ColumnConstraints column2 = new ColumnConstraints();
+        column2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().setAll(new ColumnConstraints(), column2); // second column gets any extra width
 
         root.getChildren().add(grid);
         int row = 0;
@@ -119,18 +119,19 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             }
 
             // set the field as a target for drag and drop
-            //configureDropTarget(field, propertyDescriptor, () -> target);
-
             configureDropTarget(field,
                     value -> {
-                        Class targetPropertyClass = propertyDescriptor.getPropertyType();
-                        //noinspection unchecked
+                        Class<?> targetPropertyClass = propertyDescriptor.getPropertyType();
                         return targetPropertyClass.isAssignableFrom(value.getClass());
                     },
                     value -> {
                         Method writeMethod = propertyDescriptor.getWriteMethod();
-                        writeMethod.invoke(target, value);
-                        propertyUpdated(propertyDescriptor, value);
+                        try {
+                            writeMethod.invoke(target, value);
+                            propertyUpdated(propertyDescriptor, value);
+                        } catch (Exception e) {
+                            getBuilder().displayException(e);
+                        }
                     });
 
             controlPropertyDescriptorMap.put(field, propertyDescriptor);
@@ -151,8 +152,8 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
             collectionUI.setTarget(collection);
             getBuilder().display(collectionUI, parent, title);
 
-        } catch (Exception ex) {
-            getBuilder().displayException(ex);
+        } catch (Exception e) {
+            getBuilder().displayException(e);
         }
     }
 

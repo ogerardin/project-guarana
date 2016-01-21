@@ -30,10 +30,13 @@ import java.beans.MethodDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
  * Common abstract superclass for Java FX renderable classes.
+ *
  * @author oge
  * @since 24/09/2015
  */
@@ -72,11 +75,12 @@ public abstract class JfxUI implements Renderable<Parent> {
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
     }
 
-    static <T> void configureDragSource(Node source, Supplier<T> targetSupplier) {
+    void configureDragSource(Node source, Supplier<Object> valueSupplier) {
         source.setOnDragDetected(event -> {
             Dragboard dragboard = source.startDragAndDrop(TransferMode.LINK);
             ClipboardContent content = new ClipboardContent();
-            Identifier identifier = ObjectRegistry.INSTANCE.put(targetSupplier.get());
+            Object value = valueSupplier.get();
+            Identifier identifier = ObjectRegistry.INSTANCE.put(value);
             content.put(Const.DATA_FORMAT_OBJECT_IDENTIFIER, identifier);
             dragboard.setContent(content);
             event.consume();
@@ -85,20 +89,21 @@ public abstract class JfxUI implements Renderable<Parent> {
         source.setOnDragDone(Event::consume);
     }
 
-    void configureDropTarget(Control control, ValueValidator valueValidator, ValueSetter valueSetter) {
+    void configureDropTarget(Control control, Predicate<Object> valueValidator, Consumer<Object> valueConsumer) {
+        // Note: it would make sense to accept the transfer in the DragEntered handler (which is called once when the
+        // pointer enters the target), but for some reason it doesn't work, so you have to do it in the DragOver handler
+        // (which is called whenever the pointer moves inside the target)
         control.setOnDragOver(event -> {
-            // for some reason you can't accept the transfer in the DragEntered handler, you have to do it
-            // in the DragOver handler (which is called whenever the pointer moves inside the target)
             Dragboard db = event.getDragboard();
             if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)) {
                 // retrieve identifier from dragboard and associated source object in registry
                 Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
-                Object source = ObjectRegistry.INSTANCE.get(identifier);
-                if (source == null) {
+                Object value = ObjectRegistry.INSTANCE.get(identifier);
+                if (value == null) {
                     System.err.println("Identifier not found in object registry: " + identifier);
                     return;
                 }
-                if (valueValidator.validateValue(source)) {
+                if (valueValidator.test(value)) {
                     event.acceptTransferModes(TransferMode.LINK);
                 }
             }
@@ -109,15 +114,14 @@ public abstract class JfxUI implements Renderable<Parent> {
             if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)) {
                 // retrieve identifier from dragboard and associated source object in registry
                 Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
-                Object source = ObjectRegistry.INSTANCE.get(identifier);
-                if (source == null) {
-                    System.err.println("Identifier not found in object registry: " + identifier);
+                Object value = ObjectRegistry.INSTANCE.get(identifier);
+                if (value == null) {
+                    System.err.println("Key not found in object registry: " + identifier);
                     return;
                 }
-
                 boolean completed = false;
                 try {
-                    valueSetter.setValue(source);
+                    valueConsumer.accept(value);
                     completed = true;
                 } catch (Exception e) {
                     getBuilder().displayException(e);
@@ -138,6 +142,7 @@ public abstract class JfxUI implements Renderable<Parent> {
 
     /**
      * A specialized MenuItem that triggers a method call
+     *
      * @param <T> type of the target object
      */
     private class MethodMenuItem<T> extends MenuItem {
@@ -152,6 +157,7 @@ public abstract class JfxUI implements Renderable<Parent> {
 
     /**
      * A specialized menuItem that triggers a constructor call
+     *
      * @param <T> the target class
      */
     private class ConstructorMenuItem<T> extends MenuItem {
@@ -168,6 +174,7 @@ public abstract class JfxUI implements Renderable<Parent> {
      * Called when the user requests the Instanciation of a class through a specific constructor.
      * If the constructor doesn't take any arguments, it is called immediately; otherwise a dialog is
      * displayed to let the user provide the arguments.
+     *
      * @param <T>         the target type
      * @param constructor the constructor to call
      */
@@ -193,9 +200,10 @@ public abstract class JfxUI implements Renderable<Parent> {
     /**
      * Called when the user requests the execution of a method. If the method doesn't take any arguments,
      * it is executed immediately; otherwise a dialog is displayed to let the user provide the arguments.
-     * @param <T> the target type
-     * @param <R> the return type of the method
-     * @param md the descriptor of the method to execute
+     *
+     * @param <T>            the target type
+     * @param <R>            the return type of the method
+     * @param md             the descriptor of the method to execute
      * @param targetSupplier a Supplier used to obtain the target object
      */
     private <T, R> void executeMethodRequested(MethodDescriptor md, Supplier<T> targetSupplier) {

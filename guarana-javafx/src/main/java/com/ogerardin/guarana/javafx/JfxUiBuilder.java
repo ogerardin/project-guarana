@@ -4,6 +4,8 @@
 
 package com.ogerardin.guarana.javafx;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.ui.*;
@@ -16,6 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.apache.commons.lang.Validate;
 
 /**
@@ -27,7 +30,10 @@ import org.apache.commons.lang.Validate;
  */
 public class JfxUiBuilder implements UIBuilder<Parent> {
 
+
     private static final String GUARANA_DEFAULT_CSS = "/guarana-default.css";
+
+    private BiMap<Renderable, Stage> map = HashBiMap.create();
 
     private final Configuration configuration;
     private String defaultStylesheet;
@@ -88,6 +94,7 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
     //
 
     public void displayException(Throwable e) {
+        e.printStackTrace();
         final InstanceUI<Parent, Throwable> exceptionInstanceUI = buildInstanceUI(Throwable.class);
         exceptionInstanceUI.setTarget(e);
         display(exceptionInstanceUI, "Caught Exception");
@@ -121,15 +128,9 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
     public void display(Renderable<Parent> renderable, Stage stage, Node parent, String title) {
         if (stage == null) {
             stage = new Stage();
-            if (parent != null) {
-                final Stage finalStage = stage;
-                stage.setOnShowing(event -> {
-                    Bounds boundsInScreen = parent.localToScreen(parent.getBoundsInLocal());
-                    finalStage.setX(boundsInScreen.getMinX());
-                    finalStage.setY(boundsInScreen.getMinY());
-                });
-
-            }
+        }
+        if (parent != null) {
+            positionRelativeToParent(stage, parent);
         }
         if (title != null) {
             stage.setTitle(title);
@@ -138,7 +139,17 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getDefaultStylesheet());
         stage.setScene(scene);
+
+        map.put(renderable, stage);
         stage.show();
+    }
+
+    private void positionRelativeToParent(final Window window, Node parent) {
+        window.setOnShowing(event -> {
+            Bounds boundsInScreen = parent.localToScreen(parent.getBoundsInLocal());
+            window.setX(boundsInScreen.getMinX());
+            window.setY(boundsInScreen.getMinY());
+        });
     }
 
     public <T> void displayInstance(T target) {
@@ -178,5 +189,14 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
 
     public Configuration getConfiguration() {
         return configuration;
+    }
+
+    public void hide(Renderable<Parent> renderable) {
+        Stage stage = map.get(renderable);
+        if (stage == null) {
+            System.err.println("WARNING: can't find stage for the specified renderable; maybe it was never displayed?");
+            return;
+        }
+        stage.hide();
     }
 }

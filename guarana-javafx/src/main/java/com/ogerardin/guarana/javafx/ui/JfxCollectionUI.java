@@ -33,8 +33,6 @@ import java.util.List;
 public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T> {
 
     protected final BeanInfo beanInfo;
-    private final Class<T> itemClass;
-    private Collection<T> target;
 
     private final VBox root;
     private final TableView<T> tableView;
@@ -42,8 +40,7 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
     public JfxCollectionUI(JfxUiBuilder builder, Class<T> itemClass) {
         super(builder);
 
-        beanInfo = Introspector.getClassInfo(itemClass);
-        this.itemClass = itemClass;
+        this.beanInfo = Introspector.getClassInfo(itemClass);
 
         // title, icon
 //        Image icon = beanInfo.getIcon(BeanInfo.ICON_COLOR_32x32);
@@ -115,6 +112,11 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
             return row;
         });
 
+        configureDropTarget(tableView,
+                value -> itemClass.isAssignableFrom(value.getClass()),
+                value -> tableView.getItems().add((T) value)
+        );
+
         root.getChildren().add(tableView);
 
     }
@@ -127,13 +129,10 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
 
     @Override
     public void setTarget(Collection<? extends T> target) {
-        //FIXME only list supported currently
         if (target instanceof List) {
             tableView.setItems(FXCollections.observableList((List<T>) target));
-        }
-        else {
+        } else {
             tableView.setItems(FXCollections.observableList(new ArrayList<T>(target)));
         }
-        this.target = (Collection<T>) target;
     }
 }

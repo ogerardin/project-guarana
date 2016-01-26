@@ -6,8 +6,7 @@ package com.ogerardin.guarana.javafx.ui;
 
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
-import com.ogerardin.guarana.core.ui.InstanceUI;
-import com.ogerardin.guarana.javafx.JfxUiBuilder;
+import com.ogerardin.guarana.javafx.JfxUiManager;
 import javafx.collections.FXCollections;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -32,14 +31,16 @@ import java.util.List;
  */
 public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T> {
 
-    protected final BeanInfo beanInfo;
+    private final Class<T> itemClass;
+    private final BeanInfo beanInfo;
 
     private final VBox root;
     private final TableView<T> tableView;
 
-    public JfxCollectionUI(JfxUiBuilder builder, Class<T> itemClass) {
+    public JfxCollectionUI(JfxUiManager builder, Class<T> itemClass) {
         super(builder);
 
+        this.itemClass = itemClass;
         this.beanInfo = Introspector.getClassInfo(itemClass);
 
         // title, icon
@@ -81,25 +82,7 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
             row.setOnMouseClicked(event -> {
                 // Handle double-click
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                    String itemTitle;
-                    T item = null;
-                    if (!row.isEmpty()) {
-                        itemTitle = "Item " + row.getIndex();
-                        item = row.getItem();
-                    } else {
-                        itemTitle = "New Item";
-                        try {
-                            // try no-arg constructor.
-                            item = itemClass.newInstance();
-                        } catch (Exception e) {
-                            getBuilder().displayException(e);
-                        }
-                    }
-                    if (item != null) {
-                        InstanceUI<Parent, T> instanceUI = builder.buildInstanceUI(itemClass);
-                        instanceUI.setTarget(item);
-                        getBuilder().display(instanceUI, row, itemTitle);
-                    }
+                    handleDoubleClick(row);
                 }
             });
 
@@ -119,6 +102,26 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
 
         root.getChildren().add(tableView);
 
+    }
+
+    private void handleDoubleClick(TableRow<T> row) {
+        String itemTitle;
+        T item = null;
+        if (!row.isEmpty()) {
+            itemTitle = "Item " + (row.getIndex() + 1);
+            item = row.getItem();
+        } else {
+            itemTitle = "New Item";
+            try {
+                // try no-arg constructor.
+                item = itemClass.newInstance();
+            } catch (Exception e) {
+                getBuilder().displayException(e);
+            }
+        }
+        if (item != null) {
+            getBuilder().displayInstance(item, itemClass, row, itemTitle);
+        }
     }
 
 

@@ -15,7 +15,7 @@ import com.ogerardin.guarana.demo.javafx.adapters.DemoManagerDb4OImpl;
 import com.ogerardin.guarana.demo.javafx.ui.JfxDateUi;
 import com.ogerardin.guarana.demo.model.DemoManager;
 import com.ogerardin.guarana.demo.model.Person;
-import com.ogerardin.guarana.javafx.JfxUiBuilder;
+import com.ogerardin.guarana.javafx.JfxUiManager;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
@@ -24,17 +24,17 @@ import java.util.Date;
 
 public class MainDemoJfx extends Application {
 
-    private static JfxUiBuilder uiBuilder;
+    private static JfxUiManager uiManager;
     private static DemoManager demoManager;
 
     @Override
     public void start(Stage primaryStage) {
 
-        InstanceUI<Parent, DemoManager> ui = uiBuilder.buildInstanceUI(DemoManager.class);
+        InstanceUI<Parent, DemoManager> ui = uiManager.buildInstanceUI(DemoManager.class);
 
         ui.setTarget(demoManager);
 
-        uiBuilder.display(ui, primaryStage, "Hello Guarana!");
+        uiManager.display(ui, primaryStage, "Hello Guarana!");
     }
 
     public static void main(String[] args) {
@@ -47,10 +47,10 @@ public class MainDemoJfx extends Application {
         config.forClass(Person.class).setToString(Person::getFullNameLastFirst);
         config.forClass(Date.class).setUiClass(JfxDateUi.class);
 
-        uiBuilder = new JfxUiBuilder(config);
+        uiManager = new JfxUiManager(config);
 
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-            uiBuilder.displayException(e);
+            uiManager.displayException(e);
             System.exit(1);
         });
 

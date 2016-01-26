@@ -6,7 +6,7 @@ package com.ogerardin.guarana.javafx.ui;
 
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.ClassUI;
-import com.ogerardin.guarana.javafx.JfxUiBuilder;
+import com.ogerardin.guarana.javafx.JfxUiManager;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
@@ -24,7 +24,7 @@ import java.util.Arrays;
 @Deprecated
 public class JfxClassUI extends Label implements ClassUI<Parent> {
 
-    public JfxClassUI(JfxUiBuilder builder, Class clazz) {
+    public JfxClassUI(JfxUiManager builder, Class clazz) {
         super(clazz.getName());
 
         ContextMenu contextMenu = new ContextMenu();

@@ -8,7 +8,7 @@ import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.Renderable;
-import com.ogerardin.guarana.javafx.JfxUiBuilder;
+import com.ogerardin.guarana.javafx.JfxUiManager;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
@@ -41,7 +41,7 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
     private final Map<String, Property> params;
     private Consumer onSuccess = null;
 
-    public JfxMethodCallUI(JfxUiBuilder builder, Executable executable) {
+    public JfxMethodCallUI(JfxUiManager builder, Executable executable) {
         super(builder);
 
         root = new VBox();

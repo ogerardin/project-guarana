@@ -9,7 +9,7 @@ import com.google.common.collect.HashBiMap;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.core.ui.InstanceUI;
-import com.ogerardin.guarana.javafx.JfxUiBuilder;
+import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
@@ -45,7 +45,7 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
 
     private T target;
 
-    public JfxInstanceUI(JfxUiBuilder builder, Class<T> clazz) {
+    public JfxInstanceUI(JfxUiManager builder, Class<T> clazz) {
         super(builder);
 
         beanInfo = Introspector.getClassInfo(clazz);

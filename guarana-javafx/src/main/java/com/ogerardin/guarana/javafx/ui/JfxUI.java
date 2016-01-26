@@ -10,7 +10,7 @@ import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import com.ogerardin.guarana.core.ui.MapUI;
 import com.ogerardin.guarana.core.ui.Renderable;
-import com.ogerardin.guarana.javafx.JfxUiBuilder;
+import com.ogerardin.guarana.javafx.JfxUiManager;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -45,9 +45,9 @@ public abstract class JfxUI implements Renderable<Parent> {
     Image ICON_CONSTRUCTOR = new Image("call_class_16.png");
     Image ICON_METHOD = new Image("call_method_16.png");
 
-    private final JfxUiBuilder builder;
+    private final JfxUiManager builder;
 
-    public JfxUI(JfxUiBuilder builder) {
+    public JfxUI(JfxUiManager builder) {
         Validate.notNull(builder);
         this.builder = builder;
     }
@@ -132,7 +132,7 @@ public abstract class JfxUI implements Renderable<Parent> {
         });
     }
 
-    public JfxUiBuilder getBuilder() {
+    public JfxUiManager getBuilder() {
         return builder;
     }
 

@@ -21,6 +21,8 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.apache.commons.lang.Validate;
 
+import java.util.function.Consumer;
+
 /**
  * UIBuilder implementation for JavaFX. The chosen renderable type is {@link Parent} as it can be the root of a
  * {@link Node} tree and can be put inside a {@link Stage}
@@ -28,12 +30,13 @@ import org.apache.commons.lang.Validate;
  * @author oge
  * @since 07/09/2015
  */
-public class JfxUiBuilder implements UIBuilder<Parent> {
+public class JfxUiManager implements UIBuilder<Parent> {
 
 
     private static final String GUARANA_DEFAULT_CSS = "/guarana-default.css";
 
-    private BiMap<Renderable, Stage> map = HashBiMap.create();
+    private BiMap<Object, Renderable> objectRenderableMap = HashBiMap.create();
+    private BiMap<Renderable, Stage> renderableStageMap = HashBiMap.create();
 
     private final Configuration configuration;
     private String defaultStylesheet;
@@ -41,14 +44,14 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
     /**
      * Builds a JfxBuilder with a default configuration
      */
-    public JfxUiBuilder() {
+    public JfxUiManager() {
         this(new Configuration());
     }
 
     /**
      * Builds a JfxBuilder with the specified configuration
      */
-    public JfxUiBuilder(Configuration configuration) {
+    public JfxUiManager(Configuration configuration) {
         Validate.notNull(configuration);
         this.configuration = configuration;
         this.defaultStylesheet = getClass().getResource(GUARANA_DEFAULT_CSS).toExternalForm();
@@ -140,7 +143,7 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
         scene.getStylesheets().add(getDefaultStylesheet());
         stage.setScene(scene);
 
-        map.put(renderable, stage);
+        renderableStageMap.put(renderable, stage);
         stage.show();
     }
 
@@ -157,11 +160,19 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
     }
 
     public <T> void displayInstance(T target, Class<T> targetClass, Stage stage, Node parent, String title) {
+        // check if target already has a UI
+        Renderable renderable = objectRenderableMap.get(target);
+        if (renderable != null) {
+            show(renderable);
+            return;
+        }
         // build instanceUI for the target class and display it in stage
         final InstanceUI<Parent, T> ui = buildInstanceUI(targetClass);
         ui.setTarget(target);
+        objectRenderableMap.put(target, ui);
         display(ui, stage, parent, title);
     }
+
 
     public <T> void displayInstance(T target, Class<T> targetClass, Node parent) {
         displayInstance(target, targetClass, null, parent, null);
@@ -191,12 +202,25 @@ public class JfxUiBuilder implements UIBuilder<Parent> {
         return configuration;
     }
 
-    public void hide(Renderable<Parent> renderable) {
-        Stage stage = map.get(renderable);
+
+    private void stageAction(Renderable renderable, Consumer<Stage> stageAction) {
+        Stage stage = renderableStageMap.get(renderable);
         if (stage == null) {
             System.err.println("WARNING: can't find stage for the specified renderable; maybe it was never displayed?");
             return;
         }
-        stage.hide();
+        stageAction.accept(stage);
     }
+
+    public void hide(Renderable renderable) {
+        stageAction(renderable, Window::hide);
+    }
+
+    public void show(Renderable renderable) {
+        stageAction(renderable, stage -> {
+            stage.show();
+            stage.toFront();
+        });
+    }
+
 }

@@ -11,6 +11,7 @@ import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import com.ogerardin.guarana.core.ui.MapUI;
 import com.ogerardin.guarana.core.ui.Renderable;
 import com.ogerardin.guarana.javafx.JfxUiManager;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -146,9 +147,11 @@ public abstract class JfxUI implements Renderable<Parent> {
      * @param <T> type of the target object
      */
     private class MethodMenuItem<T> extends MenuItem {
-        public MethodMenuItem(MethodDescriptor md, Supplier<T> supplier, ImageView icon) {
-            super(md.getMethod().toGenericString());
-            setOnAction(event -> executeMethodRequested(md, supplier));
+        public MethodMenuItem(MethodDescriptor methodDescriptor, Supplier<T> supplier, ImageView icon) {
+            super(methodDescriptor.getMethod().toGenericString());
+            setOnAction(
+                    event -> Platform.runLater(() -> executeMethodRequested(methodDescriptor, supplier))
+            );
             if (icon != null) {
                 setGraphic(icon);
             }
@@ -163,7 +166,9 @@ public abstract class JfxUI implements Renderable<Parent> {
     private class ConstructorMenuItem<T> extends MenuItem {
         public ConstructorMenuItem(Constructor<T> constructor, ImageView icon) {
             super(constructor.toGenericString());
-            setOnAction(event -> executeConstructorRequested(constructor));
+            setOnAction(
+                    event -> Platform.runLater(() -> executeConstructorRequested(constructor))
+            );
             if (icon != null) {
                 setGraphic(icon);
             }

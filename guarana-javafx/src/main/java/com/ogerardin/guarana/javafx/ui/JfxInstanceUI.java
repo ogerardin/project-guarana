@@ -189,8 +189,6 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
     }
 
     private void bind(T target) {
-        JavaBeanObjectPropertyBuilder jfxPropertyBuilder = JavaBeanObjectPropertyBuilder.create();
-        jfxPropertyBuilder.bean(target);
 
         for (Map.Entry<Control, PropertyDescriptor> entry : controlPropertyDescriptorMap.entrySet()) {
             Control control = entry.getKey();
@@ -198,10 +196,12 @@ public class JfxInstanceUI<T> extends JfxUI implements InstanceUI<Parent, T> {
 
             // TODO handle other field types
             if (control instanceof TextField) {
-                jfxPropertyBuilder.name(propertyDescriptor.getName());
                 Property jfxProperty = null;
                 try {
-                    jfxProperty = jfxPropertyBuilder.build();
+                    jfxProperty = JavaBeanObjectPropertyBuilder.create()
+                            .bean(target)
+                            .name(propertyDescriptor.getName())
+                            .build();
                 } catch (NoSuchMethodException e) {
                     System.err.println("WARNING: " + e.toString());
                 }

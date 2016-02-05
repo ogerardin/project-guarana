@@ -8,12 +8,14 @@ import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -67,13 +69,9 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
             if (propertyName.equals(displayName) && getConfiguration().getHumanizePropertyNames()) {
                 displayName = Introspector.humanize(propertyName);
             }
-            TableColumn column = new TableColumn(displayName);
-
+            TableColumn<T, ?> column = new TableColumn<>(displayName);
             column.setCellValueFactory(new PropertyValueFactory<>(propertyName));
-
-            if (builder.getConfiguration().forClass(itemClass).isHiddenProperty(propertyName)) {
-                column.setVisible(false);
-            }
+            column.setVisible(!builder.getConfiguration().forClass(itemClass).isHiddenProperty(propertyName));
             tableView.getColumns().add(column);
         }
 
@@ -93,6 +91,13 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
             configureDragSource(row, row::getItem);
 
             return row;
+        });
+
+        tableView.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.DELETE) {
+                ObservableList<T> selectedItems = tableView.getSelectionModel().getSelectedItems();
+                tableView.getItems().removeAll(selectedItems);
+            }
         });
 
         configureDropTarget(tableView,
@@ -115,7 +120,9 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
             try {
                 // try no-arg constructor.
                 item = itemClass.newInstance();
+                tableView.getItems().add(item);
             } catch (Exception e) {
+                //TODO better message
                 getBuilder().displayException(e);
             }
         }
@@ -132,7 +139,9 @@ public class JfxCollectionUI<T> extends JfxUI implements CollectionUI<Parent, T>
 
     @Override
     public void setTarget(Collection<? extends T> target) {
-        if (target instanceof List) {
+        if (target instanceof ObservableList) {
+            tableView.setItems((ObservableList<T>) target);
+        } else if (target instanceof List) {
             tableView.setItems(FXCollections.observableList((List<T>) target));
         } else {
             tableView.setItems(FXCollections.observableList(new ArrayList<T>(target)));

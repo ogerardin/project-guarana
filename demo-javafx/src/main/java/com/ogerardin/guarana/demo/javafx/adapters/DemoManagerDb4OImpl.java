@@ -11,10 +11,14 @@ import com.db4o.config.Configuration;
 import com.ogerardin.guarana.demo.model.DemoManager;
 import com.ogerardin.guarana.demo.model.Event;
 import com.ogerardin.guarana.demo.model.Person;
+import com.sun.javafx.collections.ObservableListWrapper;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Olivier
@@ -38,15 +42,31 @@ public class DemoManagerDb4OImpl implements DemoManager {
 
     public Collection<Person> getAllPersons() {
         final ObjectSet<Person> persons = objectContainer.query(Person.class);
-        // return a modifiable copy
-        return new ArrayList<>(persons);
+        return getReplicatingObservableList(new ArrayList<>(persons), objectContainer);
     }
 
     @Override
     public Collection<Event> getAllEvents() {
         final ObjectSet<Event> events = objectContainer.query(Event.class);
-        // return a modifiable copy
-        return new ArrayList<>(events);
+        return getReplicatingObservableList(new ArrayList<>(events), objectContainer);
+    }
+
+    //TODO move somewhere else
+    private static <T> ObservableList<T> getReplicatingObservableList(List<T> list, ObjectContainer objectContainer) {
+        ObservableListWrapper<T> observableList = new ObservableListWrapper<>(list);
+        observableList.addListener((ListChangeListener<T>) c -> {
+            System.out.println(c);
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    c.getAddedSubList().stream().forEach(objectContainer::store);
+                } else if (c.wasRemoved()) {
+                    c.getRemoved().stream().forEach(objectContainer::delete);
+                } else {
+                    System.err.println("change not supported: " + c);
+                }
+            }
+        });
+        return observableList;
     }
 
     public Person save(Person person) {

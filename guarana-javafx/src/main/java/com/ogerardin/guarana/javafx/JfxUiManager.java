@@ -19,6 +19,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Pair;
 import org.apache.commons.lang.Validate;
 
 import java.util.function.Consumer;
@@ -35,7 +36,7 @@ public class JfxUiManager implements UIBuilder<Parent> {
 
     private static final String GUARANA_DEFAULT_CSS = "/guarana-default.css";
 
-    private BiMap<Object, Renderable> objectRenderableMap = HashBiMap.create();
+    private BiMap<Pair<Class, Object>, Renderable> objectRenderableMap = HashBiMap.create();
     private BiMap<Renderable, Stage> renderableStageMap = HashBiMap.create();
 
     private final Configuration configuration;
@@ -161,7 +162,8 @@ public class JfxUiManager implements UIBuilder<Parent> {
 
     public <T> void displayInstance(T target, Class<T> targetClass, Stage stage, Node parent, String title) {
         // check if target already has a UI
-        Renderable renderable = objectRenderableMap.get(target);
+        Pair<Class, Object> key = new Pair<>(targetClass, target);
+        Renderable renderable = objectRenderableMap.get(key);
         if (renderable != null) {
             show(renderable);
             return;
@@ -169,7 +171,7 @@ public class JfxUiManager implements UIBuilder<Parent> {
         // build instanceUI for the target class and display it in stage
         final InstanceUI<Parent, T> ui = buildInstanceUI(targetClass);
         ui.setTarget(target);
-        objectRenderableMap.put(target, ui);
+        objectRenderableMap.put(key, ui);
         display(ui, stage, parent, title);
     }
 

@@ -20,7 +20,8 @@ public class JfxDateUi extends DatePicker implements InstanceUI<Parent, Date> {
 
     @Override
     public void setTarget(Date target) {
-        LocalDate value = target.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate value = (target == null) ? null :
+                target.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         setValue(value);
     }
 

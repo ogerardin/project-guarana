@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.javafx.ui;
+package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;

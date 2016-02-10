@@ -2,13 +2,13 @@
  * Copyright (c) 2015 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.javafx.ui;
+package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.ui.CollectionUI;
-import com.ogerardin.guarana.core.ui.Renderable;
 import com.ogerardin.guarana.javafx.JfxUiManager;
+import com.ogerardin.guarana.javafx.ui.JfxRenderable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
@@ -35,13 +35,13 @@ import java.util.function.Consumer;
  * @author Olivier
  * @since 05/06/15
  */
-public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
+public class DefaultJfxMethodCallUI extends JfxUI implements JfxRenderable {
 
     private final VBox root;
     private final Map<String, Property> params;
     private Consumer onSuccess = null;
 
-    public JfxMethodCallUI(JfxUiManager builder, Executable executable) {
+    public DefaultJfxMethodCallUI(JfxUiManager builder, Executable executable) {
         super(builder);
 
         root = new VBox();
@@ -99,7 +99,7 @@ public class JfxMethodCallUI extends JfxUI implements Renderable<Parent> {
                     value -> {
                         //params.put(param.getName(), value);
                         ClassConfiguration classConfig = getConfiguration().forClass(value.getClass());
-                        //FIXME set param value, not just field text ! (see JfxInstanceUI)
+                        //FIXME set param value, not just field text ! (see DefaultJfxInstanceUI)
                         field.setText(classConfig.toString(value));
                     });
 

@@ -2,15 +2,15 @@
  * Copyright (c) 2015 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.javafx.ui;
+package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import com.ogerardin.guarana.core.ui.MapUI;
-import com.ogerardin.guarana.core.ui.Renderable;
 import com.ogerardin.guarana.javafx.JfxUiManager;
+import com.ogerardin.guarana.javafx.ui.JfxRenderable;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.scene.Node;
@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  * @author oge
  * @since 24/09/2015
  */
-public abstract class JfxUI implements Renderable<Parent> {
+public abstract class JfxUI implements JfxRenderable {
 
     Image ICON_CONSTRUCTOR = new Image("call_class_16.png");
     Image ICON_METHOD = new Image("call_method_16.png");
@@ -195,7 +195,7 @@ public abstract class JfxUI implements Renderable<Parent> {
                 getBuilder().displayException(e);
             }
         } else {
-            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), constructor);
+            DefaultJfxMethodCallUI methodCallUI = new DefaultJfxMethodCallUI(getBuilder(), constructor);
             getBuilder().display(methodCallUI);
             //FIXME by default we just display the result, should be configurable
             methodCallUI.setOnSuccess(o -> getBuilder().displayInstance(o));
@@ -231,7 +231,7 @@ public abstract class JfxUI implements Renderable<Parent> {
                 getBuilder().displayException(e);
             }
         } else {
-            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), method);
+            DefaultJfxMethodCallUI methodCallUI = new DefaultJfxMethodCallUI(getBuilder(), method);
             getBuilder().display(methodCallUI);
         }
     }

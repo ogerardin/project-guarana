@@ -8,11 +8,15 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.config.Configuration;
-import com.ogerardin.guarana.core.ui.*;
-import com.ogerardin.guarana.javafx.ui.JfxClassUI;
+import com.ogerardin.guarana.core.ui.MapUI;
+import com.ogerardin.guarana.core.ui.Renderable;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
-import com.ogerardin.guarana.javafx.ui.JfxMapUI;
+import com.ogerardin.guarana.javafx.ui.JfxRenderable;
+import com.ogerardin.guarana.javafx.ui.JfxUIBuilder;
+import com.ogerardin.guarana.javafx.ui.impl.DefaultJfxCollectionUI;
+import com.ogerardin.guarana.javafx.ui.impl.DefaultJfxInstanceUI;
+import com.ogerardin.guarana.javafx.ui.impl.DefaultJfxMapUI;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -31,7 +35,8 @@ import java.util.function.Consumer;
  * @author oge
  * @since 07/09/2015
  */
-public class JfxUiManager implements UIBuilder<Parent> {
+//TOTO split Builder from Manager
+public class JfxUiManager implements JfxUIBuilder {
 
 
     private static final String GUARANA_DEFAULT_CSS = "/guarana-default.css";
@@ -64,32 +69,28 @@ public class JfxUiManager implements UIBuilder<Parent> {
 
 
     @Override
-    public <C> InstanceUI<Parent, C> buildInstanceUI(Class<C> clazz) {
+    public <C> JfxInstanceUI<C> buildInstanceUI(Class<C> clazz) {
         ClassConfiguration<C> classConfiguration = configuration.forClass(clazz);
-        Class<InstanceUI<Parent, C>> uiClass = classConfiguration.getUiClass();
+        Class<?> uiClass = classConfiguration.getUiClass();
         if (uiClass != null) {
             try {
-                return uiClass.newInstance();
+                // might throw ClassCastException if the specified class doesn't match JfxInstanceUI
+                return (JfxInstanceUI<C>) uiClass.newInstance();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-        return new JfxInstanceUI<>(this, clazz);
+        return new DefaultJfxInstanceUI<>(this, clazz);
     }
 
     @Override
-    public ClassUI<Parent> buildClassUI(Class clazz) {
-        return new JfxClassUI(this, clazz);
-    }
-
-    @Override
-    public <C> CollectionUI<Parent, C> buildCollectionUi(Class<C> itemClass) {
-        return new JfxCollectionUI<>(this, itemClass);
+    public <C> JfxCollectionUI<C> buildCollectionUi(Class<C> itemClass) {
+        return new DefaultJfxCollectionUI<>(this, itemClass);
     }
 
     @Override
     public <K, V> MapUI<Parent, K, V> buildMapUI() {
-        return new JfxMapUI<>(this);
+        return new DefaultJfxMapUI<>(this);
     }
 
 
@@ -99,37 +100,37 @@ public class JfxUiManager implements UIBuilder<Parent> {
 
     public void displayException(Throwable e) {
         e.printStackTrace();
-        final InstanceUI<Parent, Throwable> exceptionInstanceUI = buildInstanceUI(Throwable.class);
+        JfxInstanceUI<Throwable> exceptionInstanceUI = buildInstanceUI(Throwable.class);
         exceptionInstanceUI.setTarget(e);
         display(exceptionInstanceUI, "Caught Exception");
     }
 
 
-    public void display(Renderable<Parent> renderable, Node parent, String title) {
+    public void display(JfxRenderable renderable, Node parent, String title) {
         display(renderable, null, parent, title);
     }
 
-    public void display(Renderable<Parent> renderable, Stage stage, String title) {
+    public void display(JfxRenderable renderable, Stage stage, String title) {
         display(renderable, stage, null, title);
     }
 
-    public void display(Renderable<Parent> renderable, Stage stage) {
+    public void display(JfxRenderable renderable, Stage stage) {
         display(renderable, stage, null, null);
     }
 
-    public void display(Renderable<Parent> renderable, Node parent) {
+    public void display(JfxRenderable renderable, Node parent) {
         display(renderable, null, parent, null);
     }
 
-    public void display(Renderable<Parent> renderable) {
+    public void display(JfxRenderable renderable) {
         display(renderable, null, null, null);
     }
 
-    public void display(Renderable<Parent> renderable, String title) {
+    public void display(JfxRenderable renderable, String title) {
         display(renderable, null, null, title);
     }
 
-    public void display(Renderable<Parent> renderable, Stage stage, Node parent, String title) {
+    public void display(JfxRenderable renderable, Stage stage, Node parent, String title) {
         if (stage == null) {
             stage = new Stage();
         }
@@ -169,7 +170,7 @@ public class JfxUiManager implements UIBuilder<Parent> {
             return;
         }
         // build instanceUI for the target class and display it in stage
-        final InstanceUI<Parent, T> ui = buildInstanceUI(targetClass);
+        JfxInstanceUI<T> ui = buildInstanceUI(targetClass);
         ui.setTarget(target);
         objectRenderableMap.put(key, ui);
         display(ui, stage, parent, title);

@@ -14,8 +14,6 @@ package com.ogerardin.guarana.core.ui;
  */
 public interface UIBuilder<R> {
 
-    ClassUI<R> buildClassUI(Class clazz);
-
     /**
      * Builds a {@link InstanceUI} capable of representing an object of class C.
      */

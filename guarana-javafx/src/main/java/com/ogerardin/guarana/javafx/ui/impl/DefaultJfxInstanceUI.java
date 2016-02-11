@@ -11,8 +11,9 @@ import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
-import com.ogerardin.guarana.javafx.ui.JfxRenderable;
-import javafx.beans.property.Property;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.adapter.JavaBeanObjectProperty;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -43,11 +44,13 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
     protected final BeanInfo beanInfo;
 
-    protected BiMap<Node, PropertyDescriptor> controlPropertyDescriptorMap = HashBiMap.create();
+    protected BiMap<Node, PropertyDescriptor> nodePropertyDescriptorMap = HashBiMap.create();
+    protected BiMap<JfxInstanceUI, PropertyDescriptor> uiPropertyDescriptorMap = HashBiMap.create();
 
     private final VBox root;
 
-    private T target;
+    //private T target;
+    private ObjectProperty<T> targetProperty = new SimpleObjectProperty<>();
 
     public DefaultJfxInstanceUI(JfxUiManager builder, Class<T> clazz) {
         super(builder);
@@ -66,10 +69,10 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
         root.getChildren().add(title);
 
         // set the title label as a source for drag and drop
-        configureDragSource(title, () -> target);
+        configureDragSource(title, this::getTarget);
 
         // build methods context menu
-        configureContextMenu(title, beanInfo, () -> target);
+        configureContextMenu(title, beanInfo, this::getTarget);
 
         // build properties form
         GridPane grid = buildGridPane();
@@ -90,8 +93,8 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
             label.setTooltip(new Tooltip(propertyDescriptor.toString()));
             grid.add(label, 0, row);
 
-            JfxRenderable fieldUi = buildEmbeddedUi(propertyDescriptor, propertyType);
-            Parent field = fieldUi.render();
+            JfxInstanceUI<?> fieldUi = getBuilder().buildEmbeddedInstanceUI(propertyType);
+            Node field = fieldUi.render();
             grid.add(field, 1, row);
 
             // if it's a collection, add a button to open as list
@@ -116,39 +119,18 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                     value -> {
                         Method writeMethod = propertyDescriptor.getWriteMethod();
                         try {
-                            writeMethod.invoke(target, value);
+                            writeMethod.invoke(getTarget(), value);
                             propertyUpdated(propertyDescriptor, value);
                         } catch (Exception e) {
                             getBuilder().displayException(e);
                         }
                     });
 
-            controlPropertyDescriptorMap.put(field, propertyDescriptor);
+            uiPropertyDescriptorMap.put(fieldUi, propertyDescriptor);
+            nodePropertyDescriptorMap.put(field, propertyDescriptor);
 
             row++;
         }
-    }
-
-    private JfxRenderable buildEmbeddedUi(PropertyDescriptor propertyDescriptor, Class<?> propertyType) {
-        Class uiClass = getConfiguration().forClass(propertyType).getEmbeddedUiClass();
-        if (uiClass != null) {
-            try {
-                // might throw ClassCastException if the specified class doesn't match JfxRenderable
-                return (JfxRenderable) uiClass.newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return new DefaultJfxEmbeddedInstanceUI<>(getBuilder(), propertyType);
-
-//        TextField field = new TextField();
-//        //FIXME: for now only editable String properties generate an editable text field
-//        if (Introspector.isReadOnly(propertyDescriptor) || propertyType != String.class) {
-//            field.setEditable(false);
-//            field.getStyleClass().add("copyable-label");
-//        }
-//        return field;
     }
 
     private GridPane buildGridPane() {
@@ -166,7 +148,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
     private void zoomCollection(Node parent, Method readMethod, String title) {
         try {
-            final Collection collection = (Collection) readMethod.invoke(target);
+            final Collection collection = (Collection) readMethod.invoke(getTarget());
             Class<?> itemClass = Object.class;
             //FIXME how do we get the item class if collection is empty ??
             if (!collection.isEmpty()) {
@@ -187,7 +169,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
     private <P> void zoomProperty(Node parent, Class<P> propertyType, Method readMethod, String title) {
         try {
-            final P value = (P) readMethod.invoke(target);
+            final P value = (P) readMethod.invoke(getTarget());
             getBuilder().displayInstance(value, propertyType, parent, title);
         } catch (Exception ex) {
             getBuilder().displayException(ex);
@@ -196,15 +178,15 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
 
     public void setTarget(T target) {
-        if (this.target != null) {
+        if (getTarget() != null) {
             unbind();
         }
-        this.target = target;
+        targetProperty.set(target);
         bind(target);
     }
 
     private void unbind() {
-        for (Map.Entry<Node, PropertyDescriptor> entry : controlPropertyDescriptorMap.entrySet()) {
+        for (Map.Entry<Node, PropertyDescriptor> entry : nodePropertyDescriptorMap.entrySet()) {
             Node node = entry.getKey();
             if (node instanceof TextField) {
                 ((TextField) node).textProperty().unbind();
@@ -214,41 +196,58 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
     private void bind(T target) {
 
-        for (Map.Entry<Node, PropertyDescriptor> entry : controlPropertyDescriptorMap.entrySet()) {
-            Node node = entry.getKey();
+        for (Map.Entry<JfxInstanceUI, PropertyDescriptor> entry : uiPropertyDescriptorMap.entrySet()) {
+            final JfxInstanceUI ui = entry.getKey();
             PropertyDescriptor propertyDescriptor = entry.getValue();
 
-            // TODO handle other field types
-            if (node instanceof TextField) {
-                Property jfxProperty = null;
-                try {
-                    jfxProperty = JavaBeanObjectPropertyBuilder.create()
-                            .bean(target)
-                            .name(propertyDescriptor.getName())
-                            .build();
-                } catch (NoSuchMethodException e) {
-                    System.err.println("WARNING: " + e.toString());
-                }
+            JavaBeanObjectProperty jfxProperty = null;
+            try {
+                jfxProperty = JavaBeanObjectPropertyBuilder.create()
+                        .bean(target)
+                        .name(propertyDescriptor.getName())
+                        .build();
+                ui.targetProperty().bindBidirectional(jfxProperty);
 
-                if (jfxProperty == null) {
-                    // failed to create JavaFX Property: just set the field value (no binding)
-                    try {
-                        Object value = propertyDescriptor.getReadMethod().invoke(target);
-                        Bindings.fieldSetValue(getConfiguration(), (TextField) node, propertyDescriptor, value);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    continue;
-                }
-
-                if (propertyDescriptor.getPropertyType() == String.class) {
-                    ((TextField) node).textProperty().bindBidirectional(jfxProperty);
-                } else {
-                    //TODO handle other property types
-                    System.err.println("ERROR: no binding for type " + propertyDescriptor.getPropertyType());
-                }
+            } catch (NoSuchMethodException e) {
+                System.err.println("WARNING: " + e.toString());
             }
         }
+
+//        for (Map.Entry<Node, PropertyDescriptor> entry : nodePropertyDescriptorMap.entrySet()) {
+//            Node node = entry.getKey();
+//            PropertyDescriptor propertyDescriptor = entry.getValue();
+//
+//            // TODO handle other field types
+//            if (node instanceof TextField) {
+//                Property jfxProperty = null;
+//                try {
+//                    jfxProperty = JavaBeanObjectPropertyBuilder.create()
+//                            .bean(target)
+//                            .name(propertyDescriptor.getName())
+//                            .build();
+//                } catch (NoSuchMethodException e) {
+//                    System.err.println("WARNING: " + e.toString());
+//                }
+//
+//                if (jfxProperty == null) {
+//                    // failed to create JavaFX Property: just set the field value (no binding)
+//                    try {
+//                        Object value = propertyDescriptor.getReadMethod().invoke(target);
+//                        Bindings.fieldSetValue(getConfiguration(), (TextField) node, propertyDescriptor, value);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    continue;
+//                }
+//
+//                if (propertyDescriptor.getPropertyType() == String.class) {
+//                    ((TextField) node).textProperty().bindBidirectional(jfxProperty);
+//                } else {
+//                    //TODO handle other property types
+//                    System.err.println("ERROR: no binding for type " + propertyDescriptor.getPropertyType());
+//                }
+//            }
+//        }
     }
 
 
@@ -258,13 +257,18 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
     }
 
     protected void propertyUpdated(PropertyDescriptor propertyDescriptor, Object value) {
-        Node node = controlPropertyDescriptorMap.inverse().get(propertyDescriptor);
+        Node node = nodePropertyDescriptorMap.inverse().get(propertyDescriptor);
         if (node instanceof TextField) {
             Bindings.fieldSetValue(getConfiguration(), ((TextField) node), propertyDescriptor, value);
         }
     }
 
     protected T getTarget() {
-        return target;
+        return targetProperty.get();
+    }
+
+    @Override
+    public ObjectProperty<T> targetProperty() {
+        return targetProperty;
     }
 }

@@ -6,6 +6,8 @@ package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TextField;
 
 /**
@@ -18,6 +20,9 @@ public class DefaultJfxEmbeddedInstanceUI<T> extends TextField implements JfxIns
 
     private final JfxUiManager jfxUiManager;
     private final Class<T> clazz;
+
+    private ObjectProperty<T> targetProperty = new SimpleObjectProperty<>();
+
 
     public DefaultJfxEmbeddedInstanceUI(JfxUiManager jfxUiManager, Class<T> clazz) {
         this.jfxUiManager = jfxUiManager;
@@ -34,5 +39,10 @@ public class DefaultJfxEmbeddedInstanceUI<T> extends TextField implements JfxIns
     @Override
     public TextField render() {
         return this;
+    }
+
+    @Override
+    public ObjectProperty<T> targetProperty() {
+        return targetProperty;
     }
 }

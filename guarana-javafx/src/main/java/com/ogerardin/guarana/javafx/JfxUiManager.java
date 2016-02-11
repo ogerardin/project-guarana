@@ -8,13 +8,10 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.config.Configuration;
-import com.ogerardin.guarana.core.ui.MapUI;
 import com.ogerardin.guarana.core.ui.Renderable;
-import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
-import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
-import com.ogerardin.guarana.javafx.ui.JfxRenderable;
-import com.ogerardin.guarana.javafx.ui.JfxUIBuilder;
+import com.ogerardin.guarana.javafx.ui.*;
 import com.ogerardin.guarana.javafx.ui.impl.DefaultJfxCollectionUI;
+import com.ogerardin.guarana.javafx.ui.impl.DefaultJfxEmbeddedInstanceUI;
 import com.ogerardin.guarana.javafx.ui.impl.DefaultJfxInstanceUI;
 import com.ogerardin.guarana.javafx.ui.impl.DefaultJfxMapUI;
 import javafx.geometry.Bounds;
@@ -84,12 +81,28 @@ public class JfxUiManager implements JfxUIBuilder {
     }
 
     @Override
+    public <C> JfxInstanceUI<C> buildEmbeddedInstanceUI(Class<C> clazz) {
+        ClassConfiguration<C> classConfiguration = configuration.forClass(clazz);
+        Class<?> uiClass = classConfiguration.getEmbeddedUiClass();
+        if (uiClass != null) {
+            try {
+                // might throw ClassCastException if the specified class doesn't match JfxInstanceUI
+                return (JfxInstanceUI<C>) uiClass.newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return new DefaultJfxEmbeddedInstanceUI<>(this, clazz);
+    }
+
+
+    @Override
     public <C> JfxCollectionUI<C> buildCollectionUi(Class<C> itemClass) {
         return new DefaultJfxCollectionUI<>(this, itemClass);
     }
 
     @Override
-    public <K, V> MapUI<Parent, K, V> buildMapUI() {
+    public <K, V> JfxMapUI<K, V> buildMapUI() {
         return new DefaultJfxMapUI<>(this);
     }
 

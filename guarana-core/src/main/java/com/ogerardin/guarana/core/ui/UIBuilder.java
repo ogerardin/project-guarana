@@ -19,6 +19,9 @@ public interface UIBuilder<R> {
      */
     <C> InstanceUI<R, C> buildInstanceUI(Class<C> clazz);
 
+    <C> InstanceUI<R, C> buildEmbeddedInstanceUI(Class<C> clazz);
+
+
     /**
      * Builds a {@link CollectionUI} capable of representing a collection of objects of class C.
      */

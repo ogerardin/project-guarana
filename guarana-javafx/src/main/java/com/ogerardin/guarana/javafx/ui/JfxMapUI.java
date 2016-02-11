@@ -11,5 +11,5 @@ import javafx.scene.Parent;
  * @author oge
  * @since 10/02/2016
  */
-public interface JfxMapUI<K, V> extends MapUI<Parent, K, V> {
+public interface JfxMapUI<K, V> extends MapUI<Parent, K, V>, JfxRenderable {
 }

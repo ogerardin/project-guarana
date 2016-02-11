@@ -6,8 +6,8 @@ package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.introspection.Introspector;
-import com.ogerardin.guarana.core.ui.CollectionUI;
 import com.ogerardin.guarana.javafx.JfxUiManager;
+import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxRenderable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleStringProperty;
@@ -86,7 +86,7 @@ public class DefaultJfxMethodCallUI extends JfxUI implements JfxRenderable {
             if (Collection.class.isAssignableFrom(param.getType())) {
                 Button button = new Button("...");
                 button.setOnAction(e -> {
-                    CollectionUI<Parent, Object> collectionUI = getBuilder().buildCollectionUi(Object.class);
+                    JfxCollectionUI<Object> collectionUI = getBuilder().buildCollectionUi(Object.class);
                     collectionUI.setTarget(new ArrayList<>());
                     getBuilder().display(collectionUI, button, "Collection parameter");
                 });

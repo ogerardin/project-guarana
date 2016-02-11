@@ -18,7 +18,9 @@ public class ClassConfiguration<C> {
 
     private final Set<String> hiddenProperties = new HashSet<>();
     private ToString<C> toString;
-    private Class uiClass;
+    private Class<?> uiClass;
+    private Class<?> embeddedUiClass;
+
 
     public ClassConfiguration(Class<C> clazz) {
         hiddenProperties.add("class");
@@ -47,6 +49,14 @@ public class ClassConfiguration<C> {
 
     public Class getUiClass() {
         return uiClass;
+    }
+
+    public Class getEmbeddedUiClass() {
+        return embeddedUiClass;
+    }
+
+    public <U extends InstanceUI> void setEmbeddedUiClass(Class<U> embeddedUiClass) {
+        this.embeddedUiClass = embeddedUiClass;
     }
 
     public <U extends InstanceUI> void setUiClass(Class<U> uiClass) {

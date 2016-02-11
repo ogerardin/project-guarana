@@ -11,12 +11,16 @@ import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
+import com.ogerardin.guarana.javafx.ui.JfxRenderable;
 import javafx.beans.property.Property;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -39,7 +43,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
     protected final BeanInfo beanInfo;
 
-    protected BiMap<Control, PropertyDescriptor> controlPropertyDescriptorMap = HashBiMap.create();
+    protected BiMap<Node, PropertyDescriptor> controlPropertyDescriptorMap = HashBiMap.create();
 
     private final VBox root;
 
@@ -86,15 +90,8 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
             label.setTooltip(new Tooltip(propertyDescriptor.toString()));
             grid.add(label, 0, row);
 
-            TextField field = new TextField();
-            //FIXME: for now only editable String properties generate an editable text field
-            if (Introspector.isReadOnly(propertyDescriptor) || propertyType != String.class) {
-                field.setEditable(false);
-                field.getStyleClass().add("copyable-label");
-            }
-//            if (row == 0) {
-//                field.requestFocus();
-//            }
+            JfxRenderable fieldUi = buildEmbeddedUi(propertyDescriptor, propertyType);
+            Parent field = fieldUi.render();
             grid.add(field, 1, row);
 
             // if it's a collection, add a button to open as list
@@ -130,6 +127,28 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
             row++;
         }
+    }
+
+    private JfxRenderable buildEmbeddedUi(PropertyDescriptor propertyDescriptor, Class<?> propertyType) {
+        Class uiClass = getConfiguration().forClass(propertyType).getEmbeddedUiClass();
+        if (uiClass != null) {
+            try {
+                // might throw ClassCastException if the specified class doesn't match JfxRenderable
+                return (JfxRenderable) uiClass.newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return new DefaultJfxEmbeddedInstanceUI<>(getBuilder(), propertyType);
+
+//        TextField field = new TextField();
+//        //FIXME: for now only editable String properties generate an editable text field
+//        if (Introspector.isReadOnly(propertyDescriptor) || propertyType != String.class) {
+//            field.setEditable(false);
+//            field.getStyleClass().add("copyable-label");
+//        }
+//        return field;
     }
 
     private GridPane buildGridPane() {
@@ -185,22 +204,22 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
     }
 
     private void unbind() {
-        for (Map.Entry<Control, PropertyDescriptor> entry : controlPropertyDescriptorMap.entrySet()) {
-            Control control = entry.getKey();
-            if (control instanceof TextField) {
-                ((TextField) control).textProperty().unbind();
+        for (Map.Entry<Node, PropertyDescriptor> entry : controlPropertyDescriptorMap.entrySet()) {
+            Node node = entry.getKey();
+            if (node instanceof TextField) {
+                ((TextField) node).textProperty().unbind();
             }
         }
     }
 
     private void bind(T target) {
 
-        for (Map.Entry<Control, PropertyDescriptor> entry : controlPropertyDescriptorMap.entrySet()) {
-            Control control = entry.getKey();
+        for (Map.Entry<Node, PropertyDescriptor> entry : controlPropertyDescriptorMap.entrySet()) {
+            Node node = entry.getKey();
             PropertyDescriptor propertyDescriptor = entry.getValue();
 
             // TODO handle other field types
-            if (control instanceof TextField) {
+            if (node instanceof TextField) {
                 Property jfxProperty = null;
                 try {
                     jfxProperty = JavaBeanObjectPropertyBuilder.create()
@@ -215,7 +234,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                     // failed to create JavaFX Property: just set the field value (no binding)
                     try {
                         Object value = propertyDescriptor.getReadMethod().invoke(target);
-                        Bindings.fieldSetValue(getConfiguration(), (TextField) control, propertyDescriptor, value);
+                        Bindings.fieldSetValue(getConfiguration(), (TextField) node, propertyDescriptor, value);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -223,7 +242,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                 }
 
                 if (propertyDescriptor.getPropertyType() == String.class) {
-                    ((TextField) control).textProperty().bindBidirectional(jfxProperty);
+                    ((TextField) node).textProperty().bindBidirectional(jfxProperty);
                 } else {
                     //TODO handle other property types
                     System.err.println("ERROR: no binding for type " + propertyDescriptor.getPropertyType());
@@ -239,9 +258,9 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
     }
 
     protected void propertyUpdated(PropertyDescriptor propertyDescriptor, Object value) {
-        Control control = controlPropertyDescriptorMap.inverse().get(propertyDescriptor);
-        if (control instanceof TextField) {
-            Bindings.fieldSetValue(getConfiguration(), ((TextField) control), propertyDescriptor, value);
+        Node node = controlPropertyDescriptorMap.inverse().get(propertyDescriptor);
+        if (node instanceof TextField) {
+            Bindings.fieldSetValue(getConfiguration(), ((TextField) node), propertyDescriptor, value);
         }
     }
 

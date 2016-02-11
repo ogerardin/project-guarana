@@ -10,14 +10,13 @@ package com.ogerardin.guarana.demo.javafx.main;
  */
 
 import com.ogerardin.guarana.core.config.Configuration;
-import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.demo.javafx.adapters.DemoManagerDb4OImpl;
 import com.ogerardin.guarana.demo.javafx.ui.JfxDateUi;
 import com.ogerardin.guarana.demo.model.DemoManager;
 import com.ogerardin.guarana.demo.model.Person;
 import com.ogerardin.guarana.javafx.JfxUiManager;
+import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
-import javafx.scene.Parent;
 import javafx.stage.Stage;
 
 import java.util.Date;
@@ -30,7 +29,7 @@ public class MainDemoJfx extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        InstanceUI<Parent, DemoManager> ui = uiManager.buildInstanceUI(DemoManager.class);
+        JfxInstanceUI<DemoManager> ui = uiManager.buildInstanceUI(DemoManager.class);
 
         ui.setTarget(demoManager);
 
@@ -45,7 +44,7 @@ public class MainDemoJfx extends Application {
         config.forClass(Throwable.class).hideProperties("localizedMessage");
         config.forClass(Person.class).hideProperties("fullNameLastFirst", "fullNameFirstLast");
         config.forClass(Person.class).setToString(Person::getFullNameLastFirst);
-        config.forClass(Date.class).setUiClass(JfxDateUi.class);
+        config.forClass(Date.class).setEmbeddedUiClass(JfxDateUi.class);
 
         uiManager = new JfxUiManager(config);
 

@@ -4,7 +4,7 @@
 
 package com.ogerardin.guarana.demo.javafx.ui;
 
-import com.ogerardin.guarana.core.ui.InstanceUI;
+import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.scene.Parent;
 import javafx.scene.control.DatePicker;
 
@@ -16,7 +16,7 @@ import java.util.Date;
  * @author olivier
  * @since 12/01/2016.
  */
-public class JfxDateUi extends DatePicker implements InstanceUI<Parent, Date> {
+public class JfxDateUi extends DatePicker implements JfxInstanceUI<Date> {
 
     @Override
     public void setTarget(Date target) {

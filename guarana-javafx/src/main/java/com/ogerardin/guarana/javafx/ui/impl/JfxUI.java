@@ -8,13 +8,12 @@ import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
-import com.ogerardin.guarana.core.ui.MapUI;
 import com.ogerardin.guarana.javafx.JfxUiManager;
+import com.ogerardin.guarana.javafx.ui.JfxMapUI;
 import com.ogerardin.guarana.javafx.ui.JfxRenderable;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
@@ -90,7 +89,7 @@ public abstract class JfxUI implements JfxRenderable {
         source.setOnDragDone(Event::consume);
     }
 
-    void configureDropTarget(Control control, Predicate<Object> valueValidator, Consumer<Object> valueConsumer) {
+    void configureDropTarget(Node control, Predicate<Object> valueValidator, Consumer<Object> valueConsumer) {
         // Note: it would make sense to accept the transfer in the DragEntered handler (which is called once when the
         // pointer enters the target), but for some reason it doesn't work, so you have to do it in the DragOver handler
         // (which is called whenever the pointer moves inside the target)
@@ -238,7 +237,7 @@ public abstract class JfxUI implements JfxRenderable {
 
     @SuppressWarnings("unused")
     public void displayObjectRegistry() {
-        MapUI<Parent, Identifier, Object> ui = builder.buildMapUI();
+        JfxMapUI<Identifier, Object> ui = builder.buildMapUI();
         ui.setTarget(ObjectRegistry.INSTANCE.getMap());
         builder.display(ui);
     }

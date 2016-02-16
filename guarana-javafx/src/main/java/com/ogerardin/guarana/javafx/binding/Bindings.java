@@ -4,8 +4,10 @@
 
 package com.ogerardin.guarana.javafx.binding;
 
+import com.google.common.base.Converter;
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.config.Configuration;
+import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TextField;
 import jfxtras.labs.scene.control.BeanPathAdapter;
 
@@ -38,4 +40,15 @@ public class Bindings {
         textField.setText(classConfig.toString(value));
     }
 
+    public static <A, B> void bindBidirectional(ObjectProperty<A> aProperty, ObjectProperty<B> bProperty,
+                                                Converter<A, B> converter) {
+        aProperty.addListener((observable, oldValue, newValue) -> {
+            B bValue = converter.convert(newValue);
+            bProperty.setValue(bValue);
+        });
+        bProperty.addListener((observable, oldValue, newValue) -> {
+            A aValue = converter.reverse().convert(newValue);
+            aProperty.setValue(aValue);
+        });
+    }
 }

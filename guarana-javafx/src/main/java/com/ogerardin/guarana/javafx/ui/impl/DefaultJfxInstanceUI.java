@@ -11,9 +11,10 @@ import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.adapter.JavaBeanObjectProperty;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -32,11 +33,16 @@ import javafx.scene.text.FontWeight;
 import java.beans.BeanDescriptor;
 import java.beans.BeanInfo;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 
 /**
+ * Default implementation of a InstanceUI for JavaFX.
+ *
+ * @param <T> type of the object being represented
+ *
  * @author Olivier
  * @since 29/05/15
  */
@@ -198,62 +204,73 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
         for (Map.Entry<JfxInstanceUI, PropertyDescriptor> entry : uiPropertyDescriptorMap.entrySet()) {
             final JfxInstanceUI ui = entry.getKey();
-            PropertyDescriptor propertyDescriptor = entry.getValue();
+            final PropertyDescriptor propertyDescriptor = entry.getValue();
+            final Class<?> propertyType = propertyDescriptor.getPropertyType();
 
-            JavaBeanObjectProperty jfxProperty = null;
+            final Object value;
             try {
-                jfxProperty = JavaBeanObjectPropertyBuilder.create()
+                value = propertyDescriptor.getReadMethod().invoke(target);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                System.err.println("ERROR: failed to get value for property " + propertyDescriptor.getDisplayName());
+                e.printStackTrace();
+                continue;
+            }
+
+            // if the property is a JavaFX-style property, bind directly to it
+            if (Property.class.isAssignableFrom(propertyType)) {
+                Property<?> jfxProperty = (Property) value;
+                ui.targetProperty().bindBidirectional(jfxProperty);
+                System.err.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using javafx.beans.property.Property method");
+                continue;
+            }
+
+            // otherwise try to bind bidirectionally to a generated JavaBeanObjectProperty
+            try {
+                Property<?> jfxProperty = JavaBeanObjectPropertyBuilder.create()
                         .bean(target)
                         .name(propertyDescriptor.getName())
                         .build();
                 ui.targetProperty().bindBidirectional(jfxProperty);
-
+                System.err.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
+                continue;
             } catch (NoSuchMethodException e) {
-                System.err.println("WARNING: " + e.toString());
+                // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
+                System.err.println("INFO: " + e.toString());
             }
+
+            // otherwise if the property implements java.util.Observable, register a listener
+            if (java.util.Observable.class.isAssignableFrom(propertyType)) {
+                java.util.Observable observableValue = (java.util.Observable) value;
+                observableValue.addObserver((observable, o) -> ui.targetProperty().setValue(observable));
+                System.err.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using java.util.Observable method");
+                continue;
+            }
+
+            // otherwise if the property implements javafx.beans.Observable, register a listener
+            if (Observable.class.isAssignableFrom(propertyType)) {
+                Observable observableValue = (Observable) value;
+                observableValue.addListener(observable -> ui.targetProperty().setValue(observable));
+                System.err.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using javafx.beans.Observable method");
+                continue;
+            }
+
+            // otherwise just set the value and put the UI in read-only mode
+            System.err.println("WARNING: no binding for property " + propertyDescriptor.getDisplayName() + " - UI will be read-only");
+            ui.setReadOnly(true);
+            ui.targetProperty().setValue(value);
         }
 
-//        for (Map.Entry<Node, PropertyDescriptor> entry : nodePropertyDescriptorMap.entrySet()) {
-//            Node node = entry.getKey();
-//            PropertyDescriptor propertyDescriptor = entry.getValue();
-//
-//            // TODO handle other field types
-//            if (node instanceof TextField) {
-//                Property jfxProperty = null;
-//                try {
-//                    jfxProperty = JavaBeanObjectPropertyBuilder.create()
-//                            .bean(target)
-//                            .name(propertyDescriptor.getName())
-//                            .build();
-//                } catch (NoSuchMethodException e) {
-//                    System.err.println("WARNING: " + e.toString());
-//                }
-//
-//                if (jfxProperty == null) {
-//                    // failed to create JavaFX Property: just set the field value (no binding)
-//                    try {
-//                        Object value = propertyDescriptor.getReadMethod().invoke(target);
-//                        Bindings.fieldSetValue(getConfiguration(), (TextField) node, propertyDescriptor, value);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    continue;
-//                }
-//
-//                if (propertyDescriptor.getPropertyType() == String.class) {
-//                    ((TextField) node).textProperty().bindBidirectional(jfxProperty);
-//                } else {
-//                    //TODO handle other property types
-//                    System.err.println("ERROR: no binding for type " + propertyDescriptor.getPropertyType());
-//                }
-//            }
-//        }
     }
 
 
     @Override
     public Parent render() {
         return root;
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        //TODO
     }
 
     protected void propertyUpdated(PropertyDescriptor propertyDescriptor, Object value) {

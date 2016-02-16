@@ -44,6 +44,10 @@ public class JfxDateUi extends DatePicker implements JfxInstanceUI<Date> {
         return this;
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        setEditable(!readOnly);
+    }
 
     @Override
     public ObjectProperty<Date> targetProperty() {

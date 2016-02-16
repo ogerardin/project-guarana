@@ -69,30 +69,30 @@ public class JfxUiManager implements JfxUIBuilder {
     public <C> JfxInstanceUI<C> buildInstanceUI(Class<C> clazz) {
         ClassConfiguration<C> classConfiguration = configuration.forClass(clazz);
         Class<?> uiClass = classConfiguration.getUiClass();
-        if (uiClass != null) {
-            try {
-                // might throw ClassCastException if the specified class doesn't match JfxInstanceUI
-                return (JfxInstanceUI<C>) uiClass.newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        if (uiClass == null) {
+            return new DefaultJfxInstanceUI<>(this, clazz);
         }
-        return new DefaultJfxInstanceUI<>(this, clazz);
+        try {
+            // might throw ClassCastException if the specified class doesn't match JfxInstanceUI
+            return (JfxInstanceUI<C>) uiClass.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public <C> JfxInstanceUI<C> buildEmbeddedInstanceUI(Class<C> clazz) {
         ClassConfiguration<C> classConfiguration = configuration.forClass(clazz);
         Class<?> uiClass = classConfiguration.getEmbeddedUiClass();
-        if (uiClass != null) {
-            try {
-                // might throw ClassCastException if the specified class doesn't match JfxInstanceUI
-                return (JfxInstanceUI<C>) uiClass.newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        if (uiClass == null) {
+            return new DefaultJfxEmbeddedInstanceUI<>(this, clazz);
         }
-        return new DefaultJfxEmbeddedInstanceUI<>(this, clazz);
+        try {
+            // might throw ClassCastException if the specified class doesn't match JfxInstanceUI
+            return (JfxInstanceUI<C>) uiClass.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

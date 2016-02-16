@@ -194,7 +194,7 @@ public abstract class JfxUI implements JfxRenderable {
                 getBuilder().displayException(e);
             }
         } else {
-            DefaultJfxMethodCallUI methodCallUI = new DefaultJfxMethodCallUI(getBuilder(), constructor);
+            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), constructor);
             getBuilder().display(methodCallUI);
             //FIXME by default we just display the result, should be configurable
             methodCallUI.setOnSuccess(o -> getBuilder().displayInstance(o));
@@ -230,7 +230,7 @@ public abstract class JfxUI implements JfxRenderable {
                 getBuilder().displayException(e);
             }
         } else {
-            DefaultJfxMethodCallUI methodCallUI = new DefaultJfxMethodCallUI(getBuilder(), method);
+            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), method);
             getBuilder().display(methodCallUI);
         }
     }

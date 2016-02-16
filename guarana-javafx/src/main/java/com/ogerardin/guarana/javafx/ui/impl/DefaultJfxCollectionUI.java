@@ -28,6 +28,10 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Default implementation of a CollectionUI for JavaFX.
+ *
+ * @param <T> type of the object being represented
+ *
  * @author Olivier
  * @since 29/05/15
  */
@@ -135,6 +139,11 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
     @Override
     public Parent render() {
         return root;
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        tableView.setEditable(!readOnly);
     }
 
     @Override

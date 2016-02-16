@@ -32,16 +32,18 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
+ * A UI for calling a specific method or constructor.
+ *
  * @author Olivier
  * @since 05/06/15
  */
-public class DefaultJfxMethodCallUI extends JfxUI implements JfxRenderable {
+public class JfxMethodCallUI extends JfxUI implements JfxRenderable {
 
     private final VBox root;
     private final Map<String, Property> params;
     private Consumer onSuccess = null;
 
-    public DefaultJfxMethodCallUI(JfxUiManager builder, Executable executable) {
+    public JfxMethodCallUI(JfxUiManager builder, Executable executable) {
         super(builder);
 
         root = new VBox();
@@ -142,6 +144,11 @@ public class DefaultJfxMethodCallUI extends JfxUI implements JfxRenderable {
     @Override
     public Parent render() {
         return root;
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        throw new UnsupportedOperationException();
     }
 
     public void setOnSuccess(Consumer handler) {

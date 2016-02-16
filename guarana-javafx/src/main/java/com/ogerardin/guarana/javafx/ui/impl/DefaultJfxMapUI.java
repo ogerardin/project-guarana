@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * Default implemetation of a MapUI for JavaFX
+ *
  * @author Olivier
  * @since 29/05/15
  */

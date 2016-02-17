@@ -126,6 +126,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                         Method writeMethod = propertyDescriptor.getWriteMethod();
                         try {
                             writeMethod.invoke(getTarget(), value);
+                            //FIXME if the UI's target property is bound to a JavaBeanObjectProperty, we should call fireValueChangedEvent
                             propertyUpdated(propertyDescriptor, value);
                         } catch (Exception e) {
                             getBuilder().displayException(e);
@@ -192,11 +193,9 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
     }
 
     private void unbind() {
-        for (Map.Entry<Node, PropertyDescriptor> entry : nodePropertyDescriptorMap.entrySet()) {
-            Node node = entry.getKey();
-            if (node instanceof TextField) {
-                ((TextField) node).textProperty().unbind();
-            }
+        for (Map.Entry<JfxInstanceUI, PropertyDescriptor> entry : uiPropertyDescriptorMap.entrySet()) {
+            final JfxInstanceUI ui = entry.getKey();
+            ui.targetProperty().unbind();
         }
     }
 

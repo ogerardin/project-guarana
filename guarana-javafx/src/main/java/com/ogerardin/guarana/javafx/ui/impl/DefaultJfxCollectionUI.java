@@ -126,12 +126,14 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
                 item = itemClass.newInstance();
                 tableView.getItems().add(item);
             } catch (Exception e) {
+                // no-arg constructor does not exist, is not public, or failed
                 //TODO better message
                 getBuilder().displayException(e);
             }
         }
         if (item != null) {
             getBuilder().displayInstance(item, itemClass, row, itemTitle);
+            //TODO make sure changes on item are reflected in the list UI
         }
     }
 

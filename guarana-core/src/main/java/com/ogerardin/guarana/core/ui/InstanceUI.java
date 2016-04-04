@@ -5,7 +5,7 @@
 package com.ogerardin.guarana.core.ui;
 
 /**
- * @param <R> type of the rendered UI
+ * @param <R> type of the rendered UI object
  * @param <T> type of the object being represented
  *
  * @author oge

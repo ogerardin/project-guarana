@@ -112,6 +112,7 @@ public class JfxUiManager implements JfxUIBuilder {
     //
 
     public void displayException(Throwable e) {
+        //TODO improve this
         e.printStackTrace();
         JfxInstanceUI<Throwable> exceptionInstanceUI = buildInstanceUI(Throwable.class);
         exceptionInstanceUI.setTarget(e);
@@ -119,31 +120,31 @@ public class JfxUiManager implements JfxUIBuilder {
     }
 
 
-    public void display(JfxRenderable renderable, Node parent, String title) {
-        display(renderable, null, parent, title);
+    public JfxRenderable display(JfxRenderable renderable, Node parent, String title) {
+        return display(renderable, null, parent, title);
     }
 
-    public void display(JfxRenderable renderable, Stage stage, String title) {
-        display(renderable, stage, null, title);
+    public JfxRenderable display(JfxRenderable renderable, Stage stage, String title) {
+        return display(renderable, stage, null, title);
     }
 
-    public void display(JfxRenderable renderable, Stage stage) {
-        display(renderable, stage, null, null);
+    public JfxRenderable display(JfxRenderable renderable, Stage stage) {
+        return display(renderable, stage, null, null);
     }
 
-    public void display(JfxRenderable renderable, Node parent) {
-        display(renderable, null, parent, null);
+    public JfxRenderable display(JfxRenderable renderable, Node parent) {
+        return display(renderable, null, parent, null);
     }
 
-    public void display(JfxRenderable renderable) {
-        display(renderable, null, null, null);
+    public JfxRenderable display(JfxRenderable renderable) {
+        return display(renderable, null, null, null);
     }
 
-    public void display(JfxRenderable renderable, String title) {
-        display(renderable, null, null, title);
+    public JfxRenderable display(JfxRenderable renderable, String title) {
+        return display(renderable, null, null, title);
     }
 
-    public void display(JfxRenderable renderable, Stage stage, Node parent, String title) {
+    public JfxRenderable display(JfxRenderable renderable, Stage stage, Node parent, String title) {
         if (stage == null) {
             stage = new Stage();
         }
@@ -160,6 +161,7 @@ public class JfxUiManager implements JfxUIBuilder {
 
         renderableStageMap.put(renderable, stage);
         stage.show();
+        return renderable;
     }
 
     private void positionRelativeToParent(final Window window, Node parent) {
@@ -170,48 +172,49 @@ public class JfxUiManager implements JfxUIBuilder {
         });
     }
 
-    public <T> void displayInstance(T target) {
-        displayInstance(target, (Class<T>) target.getClass(), null, null, null);
+    public <T> JfxInstanceUI<T> displayInstance(T target) {
+        return displayInstance(target, (Class<T>) target.getClass(), null, null, null);
     }
 
-    public <T> void displayInstance(T target, Class<T> targetClass, Stage stage, Node parent, String title) {
+    public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, Stage stage, Node parent, String title) {
         // check if target already has a UI
         Pair<Class, Object> key = new Pair<>(targetClass, target);
-        Renderable renderable = objectRenderableMap.get(key);
-        if (renderable != null) {
-            show(renderable);
-            return;
+        JfxInstanceUI<T> ui = (JfxInstanceUI<T>) objectRenderableMap.get(key);
+        if (ui != null) {
+            show(ui);
+        } else {
+            // build instanceUI for the target class and display it in stage
+            ui = buildInstanceUI(targetClass);
+            ui.setTarget(target);
+            objectRenderableMap.put(key, ui);
+            display(ui, stage, parent, title);
         }
-        // build instanceUI for the target class and display it in stage
-        JfxInstanceUI<T> ui = buildInstanceUI(targetClass);
-        ui.setTarget(target);
-        objectRenderableMap.put(key, ui);
-        display(ui, stage, parent, title);
+        return ui;
     }
 
 
-    public <T> void displayInstance(T target, Class<T> targetClass, Node parent) {
-        displayInstance(target, targetClass, null, parent, null);
+    public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, Node parent) {
+        return displayInstance(target, targetClass, null, parent, null);
     }
 
-    public <T> void displayInstance(T target, Class<T> targetClass) {
-        displayInstance(target, targetClass, null, null, null);
+    public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass) {
+        return displayInstance(target, targetClass, null, null, null);
     }
 
-    public <T> void displayInstance(T target, Class<T> targetClass, Stage stage) {
-        displayInstance(target, targetClass, stage, null, null);
+    public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, Stage stage) {
+        return displayInstance(target, targetClass, stage, null, null);
     }
 
-    public <T> void displayInstance(T target, Class<T> targetClass, Node parent, String title) {
-        displayInstance(target, targetClass, null, parent, title);
+    public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, Node parent, String title) {
+        return displayInstance(target, targetClass, null, parent, title);
     }
 
-    public <T> void displayInstance(T target, Class<T> targetClass, String title) {
-        displayInstance(target, targetClass, null, null, title);
+    public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, String title) {
+        return displayInstance(target, targetClass, null, null, title);
     }
 
-    public <T> void displayInstance(T target, Class<T> targetClass, Stage stage, String title) {
-        displayInstance(target, targetClass, stage, null, title);
+    public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, Stage stage, String title) {
+        return displayInstance(target, targetClass, stage, null, title);
     }
 
     public Configuration getConfiguration() {

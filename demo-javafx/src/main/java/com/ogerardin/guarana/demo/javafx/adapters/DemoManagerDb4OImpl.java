@@ -57,7 +57,7 @@ public class DemoManagerDb4OImpl implements DemoManager {
         observableList.addListener((ListChangeListener<T>) c -> {
             System.out.println(c);
             while (c.next()) {
-                if (c.wasAdded()) {
+                if (c.wasAdded() || c.wasUpdated()) {
                     c.getAddedSubList().stream().forEach(objectContainer::store);
                 } else if (c.wasRemoved()) {
                     c.getRemoved().stream().forEach(objectContainer::delete);

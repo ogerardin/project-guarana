@@ -26,7 +26,7 @@ public class ClassConfiguration<C> {
         hiddenProperties.add("class");
     }
 
-    public ClassConfiguration hideProperties(String... propertyNames) {
+    public ClassConfiguration<C> hideProperties(String... propertyNames) {
         hiddenProperties.addAll(Arrays.asList(propertyNames));
         return this;
     }
@@ -35,8 +35,9 @@ public class ClassConfiguration<C> {
         return hiddenProperties.contains(propertyName);
     }
 
-    public void setToString(ToString<C> toString) {
+    public ClassConfiguration<C> setToString(ToString<C> toString) {
         this.toString = toString;
+        return this;
     }
 
     public String toString(C value) {
@@ -55,11 +56,13 @@ public class ClassConfiguration<C> {
         return embeddedUiClass;
     }
 
-    public <U extends InstanceUI> void setEmbeddedUiClass(Class<U> embeddedUiClass) {
+    public <U extends InstanceUI> ClassConfiguration<C> setEmbeddedUiClass(Class<U> embeddedUiClass) {
         this.embeddedUiClass = embeddedUiClass;
+        return this;
     }
 
-    public <U extends InstanceUI> void setUiClass(Class<U> uiClass) {
+    public <U extends InstanceUI> ClassConfiguration<C> setUiClass(Class<U> uiClass) {
         this.uiClass = uiClass;
+        return this;
     }
 }

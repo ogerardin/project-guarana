@@ -42,8 +42,9 @@ public class MainDemoJfx extends Application {
 
         Configuration config = new Configuration();
         config.forClass(Throwable.class).hideProperties("localizedMessage");
-        config.forClass(Person.class).hideProperties("fullNameLastFirst", "fullNameFirstLast");
-        config.forClass(Person.class).setToString(Person::getFullNameLastFirst);
+        config.forClass(Person.class)
+                .hideProperties("fullNameLastFirst", "fullNameFirstLast")
+                .setToString(Person::getFullNameLastFirst);
         config.forClass(Date.class).setEmbeddedUiClass(JfxDateUi.class);
 
         uiManager = new JfxUiManager(config);

@@ -11,6 +11,8 @@ import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 
 import java.lang.reflect.Constructor;
@@ -41,7 +43,16 @@ public class DefaultJfxEmbeddedInstanceUI<T> extends TextField implements JfxIns
         this.jfxUiManager = jfxUiManager;
         this.clazz = clazz;
 
-        textProperty().bindBidirectional(targetProperty, new TargetStringConverter<>(jfxUiManager, clazz));
+        final TargetStringConverter<T> converter = new TargetStringConverter<>(jfxUiManager, clazz);
+        textProperty().bindBidirectional(targetProperty, converter);
+
+        addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() == KeyCode.F5) {
+                final T value = targetProperty.getValue();
+                final String s = converter.toString(value);
+                textProperty().setValue(s);
+            }
+        });
     }
 
     @Override

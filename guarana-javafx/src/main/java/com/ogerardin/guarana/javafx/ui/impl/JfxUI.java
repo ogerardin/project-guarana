@@ -57,6 +57,7 @@ public abstract class JfxUI implements JfxRenderable {
         // add methods
         Arrays.asList(beanInfo.getMethodDescriptors()).stream()
                 .filter(md -> !Introspector.isGetterOrSetter(md))
+                .filter(md -> !getConfiguration().isHiddenMethod(beanInfo.getBeanDescriptor().getBeanClass(), md.getMethod()))
                 .map(md -> new MethodMenuItem<>(md, targetSupplier, new ImageView(ICON_METHOD)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 

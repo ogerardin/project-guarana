@@ -9,6 +9,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +48,18 @@ public class Configuration extends CompositeConfiguration {
             classConfigurationMap.put(clazz, classConfig);
         }
         return classConfig;
+    }
+
+    public <C> boolean isHiddenMethod(Class<C> clazz, Method method) {
+        ClassConfiguration<C> classConfig = forClass(clazz);
+        if (classConfig.isHiddenMethod(method)) {
+            return true;
+        }
+        Class parent = clazz.getSuperclass();
+        if (parent == null) {
+            return false;
+        }
+        return isHiddenMethod(parent, method);
     }
 }
 

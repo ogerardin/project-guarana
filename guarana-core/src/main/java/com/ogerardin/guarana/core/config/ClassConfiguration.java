@@ -6,6 +6,7 @@ package com.ogerardin.guarana.core.config;
 
 import com.ogerardin.guarana.core.ui.InstanceUI;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,12 +18,16 @@ import java.util.Set;
 public class ClassConfiguration<C> {
 
     private final Set<String> hiddenProperties = new HashSet<>();
+    private final Set<Method> hiddenMethods = new HashSet<>();
+
     private ToString<C> toString;
     private Class<?> uiClass;
     private Class<?> embeddedUiClass;
+    private Class<C> targetClass;
 
 
     public ClassConfiguration(Class<C> clazz) {
+        targetClass = clazz;
         hiddenProperties.add("class");
     }
 
@@ -64,5 +69,29 @@ public class ClassConfiguration<C> {
     public <U extends InstanceUI> ClassConfiguration<C> setUiClass(Class<U> uiClass) {
         this.uiClass = uiClass;
         return this;
+    }
+
+    public void hideMethod(String methodName) {
+        for (Method method : targetClass.getDeclaredMethods()) {
+            if (method.getName().equals(methodName)) {
+                hiddenMethods.add(method);
+                System.err.println("DEBUG: hidden method " + method);
+            }
+        }
+    }
+
+    public void hideMethods(Method... methods) {
+        for (Method method : methods) {
+            hiddenMethods.add(method);
+            System.err.println("DEBUG: hidden method " + method);
+        }
+    }
+
+    public void hideAllMethods() {
+        hideMethods(targetClass.getDeclaredMethods());
+    }
+
+    public boolean isHiddenMethod(Method method) {
+        return hiddenMethods.contains(method);
     }
 }

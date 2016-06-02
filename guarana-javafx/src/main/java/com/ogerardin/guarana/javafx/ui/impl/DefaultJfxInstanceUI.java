@@ -57,7 +57,6 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
     private final VBox root;
 
-    //private T target;
     private ObjectProperty<T> targetProperty = new SimpleObjectProperty<>();
 
     public DefaultJfxInstanceUI(JfxUiManager builder, Class<T> clazz) {
@@ -84,7 +83,6 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
         // build properties form
         GridPane grid = buildGridPane();
-
         root.getChildren().add(grid);
         int row = 0;
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
@@ -216,6 +214,10 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                 e.printStackTrace();
                 continue;
             }
+            if (value == null) {
+                ui.targetProperty().unbind();
+                return;
+            }
             final Class<?> valueClass = value.getClass();
 
             // if the property is a JavaFX-style property, bind directly to it
@@ -237,7 +239,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                 continue;
             } catch (NoSuchMethodException e) {
                 // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
-                System.err.println("INFO: " + e.toString());
+                //System.err.println("DEBUG: " + e.toString());
             }
 
             // otherwise if the property implements java.util.Observable, register a listener
@@ -263,7 +265,6 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
             // otherwise just set the value and put the UI in read-only mode
             System.err.println("WARNING: no binding for property '" + propertyDescriptor.getDisplayName() + "'");
-
 
             ui.setReadOnly(true);
             ui.targetProperty().setValue(value);

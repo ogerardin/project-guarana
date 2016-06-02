@@ -28,6 +28,10 @@ public class DemoManagerDb4OImpl implements DemoManager {
 
     private final ObjectContainer objectContainer;
 
+    private ObservableList<Person> allPersons;
+    private ObservableList<Event> allEvents;
+
+
     public DemoManagerDb4OImpl() {
         Configuration configuration = Db4o.newConfiguration();
         objectContainer = Db4o.openFile(configuration, "data.db4o");
@@ -41,14 +45,20 @@ public class DemoManagerDb4OImpl implements DemoManager {
     }
 
     public Collection<Person> getAllPersons() {
-        final ObjectSet<Person> persons = objectContainer.query(Person.class);
-        return getReplicatingObservableList(new ArrayList<>(persons), objectContainer);
+        if (allPersons == null) {
+            final ObjectSet<Person> personSet = objectContainer.query(Person.class);
+            allPersons = getReplicatingObservableList(new ArrayList<>(personSet), objectContainer);
+        }
+        return allPersons;
     }
 
     @Override
     public Collection<Event> getAllEvents() {
-        final ObjectSet<Event> events = objectContainer.query(Event.class);
-        return getReplicatingObservableList(new ArrayList<>(events), objectContainer);
+        if (allEvents == null) {
+            final ObjectSet<Event> eventSet = objectContainer.query(Event.class);
+            allEvents = getReplicatingObservableList(new ArrayList<>(eventSet), objectContainer);
+        }
+        return allEvents;
     }
 
     //TODO move somewhere else

@@ -11,6 +11,7 @@ import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
@@ -37,6 +38,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Observer;
 
 /**
  * Default implementation of a InstanceUI for JavaFX.
@@ -204,7 +206,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
         for (Map.Entry<JfxInstanceUI, PropertyDescriptor> entry : uiPropertyDescriptorMap.entrySet()) {
             final JfxInstanceUI ui = entry.getKey();
             final PropertyDescriptor propertyDescriptor = entry.getValue();
-            final Class<?> propertyType = propertyDescriptor.getPropertyType();
+            //final Class<?> propertyType = propertyDescriptor.getPropertyType();
 
             final Object value;
             try {
@@ -214,9 +216,10 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                 e.printStackTrace();
                 continue;
             }
+            final Class<?> valueClass = value.getClass();
 
             // if the property is a JavaFX-style property, bind directly to it
-            if (Property.class.isAssignableFrom(propertyType)) {
+            if (Property.class.isAssignableFrom(valueClass)) {
                 Property<?> jfxProperty = (Property) value;
                 ui.targetProperty().bindBidirectional(jfxProperty);
                 System.err.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using javafx.beans.property.Property method");
@@ -238,23 +241,30 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
             }
 
             // otherwise if the property implements java.util.Observable, register a listener
-            if (java.util.Observable.class.isAssignableFrom(propertyType)) {
+            if (java.util.Observable.class.isAssignableFrom(valueClass)) {
                 java.util.Observable observableValue = (java.util.Observable) value;
-                observableValue.addObserver((observable, o) -> ui.targetProperty().setValue(observable));
+                final Observer observer = (observable, o) -> ui.targetProperty().setValue(observable);
+                observableValue.addObserver(observer);
+                observer.update(observableValue, this);
                 System.err.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using java.util.Observable method");
                 continue;
             }
 
             // otherwise if the property implements javafx.beans.Observable, register a listener
-            if (Observable.class.isAssignableFrom(propertyType)) {
+            if (Observable.class.isAssignableFrom(valueClass)) {
                 Observable observableValue = (Observable) value;
-                observableValue.addListener(observable -> ui.targetProperty().setValue(observable));
+                final InvalidationListener listener = observable -> ui.targetProperty().setValue(observable);
+                observableValue.addListener(listener);
+                //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
+                listener.invalidated(observableValue);
                 System.err.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using javafx.beans.Observable method");
                 continue;
             }
 
             // otherwise just set the value and put the UI in read-only mode
-            System.err.println("WARNING: no binding for property " + propertyDescriptor.getDisplayName() + " - UI will be read-only");
+            System.err.println("WARNING: no binding for property '" + propertyDescriptor.getDisplayName() + "'");
+
+
             ui.setReadOnly(true);
             ui.targetProperty().setValue(value);
         }

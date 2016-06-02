@@ -14,5 +14,8 @@ import javafx.scene.Parent;
  */
 public interface JfxInstanceUI<T> extends InstanceUI<Parent, T>, JfxRenderable {
 
+    /**
+     * The JavaFX-style property that encapsulates the target object for this UI
+     */
     ObjectProperty<T> targetProperty();
 }

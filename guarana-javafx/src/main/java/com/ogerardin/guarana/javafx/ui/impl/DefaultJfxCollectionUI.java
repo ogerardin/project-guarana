@@ -70,12 +70,12 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
             final String propertyName = propertyDescriptor.getName();
             String displayName = propertyDescriptor.getDisplayName();
-            if (propertyName.equals(displayName) && getConfiguration().getHumanizePropertyNames()) {
+            if (propertyName.equals(displayName) && getConfiguration().isHumanizePropertyNames(itemClass)) {
                 displayName = Introspector.humanize(propertyName);
             }
             TableColumn<T, ?> column = new TableColumn<>(displayName);
             column.setCellValueFactory(new PropertyValueFactory<>(propertyName));
-            column.setVisible(!builder.getConfiguration().forClass(itemClass).isHiddenProperty(propertyName));
+            column.setVisible(!builder.getConfiguration().isHiddenProperty(itemClass, propertyName));
             tableView.getColumns().add(column);
         }
 

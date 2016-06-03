@@ -15,7 +15,6 @@ import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -46,8 +45,8 @@ public class DemoManagerDb4OImpl implements DemoManager {
 
     public Collection<Person> getAllPersons() {
         if (allPersons == null) {
-            final ObjectSet<Person> personSet = objectContainer.query(Person.class);
-            allPersons = getReplicatingObservableList(new ArrayList<>(personSet), objectContainer);
+            final ObjectSet<Person> persons = objectContainer.query(Person.class);
+            allPersons = getReplicatingObservableList(persons, objectContainer);
         }
         return allPersons;
     }
@@ -55,8 +54,8 @@ public class DemoManagerDb4OImpl implements DemoManager {
     @Override
     public Collection<Event> getAllEvents() {
         if (allEvents == null) {
-            final ObjectSet<Event> eventSet = objectContainer.query(Event.class);
-            allEvents = getReplicatingObservableList(new ArrayList<>(eventSet), objectContainer);
+            final ObjectSet<Event> events = objectContainer.query(Event.class);
+            allEvents = getReplicatingObservableList(events, objectContainer);
         }
         return allEvents;
     }

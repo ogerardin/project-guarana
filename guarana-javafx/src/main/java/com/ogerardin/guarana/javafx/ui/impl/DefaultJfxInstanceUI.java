@@ -88,7 +88,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
             String propertyName = propertyDescriptor.getName();
             // ignore hidden properties
-            if (getConfiguration().forClass(clazz).isHiddenProperty(propertyName)) {
+            if (getConfiguration().isHiddenProperty(clazz, propertyName)) {
                 continue;
             }
 
@@ -215,7 +215,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                 continue;
             }
             if (value == null) {
-                ui.targetProperty().unbind();
+                //ui.targetProperty().unbind();
                 return;
             }
             final Class<?> valueClass = value.getClass();
@@ -224,7 +224,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
             if (Property.class.isAssignableFrom(valueClass)) {
                 Property<?> jfxProperty = (Property) value;
                 ui.targetProperty().bindBidirectional(jfxProperty);
-                System.err.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using javafx.beans.property.Property method");
+                System.out.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using javafx.beans.property.Property method");
                 continue;
             }
 
@@ -235,11 +235,11 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                         .name(propertyDescriptor.getName())
                         .build();
                 ui.targetProperty().bindBidirectional(jfxProperty);
-                System.err.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
+                System.out.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
                 continue;
             } catch (NoSuchMethodException e) {
                 // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
-                //System.err.println("DEBUG: " + e.toString());
+                //System.out.println("DEBUG: " + e.toString());
             }
 
             // otherwise if the property implements java.util.Observable, register a listener
@@ -248,7 +248,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                 final Observer observer = (observable, o) -> ui.targetProperty().setValue(observable);
                 observableValue.addObserver(observer);
                 observer.update(observableValue, this);
-                System.err.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using java.util.Observable method");
+                System.out.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using java.util.Observable method");
                 continue;
             }
 
@@ -259,7 +259,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                 observableValue.addListener(listener);
                 //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
                 listener.invalidated(observableValue);
-                System.err.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using javafx.beans.Observable method");
+                System.out.println("DEBUG: " + propertyDescriptor.getDisplayName() + " bound using javafx.beans.Observable method");
                 continue;
             }
 

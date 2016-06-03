@@ -32,7 +32,7 @@ import java.util.function.Consumer;
  * @author oge
  * @since 07/09/2015
  */
-//TOTO split Builder from Manager
+//TODO split Builder from Manager
 public class JfxUiManager implements JfxUIBuilder {
 
 

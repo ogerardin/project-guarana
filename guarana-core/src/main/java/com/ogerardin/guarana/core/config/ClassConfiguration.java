@@ -12,23 +12,27 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * UI configuration for a specific class.
+ *
  * @author olivier
  * @since 07/11/2015.
  */
 public class ClassConfiguration<C> {
 
-    private final Set<String> hiddenProperties = new HashSet<>();
-    private final Set<Method> hiddenMethods = new HashSet<>();
+    private final Class<C> targetClass;
 
     private ToString<C> toString;
     private Class<?> uiClass;
     private Class<?> embeddedUiClass;
-    private Class<C> targetClass;
+
+    private Boolean humanizePropertyNames = null;
+    private final Set<String> hiddenProperties = new HashSet<>();
+    private final Set<Method> hiddenMethods = new HashSet<>();
 
 
     public ClassConfiguration(Class<C> clazz) {
         targetClass = clazz;
-        hiddenProperties.add("class");
+//        hiddenProperties.add("class");
     }
 
     public ClassConfiguration<C> hideProperties(String... propertyNames) {
@@ -75,15 +79,25 @@ public class ClassConfiguration<C> {
         for (Method method : targetClass.getDeclaredMethods()) {
             if (method.getName().equals(methodName)) {
                 hiddenMethods.add(method);
-                System.err.println("DEBUG: hidden method " + method);
+                System.out.println("DEBUG: hidden method: " + method);
             }
+        }
+    }
+
+    public void hideMethods(String... methods) {
+        if (methods.length == 1 && methods[0].equals("*")) {
+            hideAllMethods();
+            return;
+        }
+        for (String method : methods) {
+            hideMethod(method);
         }
     }
 
     public void hideMethods(Method... methods) {
         for (Method method : methods) {
             hiddenMethods.add(method);
-            System.err.println("DEBUG: hidden method " + method);
+            System.out.println("DEBUG: hidden method " + method);
         }
     }
 
@@ -93,5 +107,21 @@ public class ClassConfiguration<C> {
 
     public boolean isHiddenMethod(Method method) {
         return hiddenMethods.contains(method);
+    }
+
+    public void setHumanizePropertyNames(Boolean humanizePropertyNames) {
+        this.humanizePropertyNames = humanizePropertyNames;
+    }
+
+    public Boolean isHumanizePropertyNames() {
+        return humanizePropertyNames;
+    }
+
+    public void setEmbeddedUiClass(String className) throws ClassNotFoundException {
+        Class<?> clazz = Class.forName(className);
+        if (!InstanceUI.class.isAssignableFrom(clazz)) {
+            throw new ClassCastException("EmbeddedUiClass must implement InstanceUI: " + className);
+        }
+        setEmbeddedUiClass((Class<? extends InstanceUI>) clazz);
     }
 }

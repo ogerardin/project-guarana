@@ -144,7 +144,7 @@ public class Configuration extends CompositeConfiguration {
     }
 
     /**
-     * Find the first non-null result of applying the specified getter on the class configuration mathcing the specified class
+     * Find the first non-null result of applying the specified getter on the class configuration matching the specified class
      * or its superclasses in ascending order.
      *
      * @param clazz  The start class
@@ -152,8 +152,8 @@ public class Configuration extends CompositeConfiguration {
      * @return A non-empty {@link Optional} containing the function's result, or {@link Optional#empty()} if the function
      * never returned a non-null result.
      */
-    private <C, R> Optional<R> findClassConfigurationRecursively(Class<C> clazz, Function<ClassConfiguration<C>, R> getter) {
-        ClassConfiguration<C> classConfig = this.forClass(clazz);
+    private <R> Optional<R> findClassConfigurationRecursively(Class<?> clazz, Function<ClassConfiguration<?>, R> getter) {
+        ClassConfiguration<?> classConfig = this.forClass(clazz);
         final R result = getter.apply(classConfig);
         if (result != null) {
             return Optional.of(result);
@@ -162,7 +162,7 @@ public class Configuration extends CompositeConfiguration {
         if (parent == null) {
             return Optional.empty();
         }
-        return (Optional<R>) findClassConfigurationRecursively(parent, getter);
+        return findClassConfigurationRecursively(parent, getter);
     }
 
 }

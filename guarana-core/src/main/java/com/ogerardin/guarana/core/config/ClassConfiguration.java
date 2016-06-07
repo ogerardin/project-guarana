@@ -7,6 +7,7 @@ package com.ogerardin.guarana.core.config;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 
 import java.lang.reflect.Method;
+import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -76,11 +77,16 @@ public class ClassConfiguration<C> {
     }
 
     public void hideMethod(String methodName) {
+        boolean found = false;
         for (Method method : targetClass.getDeclaredMethods()) {
             if (method.getName().equals(methodName)) {
+                found = true;
                 hiddenMethods.add(method);
                 System.out.println("DEBUG: hidden method: " + method);
             }
+        }
+        if (!found) {
+            System.err.println("WARNING: no method found matching " + methodName);
         }
     }
 
@@ -96,8 +102,11 @@ public class ClassConfiguration<C> {
 
     public void hideMethods(Method... methods) {
         for (Method method : methods) {
+            if (method.getDeclaringClass() != this.targetClass) {
+                throw new InvalidParameterException("Method " + method + " is not declared in class " + targetClass);
+            }
             hiddenMethods.add(method);
-            System.out.println("DEBUG: hidden method " + method);
+            System.out.println("DEBUG: hidden method: " + method);
         }
     }
 
@@ -120,7 +129,7 @@ public class ClassConfiguration<C> {
     public void setEmbeddedUiClass(String className) throws ClassNotFoundException {
         Class<?> clazz = Class.forName(className);
         if (!InstanceUI.class.isAssignableFrom(clazz)) {
-            throw new ClassCastException("EmbeddedUiClass must implement InstanceUI: " + className);
+            throw new ClassCastException("EmbeddedUiClass does not implement InstanceUI: " + className);
         }
         setEmbeddedUiClass((Class<? extends InstanceUI>) clazz);
     }

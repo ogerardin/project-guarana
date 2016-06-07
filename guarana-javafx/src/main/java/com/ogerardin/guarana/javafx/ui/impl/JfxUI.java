@@ -44,6 +44,7 @@ public abstract class JfxUI implements JfxRenderable {
 
     Image ICON_CONSTRUCTOR = new Image("call_class_16.png");
     Image ICON_METHOD = new Image("call_method_16.png");
+    Image ICON_DRAG_HANDLE = new Image("drag_handle_16.jpg");
 
     private final JfxUiManager builder;
 
@@ -54,16 +55,17 @@ public abstract class JfxUI implements JfxRenderable {
 
     <T> void configureContextMenu(Control control, BeanInfo beanInfo, Supplier<T> targetSupplier) {
         ContextMenu contextMenu = new ContextMenu();
+        final Class<?> beanClass = beanInfo.getBeanDescriptor().getBeanClass();
         // add methods
         Arrays.asList(beanInfo.getMethodDescriptors()).stream()
                 .filter(md -> !Introspector.isGetterOrSetter(md))
-                .filter(md -> !getConfiguration().isHiddenMethod(beanInfo.getBeanDescriptor().getBeanClass(), md.getMethod()))
+                .filter(md -> !getConfiguration().isHiddenMethod(beanClass, md.getMethod()))
                 .map(md -> new MethodMenuItem<>(md, targetSupplier, new ImageView(ICON_METHOD)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
         contextMenu.getItems().add(new SeparatorMenuItem());
         // add constructors
-        Arrays.asList(beanInfo.getBeanDescriptor().getBeanClass().getDeclaredConstructors()).stream()
+        Arrays.asList(beanClass.getDeclaredConstructors()).stream()
                 .map(c -> new ConstructorMenuItem<>(c, new ImageView(ICON_CONSTRUCTOR)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         control.setContextMenu(contextMenu);

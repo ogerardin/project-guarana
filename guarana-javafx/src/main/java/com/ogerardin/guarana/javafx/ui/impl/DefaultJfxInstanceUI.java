@@ -24,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -76,6 +77,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
         root.getChildren().add(title);
 
         // set the title label as a source for drag and drop
+        title.setGraphic(new ImageView(ICON_DRAG_HANDLE));
         configureDragSource(title, this::getTarget);
 
         // build methods context menu

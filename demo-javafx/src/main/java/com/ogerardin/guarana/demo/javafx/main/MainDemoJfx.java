@@ -58,7 +58,6 @@ public class MainDemoJfx extends Application {
         // instantiate our main business object
         demoManager = new DemoManagerDb4OImpl();
 
-
         // handoff to JavaFX; this will call the start() method
         launch(args);
     }

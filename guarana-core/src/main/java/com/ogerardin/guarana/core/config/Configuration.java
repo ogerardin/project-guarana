@@ -10,6 +10,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
 
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -21,23 +22,56 @@ import java.util.function.Function;
  */
 public class Configuration extends CompositeConfiguration {
 
-    public static final String PROPERTY_PREFIX = "guarana.";
+    private static final String PROPERTY_PREFIX = "guarana.";
+
+    private static final String GUARANA_CORE_PROPERTIES = "/_guarana_core.properties";
+    private static final String GUARANA_TOOLKIT_PROPERTIES = "/_guarana_ui.properties";
+    private static final String GUARANA_USER_PROPERTIES = "/guarana.properties";
 
     private final Map<Class, ClassConfiguration> classConfigurationMap = new HashMap<>();
     private boolean humanizeClassNames = false;
 
     /**
-     * Build default configuration by using system properties and properties from a file named "guarana.properties"
+     * Build default configuration by using
+     * -system properties
+     * -core properties from _guarana_core.properties
+     * -toolkit-specific properties from guarana_ui_default.properties
+     * -user properties from guarana.properties
      */
     public Configuration() {
+        // common defaults
+        addConfiguration(new SystemConfiguration());
         try {
-            addConfiguration(new SystemConfiguration());
-            addConfiguration(new PropertiesConfiguration(getClass().getResource("/guarana_default.properties")));
-            addConfiguration(new PropertiesConfiguration(getClass().getResource("/guarana.properties")));
-            applyConfiguration();
+            addConfigurationResource(GUARANA_CORE_PROPERTIES);
         } catch (ConfigurationException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to load " + GUARANA_CORE_PROPERTIES, e);
         }
+
+        // toolkit-specific properties
+        try {
+            addConfigurationResource(GUARANA_TOOLKIT_PROPERTIES);
+        } catch (ConfigurationException e) {
+            throw new RuntimeException("Failed to load " + GUARANA_TOOLKIT_PROPERTIES +
+                    " - you need one UI implementation in your classpath!", e);
+        }
+
+        // user-defined properties
+        try {
+            addConfigurationResource(GUARANA_USER_PROPERTIES);
+        } catch (ConfigurationException e) {
+            System.err.println("WARNING: no user configuration " + GUARANA_USER_PROPERTIES + " found");
+        }
+
+        applyConfiguration();
+    }
+
+    private void addConfigurationResource(String resource) throws ConfigurationException {
+        System.out.println("DEBUG: reading configuration resource: " + resource);
+        final URL url = getClass().getResource(resource);
+        if (url == null) {
+            throw new ConfigurationException("Resource not found: " + resource);
+        }
+        addConfiguration(new PropertiesConfiguration(url));
     }
 
     /**

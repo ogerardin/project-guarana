@@ -42,9 +42,9 @@ import java.util.function.Supplier;
  */
 public abstract class JfxUI implements JfxRenderable {
 
-    Image ICON_CONSTRUCTOR = new Image("call_class_16.png");
-    Image ICON_METHOD = new Image("call_method_16.png");
-    Image ICON_DRAG_HANDLE = new Image("drag_handle_16.jpg");
+    Image ICON_CONSTRUCTOR = new Image("icons/call_class_16.png");
+    Image ICON_METHOD = new Image("icons/call_method_16.png");
+    Image ICON_DRAG_HANDLE = new Image("icons/drag_handle_16.jpg");
 
     private final JfxUiManager builder;
 

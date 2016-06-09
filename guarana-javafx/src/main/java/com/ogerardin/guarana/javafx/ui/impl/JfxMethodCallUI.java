@@ -32,6 +32,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * A UI for calling a specific method or constructor.
@@ -44,7 +45,7 @@ import java.util.function.Consumer;
 public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
 
     private final VBox root;
-    private final Map<String, Property> params;
+    private final Map<String, Property> paramNameToProperty;
 
     /**
      * {@link Consumer#accept} will be called with the result of the method call / constructor
@@ -82,11 +83,12 @@ public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
         root.getChildren().add(grid);
         int row = 0;
 
-        params = new HashMap<>();
+        paramNameToProperty = new HashMap<>();
         for (Parameter param : executable.getParameters()) {
 
+            //FIXME use actual param type instead of String
             final SimpleStringProperty jfxProperty = new SimpleStringProperty();
-            params.put(param.getName(), jfxProperty);
+            paramNameToProperty.put(param.getName(), jfxProperty);
 
             final String humanizedName = Introspector.humanize(param.getName());
             Label label = new Label(humanizedName);
@@ -115,7 +117,7 @@ public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
             configureDropTarget(field,
                     value -> param.getType().isAssignableFrom(value.getClass()),
                     value -> {
-                        //params.put(param.getName(), value);
+                        //paramNameToProperty.put(param.getName(), value);
                         ClassConfiguration classConfig = getConfiguration().forClass(value.getClass());
                         //FIXME set param value, not just field text ! (see DefaultJfxInstanceUI)
                         field.setText(classConfig.toString(value));
@@ -148,13 +150,11 @@ public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
     }
 
     private List<?> getParamValues(Executable executable) {
-        List paramValues = new ArrayList();
-        for (Parameter param : executable.getParameters()) {
-            Property property = params.get(param.getName());
-            Object paramValue = property.getValue();
-            paramValues.add(paramValue);
-        }
-        return paramValues;
+        return Arrays.stream(executable.getParameters())
+                .map(Parameter::getName)
+                .map(paramNameToProperty::get)
+                .map(Property::getValue)
+                .collect(Collectors.toList());
     }
 
     @Override

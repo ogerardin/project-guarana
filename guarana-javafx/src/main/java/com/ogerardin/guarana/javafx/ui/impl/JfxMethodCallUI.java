@@ -9,7 +9,9 @@ import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxRenderable;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -34,14 +36,28 @@ import java.util.function.Consumer;
 /**
  * A UI for calling a specific method or constructor.
  *
+ * @param <C> the declaring class of the method/constructor
+ *
  * @author Olivier
  * @since 05/06/15
  */
-public class JfxMethodCallUI extends JfxUI implements JfxRenderable {
+public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
 
     private final VBox root;
     private final Map<String, Property> params;
+
+    /**
+     * {@link Consumer#accept} will be called with the result of the method call / constructor
+     * in case of success
+     */
     private Consumer onSuccess = null;
+
+    /**
+     * For a method call, the target object on which to invoke the method.
+     * Not relevant for a constructor.
+     */
+    private ObjectProperty<C> targetProperty = new SimpleObjectProperty<>();
+
 
     public JfxMethodCallUI(JfxUiManager builder, Executable executable) {
         super(builder);
@@ -113,12 +129,12 @@ public class JfxMethodCallUI extends JfxUI implements JfxRenderable {
             try {
                 List paramValues = getParamValues(executable);
                 if (executable instanceof Constructor) {
-                    Object instance = ((Constructor) executable).newInstance(paramValues.toArray());
+                    C instance = ((Constructor<C>) executable).newInstance(paramValues.toArray());
                     if (onSuccess != null) {
                         onSuccess.accept(instance);
                     }
                 } else if (executable instanceof Method) {
-                    Object result = ((Method) executable).invoke(paramValues);
+                    Object result = ((Method) executable).invoke(getTarget(), paramValues.toArray());
                     if (onSuccess != null) {
                         onSuccess.accept(result);
                     }
@@ -131,7 +147,7 @@ public class JfxMethodCallUI extends JfxUI implements JfxRenderable {
         root.getChildren().add(goButton);
     }
 
-    private List getParamValues(Executable executable) {
+    private List<?> getParamValues(Executable executable) {
         List paramValues = new ArrayList();
         for (Parameter param : executable.getParameters()) {
             Property property = params.get(param.getName());
@@ -154,5 +170,18 @@ public class JfxMethodCallUI extends JfxUI implements JfxRenderable {
     public void setOnSuccess(Consumer handler) {
         this.onSuccess = handler;
     }
+
+    protected C getTarget() {
+        return targetProperty.get();
+    }
+
+    public void setTarget(C target) {
+        targetProperty.setValue(target);
+    }
+
+    public ObjectProperty<C> targetProperty() {
+        return targetProperty;
+    }
+
 
 }

@@ -28,6 +28,7 @@ import org.apache.commons.lang.Validate;
 import java.beans.BeanInfo;
 import java.beans.MethodDescriptor;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -150,7 +151,7 @@ public abstract class JfxUI implements JfxRenderable {
      */
     private class MethodMenuItem<T> extends MenuItem {
         public MethodMenuItem(MethodDescriptor methodDescriptor, Supplier<T> supplier, ImageView icon) {
-            super(methodDescriptor.getMethod().toGenericString());
+            super(getLabel(methodDescriptor.getMethod()));
             setOnAction(
                     event -> Platform.runLater(() -> executeMethodRequested(methodDescriptor, supplier))
             );
@@ -160,6 +161,7 @@ public abstract class JfxUI implements JfxRenderable {
         }
     }
 
+
     /**
      * A specialized menuItem that triggers a constructor call
      *
@@ -167,13 +169,41 @@ public abstract class JfxUI implements JfxRenderable {
      */
     private class ConstructorMenuItem<T> extends MenuItem {
         public ConstructorMenuItem(Constructor<T> constructor, ImageView icon) {
-            super(constructor.toGenericString());
+            super(getLabel(constructor));
             setOnAction(
                     event -> Platform.runLater(() -> executeConstructorRequested(constructor))
             );
             if (icon != null) {
                 setGraphic(icon);
             }
+        }
+    }
+
+    private static String getLabel(Method method) {
+        return getLabel(method, method.getReturnType());
+    }
+
+    private static String getLabel(Constructor constructor) {
+        return getLabel(constructor, constructor.getDeclaringClass());
+    }
+
+    private static String getLabel(Executable executable, Class returnType) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append(returnType.getSimpleName()).append(' ');
+            sb.append(executable.getName());
+            sb.append('(');
+            final Class<?>[] parameterTypes = executable.getParameterTypes();
+            for (int i = 0; i < parameterTypes.length; ++i) {
+                sb.append(parameterTypes[i].getSimpleName());
+                if (i < parameterTypes.length - 1) {
+                    sb.append(",");
+                }
+            }
+            sb.append(')');
+            return sb.toString();
+        } catch (Exception var6) {
+            return "<" + var6 + ">";
         }
     }
 
@@ -234,6 +264,7 @@ public abstract class JfxUI implements JfxRenderable {
             }
         } else {
             JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), method);
+            methodCallUI.setTarget(target);
             getBuilder().display(methodCallUI);
         }
     }

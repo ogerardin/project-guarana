@@ -6,7 +6,9 @@ package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.ogerardin.guarana.core.introspection.ClassInformation;
 import com.ogerardin.guarana.core.introspection.Introspector;
+import com.ogerardin.guarana.core.introspection.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
@@ -34,9 +36,6 @@ import javafx.scene.text.FontWeight;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.BeanDescriptor;
-import java.beans.BeanInfo;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -55,10 +54,10 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJfxInstanceUI.class);
 
-    private final BeanInfo beanInfo;
+    private final ClassInformation<T> classInformation;
 
-    private BiMap<Node, PropertyDescriptor> nodePropertyDescriptorMap = HashBiMap.create();
-    private BiMap<JfxInstanceUI, PropertyDescriptor> uiPropertyDescriptorMap = HashBiMap.create();
+    private BiMap<Node, PropertyInformation> nodePropertyDescriptorMap = HashBiMap.create();
+    private BiMap<JfxInstanceUI, PropertyInformation> uiPropertyDescriptorMap = HashBiMap.create();
 
     private final VBox root;
 
@@ -67,12 +66,11 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
     public DefaultJfxInstanceUI(JfxUiManager builder, Class<T> clazz) {
         super(builder);
 
-        beanInfo = Introspector.getClassInfo(clazz);
+        classInformation = Introspector.getClassInfo(clazz);
 
         root = new VBox();
-        final BeanDescriptor beanDescriptor = beanInfo.getBeanDescriptor();
-        final String className = beanDescriptor.getBeanClass().getSimpleName();
-        String displayName = beanDescriptor.getDisplayName();
+        final String className = classInformation.getSimpleClassName();
+        String displayName = classInformation.getDisplayName();
         if (displayName.equals(className) && getConfiguration().getHumanizeClassNames()) {
             displayName = Introspector.humanize(className);
         }
@@ -85,24 +83,24 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
         configureDragSource(title, this::getTarget);
 
         // build methods context menu
-        configureContextMenu(title, beanInfo, this::getTarget);
+        configureContextMenu(title, classInformation, this::getTarget);
 
         // build properties form
         GridPane grid = buildGridPane();
         root.getChildren().add(grid);
         int row = 0;
-        for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-            String propertyName = propertyDescriptor.getName();
+        for (PropertyInformation propertyInformation : classInformation.getProperties()) {
+            String propertyName = propertyInformation.getName();
             // ignore hidden properties
             if (getConfiguration().isHiddenProperty(clazz, propertyName)) {
                 continue;
             }
 
-            final Class<?> propertyType = propertyDescriptor.getPropertyType();
-            final Method readMethod = propertyDescriptor.getReadMethod();
-            final String humanizedName = Introspector.humanize(propertyDescriptor.getDisplayName());
+            final Class<?> propertyType = propertyInformation.getPropertyType();
+            final Method readMethod = propertyInformation.getReadMethod();
+            final String humanizedName = Introspector.humanize(propertyInformation.getDisplayName());
             Label label = new Label(humanizedName);
-            label.setTooltip(new Tooltip(propertyDescriptor.toString()));
+            label.setTooltip(new Tooltip(propertyInformation.toString()));
             grid.add(label, 0, row);
 
             JfxInstanceUI<?> fieldUi = getBuilder().buildEmbeddedInstanceUI(propertyType);
@@ -125,22 +123,22 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
             // set the field as a target for drag and drop
             configureDropTarget(field,
                     value -> {
-                        Class<?> targetPropertyClass = propertyDescriptor.getPropertyType();
+                        Class<?> targetPropertyClass = propertyInformation.getPropertyType();
                         return targetPropertyClass.isAssignableFrom(value.getClass());
                     },
                     value -> {
-                        Method writeMethod = propertyDescriptor.getWriteMethod();
+                        Method writeMethod = propertyInformation.getWriteMethod();
                         try {
                             writeMethod.invoke(getTarget(), value);
                             //FIXME if the UI's target property is bound to a JavaBeanObjectProperty, we should call fireValueChangedEvent
-                            propertyUpdated(propertyDescriptor, value);
+                            propertyUpdated(propertyInformation, value);
                         } catch (Exception e) {
                             getBuilder().displayException(e);
                         }
                     });
 
-            uiPropertyDescriptorMap.put(fieldUi, propertyDescriptor);
-            nodePropertyDescriptorMap.put(field, propertyDescriptor);
+            uiPropertyDescriptorMap.put(fieldUi, propertyInformation);
+            nodePropertyDescriptorMap.put(field, propertyInformation);
 
             row++;
         }
@@ -199,7 +197,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
     }
 
     private void unbind() {
-        for (Map.Entry<JfxInstanceUI, PropertyDescriptor> entry : uiPropertyDescriptorMap.entrySet()) {
+        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : uiPropertyDescriptorMap.entrySet()) {
             final JfxInstanceUI ui = entry.getKey();
             ui.targetProperty().unbind();
         }
@@ -207,16 +205,15 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
     private void bind(T target) {
 
-        for (Map.Entry<JfxInstanceUI, PropertyDescriptor> entry : uiPropertyDescriptorMap.entrySet()) {
+        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : uiPropertyDescriptorMap.entrySet()) {
             final JfxInstanceUI ui = entry.getKey();
-            final PropertyDescriptor propertyDescriptor = entry.getValue();
-            //final Class<?> propertyType = propertyDescriptor.getPropertyType();
+            final PropertyInformation propertyInformation = entry.getValue();
 
             final Object value;
             try {
-                value = propertyDescriptor.getReadMethod().invoke(target);
+                value = propertyInformation.getReadMethod().invoke(target);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                LOGGER.error("failed to get value for property " + propertyDescriptor.getDisplayName(), e);
+                LOGGER.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
                 continue;
             }
             if (value == null) {
@@ -229,7 +226,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
             if (Property.class.isAssignableFrom(valueClass)) {
                 Property<?> jfxProperty = (Property) value;
                 ui.targetProperty().bindBidirectional(jfxProperty);
-                LOGGER.debug(propertyDescriptor.getDisplayName() + " bound using javafx.beans.property.Property method");
+                LOGGER.debug(propertyInformation.getDisplayName() + " bound using javafx.beans.property.Property method");
                 continue;
             }
 
@@ -237,10 +234,10 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
             try {
                 Property<?> jfxProperty = JavaBeanObjectPropertyBuilder.create()
                         .bean(target)
-                        .name(propertyDescriptor.getName())
+                        .name(propertyInformation.getName())
                         .build();
                 ui.targetProperty().bindBidirectional(jfxProperty);
-                LOGGER.debug(propertyDescriptor.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
+                LOGGER.debug(propertyInformation.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
                 continue;
             } catch (NoSuchMethodException e) {
                 // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
@@ -253,7 +250,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                 final Observer observer = (observable, o) -> ui.targetProperty().setValue(observable);
                 observableValue.addObserver(observer);
                 observer.update(observableValue, this);
-                LOGGER.debug(propertyDescriptor.getDisplayName() + " bound using java.util.Observable method");
+                LOGGER.debug(propertyInformation.getDisplayName() + " bound using java.util.Observable method");
                 continue;
             }
 
@@ -264,12 +261,12 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
                 observableValue.addListener(listener);
                 //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
                 listener.invalidated(observableValue);
-                LOGGER.debug(propertyDescriptor.getDisplayName() + " bound using javafx.beans.Observable method");
+                LOGGER.debug(propertyInformation.getDisplayName() + " bound using javafx.beans.Observable method");
                 continue;
             }
 
             // otherwise just set the value and put the UI in read-only mode
-            LOGGER.warn("no binding for property '" + propertyDescriptor.getDisplayName() + "'");
+            LOGGER.warn("no binding for property '" + propertyInformation.getDisplayName() + "'");
 
             ui.setReadOnly(true);
             ui.targetProperty().setValue(value);
@@ -288,10 +285,10 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
         //TODO
     }
 
-    protected void propertyUpdated(PropertyDescriptor propertyDescriptor, Object value) {
-        Node node = nodePropertyDescriptorMap.inverse().get(propertyDescriptor);
+    protected void propertyUpdated(PropertyInformation propertyInformation, Object value) {
+        Node node = nodePropertyDescriptorMap.inverse().get(propertyInformation);
         if (node instanceof TextField) {
-            Bindings.fieldSetValue(getConfiguration(), ((TextField) node), propertyDescriptor, value);
+            Bindings.fieldSetValue(getConfiguration(), ((TextField) node), propertyInformation, value);
         }
     }
 

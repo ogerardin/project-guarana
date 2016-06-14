@@ -7,11 +7,10 @@ package com.ogerardin.guarana.javafx.binding;
 import com.google.common.base.Converter;
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.config.Configuration;
+import com.ogerardin.guarana.core.introspection.PropertyInformation;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TextField;
 import jfxtras.labs.scene.control.BeanPathAdapter;
-
-import java.beans.PropertyDescriptor;
 
 /**
  * @author oge
@@ -19,24 +18,24 @@ import java.beans.PropertyDescriptor;
  */
 public class Bindings {
 
-    public static <T> void bindTextField(Configuration configuration, TextField textField, PropertyDescriptor propertyDescriptor, T target) {
+    public static <T> void bindTextField(Configuration configuration, TextField textField, PropertyInformation propertyInformation, T target) {
         if (textField.isEditable()) {
             BeanPathAdapter<T> beanPathAdapter = new BeanPathAdapter<>(target);
-            String propertyName = propertyDescriptor.getName();
+            String propertyName = propertyInformation.getName();
             beanPathAdapter.bindBidirectional(propertyName, textField.textProperty());
         } else {
             //FIXME we should bind (unidirectionally) and not just set property value
             try {
-                final Object value = propertyDescriptor.getReadMethod().invoke(target);
-                fieldSetValue(configuration, textField, propertyDescriptor, value);
+                final Object value = propertyInformation.getReadMethod().invoke(target);
+                fieldSetValue(configuration, textField, propertyInformation, value);
             } catch (Exception ignored) {
                 ignored.printStackTrace(System.err);
             }
         }
     }
 
-    public static void fieldSetValue(Configuration configuration, TextField textField, PropertyDescriptor propertyDescriptor, Object value) {
-        ClassConfiguration classConfig = configuration.forClass(propertyDescriptor.getPropertyType());
+    public static void fieldSetValue(Configuration configuration, TextField textField, PropertyInformation propertyInformation, Object value) {
+        ClassConfiguration classConfig = configuration.forClass(propertyInformation.getPropertyType());
         textField.setText(classConfig.toString(value));
     }
 

@@ -7,10 +7,7 @@ package com.ogerardin.guarana.core.introspection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
-import java.beans.MethodDescriptor;
-import java.beans.PropertyDescriptor;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,24 +20,24 @@ import java.util.stream.Collectors;
 public class Introspector {
     static Logger LOGGER = LoggerFactory.getLogger(Introspector.class);
 
-    private static Map<Class, BeanInfo> classInfoMap = new HashMap<>();
+    private static Map<Class, ClassInformation> classInfoMap = new HashMap<>();
 
     private Introspector() {
     }
 
-    public static BeanInfo getClassInfo(Class clazz) {
-        BeanInfo beanInfo = classInfoMap.get(clazz);
-        if (beanInfo != null) {
-            return beanInfo;
+    public static <C> ClassInformation<C> getClassInfo(Class<C> clazz) {
+        ClassInformation<C> classInformation = classInfoMap.get(clazz);
+        if (classInformation != null) {
+            return classInformation;
         }
         try {
-            beanInfo = java.beans.Introspector.getBeanInfo(clazz);
+            classInformation = new ClassInformation<C>(clazz);
         } catch (IntrospectionException e) {
             LOGGER.error("Failed to introspect " + clazz, e);
             throw new RuntimeException(e);
         }
-        classInfoMap.put(clazz, beanInfo);
-        return beanInfo;
+        classInfoMap.put(clazz, classInformation);
+        return classInformation;
     }
 
     public static String humanize(String name) {
@@ -52,14 +49,4 @@ public class Introspector {
                 .collect(Collectors.joining(" "));
     }
 
-    public static boolean isGetterOrSetter(MethodDescriptor methodDescriptor) {
-        String methodName = methodDescriptor.getName();
-        final int paramCount = methodDescriptor.getMethod().getParameterCount();
-        return ((methodName.startsWith("get") || methodName.startsWith("is")) && paramCount == 0)
-                || (methodName.startsWith("set") && paramCount == 1);
-    }
-
-    public static boolean isReadOnly(PropertyDescriptor propertyDescriptor) {
-        return propertyDescriptor.getWriteMethod() == null;
-    }
 }

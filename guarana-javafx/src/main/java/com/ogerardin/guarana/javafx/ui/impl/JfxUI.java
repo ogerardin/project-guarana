@@ -5,7 +5,9 @@
 package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.config.Configuration;
+import com.ogerardin.guarana.core.introspection.ClassInformation;
 import com.ogerardin.guarana.core.introspection.Introspector;
+import com.ogerardin.guarana.core.introspection.MethodInformation;
 import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import com.ogerardin.guarana.javafx.JfxUiManager;
@@ -27,12 +29,9 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.BeanInfo;
-import java.beans.MethodDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -58,21 +57,21 @@ abstract class JfxUI implements JfxRenderable {
         this.builder = builder;
     }
 
-    <T> void configureContextMenu(Control control, BeanInfo beanInfo, Supplier<T> targetSupplier) {
+    <T> void configureContextMenu(Control control, ClassInformation<T> targetClassInformation, Supplier<T> targetSupplier) {
         ContextMenu contextMenu = new ContextMenu();
-        final Class<?> beanClass = beanInfo.getBeanDescriptor().getBeanClass();
+        final Class<?> beanClass = targetClassInformation.getTargetClass();
 
         // add methods
-        Arrays.asList(beanInfo.getMethodDescriptors()).stream()
-                .filter(md -> !Introspector.isGetterOrSetter(md))
-                .filter(md -> !getConfiguration().isHiddenMethod(beanClass, md.getMethod()))
-                .map(md -> new MethodMenuItem<>(md, targetSupplier, new ImageView(ICON_METHOD)))
+        targetClassInformation.getMethods().stream()
+                .filter(MethodInformation::isGetterOrSetter)
+                .filter(m -> !getConfiguration().isHiddenMethod(beanClass, m.getMethod()))
+                .map(mi -> new MethodMenuItem<>(mi, targetSupplier, new ImageView(ICON_METHOD)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
         contextMenu.getItems().add(new SeparatorMenuItem());
 
         // add constructors
-        Arrays.asList(beanClass.getDeclaredConstructors()).stream()
+        targetClassInformation.getDeclaredConstructors().stream()
                 .map(c -> new ConstructorMenuItem<>(c, new ImageView(ICON_CONSTRUCTOR)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         control.setContextMenu(contextMenu);
@@ -80,9 +79,10 @@ abstract class JfxUI implements JfxRenderable {
         contextMenu.getItems().add(new SeparatorMenuItem());
 
         // add other items
-        Arrays.asList(Introspector.getClassInfo(this.getClass()).getMethodDescriptors()).stream()
-                .filter(md -> md.getName().equals("displayObjectRegistry"))
-                .map(md -> new MethodMenuItem<>(md, () -> this, null))
+        //TODO make this generic
+        Introspector.getClassInfo(this.getClass()).getMethods().stream()
+                .filter(m -> m.getName().equals("displayObjectRegistry"))
+                .map(m -> new MethodMenuItem<>(m, () -> this, null))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
     }
 
@@ -157,10 +157,10 @@ abstract class JfxUI implements JfxRenderable {
      * @param <T> type of the target object
      */
     private class MethodMenuItem<T> extends MenuItem {
-        public MethodMenuItem(MethodDescriptor methodDescriptor, Supplier<T> supplier, ImageView icon) {
-            super(getLabel(methodDescriptor.getMethod()));
+        public MethodMenuItem(MethodInformation methodInformation, Supplier<T> supplier, ImageView icon) {
+            super(getLabel(methodInformation.getMethod()));
             setOnAction(
-                    event -> Platform.runLater(() -> executeMethodRequested(methodDescriptor, supplier))
+                    event -> Platform.runLater(() -> executeMethodRequested(methodInformation, supplier))
             );
             if (icon != null) {
                 setGraphic(icon);
@@ -223,7 +223,6 @@ abstract class JfxUI implements JfxRenderable {
      * @param constructor the constructor to call
      */
     private <T> void executeConstructorRequested(Constructor<T> constructor) {
-//        LOGGER.debug(constructor.toGenericString());
         T instance;
         if (constructor.getParameterCount() == 0) {
             try {
@@ -244,14 +243,12 @@ abstract class JfxUI implements JfxRenderable {
     /**
      * Called when the user requests the execution of a method. If the method doesn't take any arguments,
      * it is executed immediately; otherwise a dialog is displayed to let the user provide the arguments.
-     *
-     * @param <T>            the target type
+     *  @param <T>            the target type
      * @param <R>            the return type of the method
      * @param md             the descriptor of the method to execute
      * @param targetSupplier a Supplier used to obtain the target object
      */
-    private <T, R> void executeMethodRequested(MethodDescriptor md, Supplier<T> targetSupplier) {
-//        LOGGER.debug(md.getName());
+    private <T, R> void executeMethodRequested(MethodInformation md, Supplier<T> targetSupplier) {
         Method method = md.getMethod();
 
         final T target = targetSupplier.get();

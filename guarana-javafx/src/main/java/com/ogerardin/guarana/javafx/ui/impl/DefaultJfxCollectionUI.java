@@ -4,7 +4,9 @@
 
 package com.ogerardin.guarana.javafx.ui.impl;
 
+import com.ogerardin.guarana.core.introspection.ClassInformation;
 import com.ogerardin.guarana.core.introspection.Introspector;
+import com.ogerardin.guarana.core.introspection.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import javafx.collections.FXCollections;
@@ -21,8 +23,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-import java.beans.BeanInfo;
-import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,7 +38,7 @@ import java.util.List;
 public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<T> {
 
     private final Class<T> itemClass;
-    private final BeanInfo beanInfo;
+    private final ClassInformation<T> classInformation;
 
     private final VBox root;
     private final TableView<T> tableView;
@@ -47,10 +47,10 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         super(builder);
 
         this.itemClass = itemClass;
-        this.beanInfo = Introspector.getClassInfo(itemClass);
+        this.classInformation = Introspector.getClassInfo(itemClass);
 
         // title, icon
-//        Image icon = beanInfo.getIcon(BeanInfo.ICON_COLOR_32x32);
+//        Image icon = classInformation.getIcon(BeanInfo.ICON_COLOR_32x32);
 //        setTitle(itemClass.getSimpleName());
 //        if (icon != null) {
 //            try {
@@ -60,16 +60,16 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 //        }
 
         root = new VBox();
-        final Label title = new Label(beanInfo.getBeanDescriptor().getDisplayName() + "...");
+        final Label title = new Label(classInformation.getDisplayName() + "...");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         root.getChildren().add(title);
 
         // build table
         tableView = new TableView<>();
         tableView.setEditable(false);
-        for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-            final String propertyName = propertyDescriptor.getName();
-            String displayName = propertyDescriptor.getDisplayName();
+        for (PropertyInformation propertyInformation : classInformation.getProperties()) {
+            final String propertyName = propertyInformation.getName();
+            String displayName = propertyInformation.getDisplayName();
             if (propertyName.equals(displayName) && getConfiguration().isHumanizePropertyNames(itemClass)) {
                 displayName = Introspector.humanize(propertyName);
             }
@@ -89,7 +89,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
             });
 
             //Set context menu for row
-            configureContextMenu(row, beanInfo, row::getItem);
+            configureContextMenu(row, classInformation, row::getItem);
 
             //Set row as drag-and-drop source
             configureDragSource(row, row::getItem);

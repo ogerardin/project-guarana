@@ -8,6 +8,8 @@ import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -21,12 +23,13 @@ import java.util.function.Function;
  * @since 24/09/2015
  */
 public class Configuration extends CompositeConfiguration {
+    private static Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 
     private static final String PROPERTY_PREFIX = "guarana.";
 
-    private static final String GUARANA_CORE_PROPERTIES = "/_guarana_core.properties";
-    private static final String GUARANA_TOOLKIT_PROPERTIES = "/_guarana_ui.properties";
-    private static final String GUARANA_USER_PROPERTIES = "/guarana.properties";
+    private static final String CORE_PROPERTIES = "/_guarana_core.properties";
+    private static final String TOOLKIT_PROPERTIES = "/_guarana_ui.properties";
+    private static final String USER_PROPERTIES = "/guarana.properties";
 
     private final Map<Class, ClassConfiguration> classConfigurationMap = new HashMap<>();
     private boolean humanizeClassNames = false;
@@ -42,31 +45,31 @@ public class Configuration extends CompositeConfiguration {
         // common defaults
         addConfiguration(new SystemConfiguration());
         try {
-            addConfigurationResource(GUARANA_CORE_PROPERTIES);
+            addConfigurationResource(CORE_PROPERTIES);
         } catch (ConfigurationException e) {
-            throw new RuntimeException("Failed to load " + GUARANA_CORE_PROPERTIES, e);
+            throw new RuntimeException("Failed to load " + CORE_PROPERTIES, e);
         }
 
         // toolkit-specific properties
         try {
-            addConfigurationResource(GUARANA_TOOLKIT_PROPERTIES);
+            addConfigurationResource(TOOLKIT_PROPERTIES);
         } catch (ConfigurationException e) {
-            throw new RuntimeException("Failed to load " + GUARANA_TOOLKIT_PROPERTIES +
+            throw new RuntimeException("Failed to load " + TOOLKIT_PROPERTIES +
                     " - you need one UI implementation in your classpath!", e);
         }
 
         // user-defined properties
         try {
-            addConfigurationResource(GUARANA_USER_PROPERTIES);
+            addConfigurationResource(USER_PROPERTIES);
         } catch (ConfigurationException e) {
-            System.err.println("WARNING: no user configuration " + GUARANA_USER_PROPERTIES + " found");
+            LOGGER.error("WARNING: no user configuration " + USER_PROPERTIES + " found");
         }
 
         applyConfiguration();
     }
 
     private void addConfigurationResource(String resource) throws ConfigurationException {
-        System.out.println("DEBUG: reading configuration resource: " + resource);
+        LOGGER.debug("reading configuration resource: " + resource);
         final URL url = getClass().getResource(resource);
         if (url == null) {
             throw new ConfigurationException("Resource not found: " + resource);
@@ -97,7 +100,7 @@ public class Configuration extends CompositeConfiguration {
                     this.humanizeClassNames = getBoolean(key);
                     break;
                 default:
-                    System.err.println("ERROR: configuration: invalid property key: " + key);
+                    LOGGER.error("ERROR: configuration: invalid property key: " + key);
             }
         }
     }
@@ -108,7 +111,7 @@ public class Configuration extends CompositeConfiguration {
             Class<?> clazz = Class.forName(className);
             classConfiguration = this.forClass(clazz);
         } catch (ClassNotFoundException e) {
-            System.err.println("ERROR: configuration: class not found: " + className);
+            LOGGER.error("ERROR: configuration: class not found: " + className);
             return;
         }
         switch (property) {
@@ -125,11 +128,11 @@ public class Configuration extends CompositeConfiguration {
                 try {
                     classConfiguration.setEmbeddedUiClass(getString(key));
                 } catch (ClassNotFoundException e) {
-                    System.err.println(e.toString());
+                    LOGGER.error(e.toString());
                 }
                 break;
             default:
-                System.err.println("ERROR: configuration: invalid class property: " + property);
+                LOGGER.error("ERROR: configuration: invalid class property: " + property);
         }
     }
 

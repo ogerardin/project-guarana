@@ -10,14 +10,18 @@ import com.db4o.ObjectSet;
 import com.db4o.config.Configuration;
 import com.ogerardin.guarana.demo.model.DemoManager;
 import com.ogerardin.guarana.demo.model.Event;
+import com.ogerardin.guarana.demo.model.Leave;
 import com.ogerardin.guarana.demo.model.Person;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Olivier
@@ -25,10 +29,13 @@ import java.util.List;
  */
 public class DemoManagerDb4OImpl implements DemoManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemoManagerDb4OImpl.class);
+
     private final ObjectContainer objectContainer;
 
     private ObservableList<Person> allPersons;
     private ObservableList<Event> allEvents;
+    private ObservableList<Leave> allLeaves;
 
 
     public DemoManagerDb4OImpl() {
@@ -60,18 +67,26 @@ public class DemoManagerDb4OImpl implements DemoManager {
         return allEvents;
     }
 
+    public Collection<Leave> getAllLeaves() {
+        if (allLeaves == null) {
+            final ObjectSet<Leave> leaves = objectContainer.query(Leave.class);
+            allLeaves = getReplicatingObservableList(leaves, objectContainer);
+        }
+        return allLeaves;
+    }
+
     //TODO move somewhere else
     private static <T> ObservableList<T> getReplicatingObservableList(List<T> list, ObjectContainer objectContainer) {
         ObservableListWrapper<T> observableList = new ObservableListWrapper<>(list);
         observableList.addListener((ListChangeListener<T>) c -> {
-            System.out.println(c);
+            LOGGER.debug("change: " + c);
             while (c.next()) {
                 if (c.wasAdded() || c.wasUpdated()) {
                     c.getAddedSubList().stream().forEach(objectContainer::store);
                 } else if (c.wasRemoved()) {
                     c.getRemoved().stream().forEach(objectContainer::delete);
                 } else {
-                    System.err.println("change not supported: " + c);
+                    LOGGER.warn("change not supported: " + c);
                 }
             }
         });
@@ -104,7 +119,14 @@ public class DemoManagerDb4OImpl implements DemoManager {
 
         getAllPersons().forEach(System.out::println);
         getAllEvents().forEach(System.out::println);
+        getAllLeaves().forEach(System.out::println);
+    }
 
+    @Override
+    public List<Leave> getLeavesByPerson(Person person) {
+        return getAllLeaves().stream()
+                .filter(l -> l.getPerson() == person)
+                .collect(Collectors.toList());
     }
 
 }

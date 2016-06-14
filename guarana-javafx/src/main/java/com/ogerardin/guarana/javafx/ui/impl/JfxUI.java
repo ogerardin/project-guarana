@@ -24,6 +24,8 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.BeanInfo;
 import java.beans.MethodDescriptor;
@@ -41,7 +43,9 @@ import java.util.function.Supplier;
  * @author oge
  * @since 24/09/2015
  */
-public abstract class JfxUI implements JfxRenderable {
+abstract class JfxUI implements JfxRenderable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JfxUI.class);
 
     Image ICON_CONSTRUCTOR = new Image("icons/call_class_16.png");
     Image ICON_METHOD = new Image("icons/call_method_16.png");
@@ -49,7 +53,7 @@ public abstract class JfxUI implements JfxRenderable {
 
     private final JfxUiManager builder;
 
-    public JfxUI(JfxUiManager builder) {
+    JfxUI(JfxUiManager builder) {
         Validate.notNull(builder);
         this.builder = builder;
     }
@@ -57,6 +61,7 @@ public abstract class JfxUI implements JfxRenderable {
     <T> void configureContextMenu(Control control, BeanInfo beanInfo, Supplier<T> targetSupplier) {
         ContextMenu contextMenu = new ContextMenu();
         final Class<?> beanClass = beanInfo.getBeanDescriptor().getBeanClass();
+
         // add methods
         Arrays.asList(beanInfo.getMethodDescriptors()).stream()
                 .filter(md -> !Introspector.isGetterOrSetter(md))
@@ -65,6 +70,7 @@ public abstract class JfxUI implements JfxRenderable {
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
         contextMenu.getItems().add(new SeparatorMenuItem());
+
         // add constructors
         Arrays.asList(beanClass.getDeclaredConstructors()).stream()
                 .map(c -> new ConstructorMenuItem<>(c, new ImageView(ICON_CONSTRUCTOR)))
@@ -72,6 +78,7 @@ public abstract class JfxUI implements JfxRenderable {
         control.setContextMenu(contextMenu);
 
         contextMenu.getItems().add(new SeparatorMenuItem());
+
         // add other items
         Arrays.asList(Introspector.getClassInfo(this.getClass()).getMethodDescriptors()).stream()
                 .filter(md -> md.getName().equals("displayObjectRegistry"))
@@ -104,7 +111,7 @@ public abstract class JfxUI implements JfxRenderable {
                 Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
                 Object value = ObjectRegistry.INSTANCE.get(identifier);
                 if (value == null) {
-                    System.err.println("Identifier not found in object registry: " + identifier);
+                    LOGGER.error("Identifier not found in object registry: " + identifier);
                     return;
                 }
                 if (valueValidator.test(value)) {
@@ -120,7 +127,7 @@ public abstract class JfxUI implements JfxRenderable {
                 Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
                 Object value = ObjectRegistry.INSTANCE.get(identifier);
                 if (value == null) {
-                    System.err.println("Key not found in object registry: " + identifier);
+                    LOGGER.error("Key not found in object registry: " + identifier);
                     return;
                 }
                 boolean completed = false;
@@ -180,32 +187,32 @@ public abstract class JfxUI implements JfxRenderable {
     }
 
     private static String getLabel(Method method) {
-        return getLabel(method, method.getReturnType());
+        StringBuilder sb = new StringBuilder();
+        sb.append(method.getReturnType().getSimpleName()).append(' ');
+        sb.append(method.getName());
+        appendParameters(method, sb);
+        return sb.toString();
     }
 
     private static String getLabel(Constructor constructor) {
-        return getLabel(constructor, constructor.getDeclaringClass());
+        StringBuilder sb = new StringBuilder();
+        sb.append(constructor.getDeclaringClass().getSimpleName());
+        appendParameters(constructor, sb);
+        return sb.toString();
     }
 
-    private static String getLabel(Executable executable, Class returnType) {
-        try {
-            StringBuilder sb = new StringBuilder();
-            sb.append(returnType.getSimpleName()).append(' ');
-            sb.append(executable.getName());
-            sb.append('(');
-            final Class<?>[] parameterTypes = executable.getParameterTypes();
-            for (int i = 0; i < parameterTypes.length; ++i) {
-                sb.append(parameterTypes[i].getSimpleName());
-                if (i < parameterTypes.length - 1) {
-                    sb.append(",");
-                }
+    private static void appendParameters(Executable method, StringBuilder sb) {
+        sb.append('(');
+        final Class<?>[] parameterTypes = method.getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; ++i) {
+            sb.append(parameterTypes[i].getSimpleName());
+            if (i < parameterTypes.length - 1) {
+                sb.append(",");
             }
-            sb.append(')');
-            return sb.toString();
-        } catch (Exception var6) {
-            return "<" + var6 + ">";
         }
+        sb.append(')');
     }
+
 
     /**
      * Called when the user requests the Instanciation of a class through a specific constructor.
@@ -216,7 +223,7 @@ public abstract class JfxUI implements JfxRenderable {
      * @param constructor the constructor to call
      */
     private <T> void executeConstructorRequested(Constructor<T> constructor) {
-//        System.out.println(constructor.toGenericString());
+//        LOGGER.debug(constructor.toGenericString());
         T instance;
         if (constructor.getParameterCount() == 0) {
             try {
@@ -244,7 +251,7 @@ public abstract class JfxUI implements JfxRenderable {
      * @param targetSupplier a Supplier used to obtain the target object
      */
     private <T, R> void executeMethodRequested(MethodDescriptor md, Supplier<T> targetSupplier) {
-//        System.out.println(md.getName());
+//        LOGGER.debug(md.getName());
         Method method = md.getMethod();
 
         final T target = targetSupplier.get();

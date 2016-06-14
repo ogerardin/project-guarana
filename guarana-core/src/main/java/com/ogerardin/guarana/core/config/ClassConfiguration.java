@@ -5,6 +5,8 @@
 package com.ogerardin.guarana.core.config;
 
 import com.ogerardin.guarana.core.ui.InstanceUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
@@ -19,6 +21,7 @@ import java.util.Set;
  * @since 07/11/2015.
  */
 public class ClassConfiguration<C> {
+    private static Logger LOGGER = LoggerFactory.getLogger(ClassConfiguration.class);
 
     private final Class<C> targetClass;
 
@@ -82,11 +85,11 @@ public class ClassConfiguration<C> {
             if (method.getName().equals(methodName)) {
                 found = true;
                 hiddenMethods.add(method);
-                System.out.println("DEBUG: hidden method: " + method);
+                LOGGER.debug("hidden method: " + method);
             }
         }
         if (!found) {
-            System.err.println("WARNING: no method found matching " + methodName);
+            LOGGER.warn("no method found matching " + methodName);
         }
     }
 
@@ -106,7 +109,7 @@ public class ClassConfiguration<C> {
                 throw new InvalidParameterException("Method " + method + " is not declared in class " + targetClass);
             }
             hiddenMethods.add(method);
-            System.out.println("DEBUG: hidden method: " + method);
+            LOGGER.debug("hidden method: " + method);
         }
     }
 

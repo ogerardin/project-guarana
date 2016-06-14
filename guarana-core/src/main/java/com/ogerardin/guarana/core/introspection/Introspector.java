@@ -4,6 +4,9 @@
 
 package com.ogerardin.guarana.core.introspection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.MethodDescriptor;
@@ -14,11 +17,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Created by oge on 07/09/2015.
+ * @author oge
+ * @since 07/09/2015
  */
 public class Introspector {
+    static Logger LOGGER = LoggerFactory.getLogger(Introspector.class);
 
-    private static Map<Class, BeanInfo> classInfoMap = new HashMap<Class, BeanInfo>();
+    private static Map<Class, BeanInfo> classInfoMap = new HashMap<>();
 
     private Introspector() {
     }
@@ -31,6 +36,7 @@ public class Introspector {
         try {
             beanInfo = java.beans.Introspector.getBeanInfo(clazz);
         } catch (IntrospectionException e) {
+            LOGGER.error("Failed to introspect " + clazz, e);
             throw new RuntimeException(e);
         }
         classInfoMap.put(clazz, beanInfo);
@@ -48,9 +54,9 @@ public class Introspector {
 
     public static boolean isGetterOrSetter(MethodDescriptor methodDescriptor) {
         String methodName = methodDescriptor.getName();
-        return methodName.startsWith("get")
-                || methodName.startsWith("is")
-                || methodName.startsWith("set");
+        final int paramCount = methodDescriptor.getMethod().getParameterCount();
+        return ((methodName.startsWith("get") || methodName.startsWith("is")) && paramCount == 0)
+                || (methodName.startsWith("set") && paramCount == 1);
     }
 
     public static boolean isReadOnly(PropertyDescriptor propertyDescriptor) {

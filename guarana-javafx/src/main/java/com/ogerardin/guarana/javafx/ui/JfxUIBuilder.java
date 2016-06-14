@@ -8,6 +8,8 @@ import com.ogerardin.guarana.core.ui.UIBuilder;
 import javafx.scene.Parent;
 
 /**
+ * Specialized {@link UIBuilder} for JavaFX
+ *
  * @author oge
  * @since 10/02/2016
  */

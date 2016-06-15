@@ -66,7 +66,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
     public DefaultJfxInstanceUI(JfxUiManager builder, Class<T> clazz) {
         super(builder);
 
-        classInformation = Introspector.getClassInfo(clazz);
+        classInformation = Introspector.getClassInformation(clazz);
 
         root = new VBox();
         final String className = classInformation.getSimpleClassName();

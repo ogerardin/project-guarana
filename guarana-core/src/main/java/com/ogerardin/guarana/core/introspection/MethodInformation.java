@@ -6,6 +6,8 @@ package com.ogerardin.guarana.core.introspection;
 
 import java.beans.MethodDescriptor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.Set;
 
 /**
  * @author oge
@@ -17,6 +19,22 @@ public class MethodInformation {
 
     MethodInformation(MethodDescriptor methodDescriptor) {
         this.methodDescriptor = methodDescriptor;
+    }
+
+    Set<Class> getReferencedClasses() {
+        ClassSet referencedClasses = new ClassSet();
+        final Method method = methodDescriptor.getMethod();
+        // add return type and its parameter types
+        referencedClasses.add(method.getReturnType());
+        referencedClasses.addParameterized(method.getGenericReturnType());
+        // add parameters and their parameter types
+        for (Class c : method.getParameterTypes()) {
+            referencedClasses.add(c);
+        }
+        for (Type t : method.getGenericParameterTypes()) {
+            referencedClasses.addParameterized(t);
+        }
+        return referencedClasses;
     }
 
     public boolean isGetterOrSetter() {

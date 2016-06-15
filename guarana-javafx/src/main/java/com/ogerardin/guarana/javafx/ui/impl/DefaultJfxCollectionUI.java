@@ -47,7 +47,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         super(builder);
 
         this.itemClass = itemClass;
-        this.classInformation = Introspector.getClassInfo(itemClass);
+        this.classInformation = Introspector.getClassInformation(itemClass);
 
         // title, icon
 //        Image icon = classInformation.getIcon(BeanInfo.ICON_COLOR_32x32);

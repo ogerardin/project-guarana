@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.beans.IntrospectionException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -18,25 +16,19 @@ import java.util.stream.Collectors;
  * @since 07/09/2015
  */
 public class Introspector {
-    static Logger LOGGER = LoggerFactory.getLogger(Introspector.class);
-
-    private static Map<Class, ClassInformation> classInfoMap = new HashMap<>();
+    private static Logger LOGGER = LoggerFactory.getLogger(Introspector.class);
 
     private Introspector() {
     }
 
-    public static <C> ClassInformation<C> getClassInfo(Class<C> clazz) {
-        ClassInformation<C> classInformation = classInfoMap.get(clazz);
-        if (classInformation != null) {
-            return classInformation;
-        }
+    public static <C> ClassInformation<C> getClassInformation(Class<C> clazz) {
+        ClassInformation<C> classInformation;
         try {
-            classInformation = new ClassInformation<C>(clazz);
+            classInformation = ClassInformation.forClass(clazz);
         } catch (IntrospectionException e) {
-            LOGGER.error("Failed to introspect " + clazz, e);
+            LOGGER.error("Failed to obtain class information for " + clazz, e);
             throw new RuntimeException(e);
         }
-        classInfoMap.put(clazz, classInformation);
         return classInformation;
     }
 

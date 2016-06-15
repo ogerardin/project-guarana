@@ -6,7 +6,6 @@ package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.introspection.ClassInformation;
-import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.introspection.MethodInformation;
 import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
@@ -63,27 +62,33 @@ abstract class JfxUI implements JfxRenderable {
 
         // add methods
         targetClassInformation.getMethods().stream()
-                .filter(MethodInformation::isGetterOrSetter)
-                .filter(m -> !getConfiguration().isHiddenMethod(beanClass, m.getMethod()))
-                .map(mi -> new MethodMenuItem<>(mi, targetSupplier, new ImageView(ICON_METHOD)))
+                .filter(methodInfo -> !methodInfo.isGetterOrSetter())
+                .filter(methodInfo -> !getConfiguration().isHiddenMethod(beanClass, methodInfo.getMethod()))
+                .map(methodInfo -> new MethodMenuItem<>(methodInfo, targetSupplier, new ImageView(ICON_METHOD)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
         contextMenu.getItems().add(new SeparatorMenuItem());
-
         // add constructors
         targetClassInformation.getDeclaredConstructors().stream()
-                .map(c -> new ConstructorMenuItem<>(c, new ImageView(ICON_CONSTRUCTOR)))
+                .map(constructor -> new ConstructorMenuItem<>(constructor, new ImageView(ICON_CONSTRUCTOR)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         control.setContextMenu(contextMenu);
 
         contextMenu.getItems().add(new SeparatorMenuItem());
+        // add releated methods
+        targetClassInformation.getRelatedMethods().stream()
+                .map(method -> new MethodMenuItem<>(method, targetSupplier, new ImageView(ICON_METHOD)))
+                .forEach(menuItem -> contextMenu.getItems().add(menuItem));
+
 
         // add other items
-        //TODO make this generic
-        Introspector.getClassInfo(this.getClass()).getMethods().stream()
+        // FIXME disabled for now because it triggers too much introspection
+/*
+        Introspector.getClassInformation(this.getClass()).getMethods().stream()
                 .filter(m -> m.getName().equals("displayObjectRegistry"))
                 .map(m -> new MethodMenuItem<>(m, () -> this, null))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
+*/
     }
 
     void configureDragSource(Node source, Supplier<Object> valueSupplier) {
@@ -158,9 +163,13 @@ abstract class JfxUI implements JfxRenderable {
      */
     private class MethodMenuItem<T> extends MenuItem {
         public MethodMenuItem(MethodInformation methodInformation, Supplier<T> supplier, ImageView icon) {
-            super(getLabel(methodInformation.getMethod()));
+            this(methodInformation.getMethod(), supplier, icon);
+        }
+
+        public MethodMenuItem(Method method, Supplier<T> supplier, ImageView icon) {
+            super(getLabel(method));
             setOnAction(
-                    event -> Platform.runLater(() -> executeMethodRequested(methodInformation, supplier))
+                    event -> Platform.runLater(() -> executeMethodRequested(method, supplier))
             );
             if (icon != null) {
                 setGraphic(icon);
@@ -245,12 +254,10 @@ abstract class JfxUI implements JfxRenderable {
      * it is executed immediately; otherwise a dialog is displayed to let the user provide the arguments.
      *  @param <T>            the target type
      * @param <R>            the return type of the method
-     * @param md             the descriptor of the method to execute
+     * @param method             the descriptor of the method to execute
      * @param targetSupplier a Supplier used to obtain the target object
      */
-    private <T, R> void executeMethodRequested(MethodInformation md, Supplier<T> targetSupplier) {
-        Method method = md.getMethod();
-
+    private <T, R> void executeMethodRequested(Method method, Supplier<T> targetSupplier) {
         final T target = targetSupplier.get();
         final Class<R> returnType = (Class<R>) method.getReturnType();
         // if no arg, execute immediately, otherwise display arg dialog

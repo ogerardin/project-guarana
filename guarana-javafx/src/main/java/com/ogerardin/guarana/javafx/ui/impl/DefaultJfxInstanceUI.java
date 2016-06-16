@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Observer;
@@ -109,12 +110,21 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(propertyType)) {
-                Button button = new Button("...");
+                Button button = new Button("(+)");
                 button.setOnAction(e -> zoomCollection(button, readMethod, humanizedName));
                 grid.add(button, 2, row);
             }
-            // otherwise add a button to zoom on property
-            else {
+            // if it's an array, add a button to open as a list only if element type is not primitive
+            else if (propertyType.isArray()) {
+                final Class<?> componentType = propertyType.getComponentType();
+                if (!componentType.isPrimitive()) {
+                    Button button = new Button("[+]");
+                    button.setOnAction(e -> zoomArray(button, readMethod, componentType, humanizedName));
+                    grid.add(button, 2, row);
+                }
+            }
+            // otherwise if it's not a primitive type, add a button to zoom on property as single instance
+            else if (!propertyType.isPrimitive()) {
                 Button button = new Button("...");
                 button.setOnAction(e -> zoomProperty(button, propertyType, readMethod, humanizedName));
                 grid.add(button, 2, row);
@@ -167,6 +177,18 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
             }
             JfxCollectionUI<?> collectionUI = getCollectionUI(itemClass);
             collectionUI.setTarget(collection);
+            getBuilder().display(collectionUI, parent, title);
+
+        } catch (Exception e) {
+            getBuilder().displayException(e);
+        }
+    }
+
+    private <C> void zoomArray(Node parent, Method readMethod, Class<C> componentType, String title) {
+        try {
+            final C[] array = (C[]) readMethod.invoke(getTarget());
+            JfxCollectionUI<C> collectionUI = getCollectionUI(componentType);
+            collectionUI.setTarget(Arrays.asList(array));
             getBuilder().display(collectionUI, parent, title);
 
         } catch (Exception e) {

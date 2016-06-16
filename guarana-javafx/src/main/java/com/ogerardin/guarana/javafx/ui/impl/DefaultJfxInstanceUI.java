@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -167,15 +169,20 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
         return grid;
     }
 
-    private void zoomCollection(Node parent, Method readMethod, String title) {
+    private <C> void zoomCollection(Node parent, Method readMethod, String title) {
         try {
-            final Collection collection = (Collection) readMethod.invoke(getTarget());
-            Class<?> itemClass = Object.class;
-            //FIXME how do we get the item class if collection is empty ??
-            if (!collection.isEmpty()) {
-                itemClass = collection.iterator().next().getClass();
+            // Try to use generic introspection to determine the type of collection members.
+            final Type genericReturnType = readMethod.getGenericReturnType();
+            if (!(genericReturnType instanceof ParameterizedType)) {
+                throw new RuntimeException("Failed to obtain parameterized return type from read method " + readMethod);
             }
-            JfxCollectionUI<?> collectionUI = getCollectionUI(itemClass);
+            // We know that the property is a Collection so the read method should return
+            // a parameterized type with exactly one actual type argument
+            final Type[] actualTypeArguments = ((ParameterizedType) genericReturnType).getActualTypeArguments();
+            final Class<C> itemClass = (Class<C>) actualTypeArguments[0];
+            final Collection<C> collection = (Collection<C>) readMethod.invoke(getTarget());
+
+            JfxCollectionUI<C> collectionUI = getCollectionUI(itemClass);
             collectionUI.setTarget(collection);
             getBuilder().display(collectionUI, parent, title);
 

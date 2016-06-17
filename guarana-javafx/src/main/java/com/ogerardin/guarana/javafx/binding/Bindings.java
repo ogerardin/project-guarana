@@ -10,13 +10,16 @@ import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.introspection.PropertyInformation;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 import jfxtras.labs.scene.control.BeanPathAdapter;
 
 /**
  * @author oge
  * @since 14/01/2016
  */
-public class Bindings {
+public enum Bindings {
+
+    ;
 
     public static <T> void bindTextField(Configuration configuration, TextField textField, PropertyInformation propertyInformation, T target) {
         if (textField.isEditable()) {
@@ -49,5 +52,20 @@ public class Bindings {
             A aValue = converter.reverse().convert(newValue);
             aProperty.setValue(aValue);
         });
+    }
+
+    public static <T> StringConverter<T> getStringConverter(Class<T> paramType, Configuration configuration) {
+        return new StringConverter<T>() {
+            @Override
+            public String toString(T object) {
+                ClassConfiguration<T> classConfig = configuration.forClass(paramType);
+                return classConfig.toString(object);
+            }
+
+            @Override
+            public T fromString(String string) {
+                return null;
+            }
+        };
     }
 }

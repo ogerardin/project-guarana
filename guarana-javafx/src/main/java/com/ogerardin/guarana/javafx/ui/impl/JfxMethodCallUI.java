@@ -4,20 +4,18 @@
 
 package com.ogerardin.guarana.javafx.ui.impl;
 
-import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
+import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import com.ogerardin.guarana.javafx.ui.JfxRenderable;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -25,13 +23,17 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +47,9 @@ import java.util.stream.Collectors;
 public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
 
     private final VBox root;
-    private final Map<String, Property> paramNameToProperty;
+
+    //private final Map<String, Property> paramNameToProperty;
+    private List<JfxInstanceUI> paramFieldUiList = new ArrayList<>();
 
     /**
      * {@link Consumer#accept} will be called with the result of the method call / constructor
@@ -83,19 +87,22 @@ public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
         root.getChildren().add(grid);
         int row = 0;
 
-        paramNameToProperty = new HashMap<>();
+        //paramNameToProperty = new HashMap<>();
         for (Parameter param : executable.getParameters()) {
-
-            //FIXME use actual param type instead of String
-            final SimpleStringProperty jfxProperty = new SimpleStringProperty();
-            paramNameToProperty.put(param.getName(), jfxProperty);
+            final Class<?> paramType = param.getType();
+            //SimpleObjectProperty jfxProperty = createSimpleObjectProperty(paramType);
+            //paramNameToProperty.put(param.getName(), jfxProperty);
 
             final String humanizedName = Introspector.humanize(param.getName());
             Label label = new Label(humanizedName);
             grid.add(label, 0, row);
 
-            TextField field = new TextField();
-            field.textProperty().bindBidirectional(jfxProperty);
+            //TextField field = new TextField();
+            //final StringConverter stringConverter = Bindings.getStringConverter(paramType, getConfiguration());
+            //field.textProperty().bindBidirectional(jfxProperty, stringConverter);
+            final JfxInstanceUI<Object> ui = (JfxInstanceUI<Object>) getBuilder().buildEmbeddedInstanceUI(paramType);
+            paramFieldUiList.add(ui);
+            final Node field = ui.render();
 
             grid.add(field, 1, row);
             if (row == 0) {
@@ -103,7 +110,7 @@ public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
             }
 
             // if it's a collection, add a button to open as list
-            if (Collection.class.isAssignableFrom(param.getType())) {
+            if (Collection.class.isAssignableFrom(paramType)) {
                 Button button = new Button("...");
                 button.setOnAction(e -> {
                     JfxCollectionUI<Object> collectionUI = getBuilder().buildCollectionUi(Object.class);
@@ -115,28 +122,37 @@ public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
 
             // set the field as a target for drag and drop
             configureDropTarget(field,
-                    value -> param.getType().isAssignableFrom(value.getClass()),
-                    value -> {
-                        //paramNameToProperty.put(param.getName(), value);
-                        ClassConfiguration classConfig = getConfiguration().forClass(value.getClass());
-                        //FIXME set param value, not just field text ! (see DefaultJfxInstanceUI)
-                        field.setText(classConfig.toString(value));
-                    });
-
+                    new Predicate<Object>() {
+                        @Override
+                        public boolean test(Object value) {
+                            return paramType.isAssignableFrom(value.getClass());
+                        }
+                    },
+                    //value -> jfxProperty.setValue(value));
+                    new Consumer<Object>() {
+                        @Override
+                        public void accept(Object value) {
+                            ui.targetProperty().setValue(value);
+                        }
+                    }
+            );
             row++;
         }
 
         Button goButton = new Button(executable instanceof Constructor ? "Create" : "Go");
         goButton.setOnAction(event -> {
             try {
-                List paramValues = getParamValues(executable);
+                List paramValues = getParamValues();
+                final Object[] values = paramValues.toArray();
                 if (executable instanceof Constructor) {
-                    C instance = ((Constructor<C>) executable).newInstance(paramValues.toArray());
+                    final Constructor<C> constructor = (Constructor<C>) executable;
+                    C instance = constructor.newInstance(values);
                     if (onSuccess != null) {
                         onSuccess.accept(instance);
                     }
                 } else if (executable instanceof Method) {
-                    Object result = ((Method) executable).invoke(getTarget(), paramValues.toArray());
+                    final Method method = (Method) executable;
+                    Object result = method.invoke(getTarget(), values);
                     if (onSuccess != null) {
                         onSuccess.accept(result);
                     }
@@ -149,12 +165,21 @@ public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
         root.getChildren().add(goButton);
     }
 
-    private List<?> getParamValues(Executable executable) {
-        return Arrays.stream(executable.getParameters())
-                .map(Parameter::getName)
-                .map(paramNameToProperty::get)
-                .map(Property::getValue)
+    @NotNull
+    private <T> SimpleObjectProperty<T> createSimpleObjectProperty(Class<T> propertyClass) {
+        return new SimpleObjectProperty<T>();
+    }
+
+    private List<Object> getParamValues() {
+        return paramFieldUiList.stream()
+                .map(ui -> ui.targetProperty().getValue())
                 .collect(Collectors.toList());
+
+//        return Arrays.stream(executable.getParameters())
+//                .map(Parameter::getName)
+//                .map(paramNameToProperty::get)
+//                .map(Property::getValue)
+//                .collect(Collectors.toList());
     }
 
     @Override

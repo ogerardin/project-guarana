@@ -67,15 +67,16 @@ abstract class JfxUI implements JfxRenderable {
                 .map(methodInfo -> new MethodMenuItem<>(methodInfo, targetSupplier, new ImageView(ICON_METHOD)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
-        contextMenu.getItems().add(new SeparatorMenuItem());
         // add constructors
+        contextMenu.getItems().add(new SeparatorMenuItem());
         targetClassInformation.getDeclaredConstructors().stream()
                 .map(constructor -> new ConstructorMenuItem<>(constructor, new ImageView(ICON_CONSTRUCTOR)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         control.setContextMenu(contextMenu);
 
-        contextMenu.getItems().add(new SeparatorMenuItem());
         // add releated methods
+        contextMenu.getItems().add(new SeparatorMenuItem());
+        //FIXME targetSupplier cannot be used here since those methods do not belong to the target class !!!
         targetClassInformation.getRelatedMethods().stream()
                 .map(method -> new MethodMenuItem<>(method, targetSupplier, new ImageView(ICON_METHOD)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
@@ -91,11 +92,11 @@ abstract class JfxUI implements JfxRenderable {
 */
     }
 
-    void configureDragSource(Node source, Supplier<Object> valueSupplier) {
+    <T> void configureDragSource(Node source, Supplier<T> valueSupplier) {
         source.setOnDragDetected(event -> {
             Dragboard dragboard = source.startDragAndDrop(TransferMode.LINK);
             ClipboardContent content = new ClipboardContent();
-            Object value = valueSupplier.get();
+            T value = valueSupplier.get();
             Identifier identifier = ObjectRegistry.INSTANCE.put(value);
             content.put(Const.DATA_FORMAT_OBJECT_IDENTIFIER, identifier);
             dragboard.setContent(content);
@@ -105,7 +106,7 @@ abstract class JfxUI implements JfxRenderable {
         source.setOnDragDone(Event::consume);
     }
 
-    void configureDropTarget(Node control, Predicate<Object> valueValidator, Consumer<Object> valueConsumer) {
+    <T> void configureDropTarget(Node control, Predicate<T> valueValidator, Consumer<T> valueConsumer) {
         // Note: it would make sense to accept the transfer in the DragEntered handler (which is called once when the
         // pointer enters the target), but for some reason it doesn't work, so you have to do it in the DragOver handler
         // (which is called whenever the pointer moves inside the target)
@@ -114,7 +115,7 @@ abstract class JfxUI implements JfxRenderable {
             if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)) {
                 // retrieve identifier from dragboard and associated source object in registry
                 Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
-                Object value = ObjectRegistry.INSTANCE.get(identifier);
+                T value = (T) ObjectRegistry.INSTANCE.get(identifier);
                 if (value == null) {
                     LOGGER.error("Identifier not found in object registry: " + identifier);
                     return;
@@ -130,7 +131,7 @@ abstract class JfxUI implements JfxRenderable {
             if (db.hasContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER)) {
                 // retrieve identifier from dragboard and associated source object in registry
                 Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
-                Object value = ObjectRegistry.INSTANCE.get(identifier);
+                T value = (T) ObjectRegistry.INSTANCE.get(identifier);
                 if (value == null) {
                     LOGGER.error("Key not found in object registry: " + identifier);
                     return;

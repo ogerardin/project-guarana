@@ -59,8 +59,8 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
     private final ClassInformation<T> classInformation;
 
-    private BiMap<Node, PropertyInformation> nodePropertyDescriptorMap = HashBiMap.create();
-    private BiMap<JfxInstanceUI, PropertyInformation> uiPropertyDescriptorMap = HashBiMap.create();
+    private BiMap<Node, PropertyInformation> nodeToPropertyInformation = HashBiMap.create();
+    private BiMap<JfxInstanceUI, PropertyInformation> uiToPropertyInformation = HashBiMap.create();
 
     private final VBox root;
 
@@ -101,6 +101,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
             final Class<?> propertyType = propertyInformation.getPropertyType();
             final Method readMethod = propertyInformation.getReadMethod();
+
             final String humanizedName = Introspector.humanize(propertyInformation.getDisplayName());
             Label label = new Label(humanizedName);
             label.setTooltip(new Tooltip(propertyInformation.toString()));
@@ -134,23 +135,20 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
             // set the field as a target for drag and drop
             configureDropTarget(field,
-                    value -> {
-                        Class<?> targetPropertyClass = propertyInformation.getPropertyType();
-                        return targetPropertyClass.isAssignableFrom(value.getClass());
-                    },
+                    value -> propertyType.isAssignableFrom(value.getClass()),
                     value -> {
                         Method writeMethod = propertyInformation.getWriteMethod();
                         try {
                             writeMethod.invoke(getTarget(), value);
                             //FIXME if the UI's target property is bound to a JavaBeanObjectProperty, we should call fireValueChangedEvent
-                            propertyUpdated(propertyInformation, value);
+                            //propertyUpdated(propertyInformation, value);
                         } catch (Exception e) {
                             getBuilder().displayException(e);
                         }
                     });
 
-            uiPropertyDescriptorMap.put(fieldUi, propertyInformation);
-            nodePropertyDescriptorMap.put(field, propertyInformation);
+            uiToPropertyInformation.put(fieldUi, propertyInformation);
+            nodeToPropertyInformation.put(field, propertyInformation);
 
             row++;
         }
@@ -226,7 +224,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
     }
 
     private void unbind() {
-        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : uiPropertyDescriptorMap.entrySet()) {
+        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : uiToPropertyInformation.entrySet()) {
             final JfxInstanceUI ui = entry.getKey();
             ui.targetProperty().unbind();
         }
@@ -234,7 +232,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
     private void bind(T target) {
 
-        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : uiPropertyDescriptorMap.entrySet()) {
+        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : uiToPropertyInformation.entrySet()) {
             final JfxInstanceUI ui = entry.getKey();
             final PropertyInformation propertyInformation = entry.getValue();
 
@@ -315,7 +313,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
     }
 
     protected void propertyUpdated(PropertyInformation propertyInformation, Object value) {
-        Node node = nodePropertyDescriptorMap.inverse().get(propertyInformation);
+        Node node = nodeToPropertyInformation.inverse().get(propertyInformation);
         if (node instanceof TextField) {
             Bindings.fieldSetValue(getConfiguration(), ((TextField) node), propertyInformation, value);
         }

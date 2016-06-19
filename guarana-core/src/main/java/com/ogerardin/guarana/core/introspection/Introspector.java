@@ -4,37 +4,32 @@
 
 package com.ogerardin.guarana.core.introspection;
 
-import java.beans.BeanInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.beans.IntrospectionException;
-import java.beans.MethodDescriptor;
-import java.beans.PropertyDescriptor;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Created by oge on 07/09/2015.
+ * @author oge
+ * @since 07/09/2015
  */
 public class Introspector {
-
-    private static Map<Class, BeanInfo> classInfoMap = new HashMap<Class, BeanInfo>();
+    private static Logger LOGGER = LoggerFactory.getLogger(Introspector.class);
 
     private Introspector() {
     }
 
-    public static BeanInfo getClassInfo(Class clazz) {
-        BeanInfo beanInfo = classInfoMap.get(clazz);
-        if (beanInfo != null) {
-            return beanInfo;
-        }
+    public static <C> ClassInformation<C> getClassInformation(Class<C> clazz) {
+        ClassInformation<C> classInformation;
         try {
-            beanInfo = java.beans.Introspector.getBeanInfo(clazz);
+            classInformation = ClassInformation.forClass(clazz);
         } catch (IntrospectionException e) {
+            LOGGER.error("Failed to obtain class information for " + clazz, e);
             throw new RuntimeException(e);
         }
-        classInfoMap.put(clazz, beanInfo);
-        return beanInfo;
+        return classInformation;
     }
 
     public static String humanize(String name) {
@@ -46,14 +41,4 @@ public class Introspector {
                 .collect(Collectors.joining(" "));
     }
 
-    public static boolean isGetterOrSetter(MethodDescriptor methodDescriptor) {
-        String methodName = methodDescriptor.getName();
-        return methodName.startsWith("get")
-                || methodName.startsWith("is")
-                || methodName.startsWith("set");
-    }
-
-    public static boolean isReadOnly(PropertyDescriptor propertyDescriptor) {
-        return propertyDescriptor.getWriteMethod() == null;
-    }
 }

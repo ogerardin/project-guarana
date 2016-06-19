@@ -5,6 +5,7 @@
 package com.ogerardin.guarana.demo.model;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Olivier
@@ -21,6 +22,8 @@ public interface DemoManager {
     Person save(Person person);
 
     Event save(Event event);
+
+    List<Leave> getLeavesByPerson(Person person);
 
     void resetDemo();
 }

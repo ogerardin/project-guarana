@@ -9,50 +9,39 @@ package com.ogerardin.guarana.demo.javafx.main;
  * @since 28/05/15
  */
 
-import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.demo.javafx.adapters.DemoManagerDb4OImpl;
-import com.ogerardin.guarana.demo.javafx.ui.JfxDateUi;
 import com.ogerardin.guarana.demo.model.DemoManager;
-import com.ogerardin.guarana.demo.model.Person;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.util.Date;
-
 public class MainDemoJfx extends Application {
 
-    private static JfxUiManager uiManager;
     private static DemoManager demoManager;
 
     @Override
     public void start(Stage primaryStage) {
 
+        // instantiate UiManager for JavaFX
+        JfxUiManager uiManager = new JfxUiManager();
+
+        // build UI for a DemoManager
         JfxInstanceUI<DemoManager> ui = uiManager.buildInstanceUI(DemoManager.class);
 
+        // populate UI with actual instance
         ui.setTarget(demoManager);
 
+        //display UI in primary Stage
         uiManager.display(ui, primaryStage, "Hello Guarana!");
     }
 
     public static void main(String[] args) {
 
+        // instantiate our main business object
         demoManager = new DemoManagerDb4OImpl();
 
-        Configuration config = new Configuration();
-        config.forClass(Throwable.class).hideProperties("localizedMessage");
-        config.forClass(Person.class).hideProperties("fullNameLastFirst", "fullNameFirstLast");
-        config.forClass(Person.class).setToString(Person::getFullNameLastFirst);
-        config.forClass(Date.class).setEmbeddedUiClass(JfxDateUi.class);
-
-        uiManager = new JfxUiManager(config);
-
-        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-            uiManager.displayException(e);
-            System.exit(1);
-        });
-
+        // handoff to JavaFX; this will call the start() method
         launch(args);
     }
 }

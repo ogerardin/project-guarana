@@ -5,7 +5,7 @@
 package com.ogerardin.guarana.javafx.ui;
 
 import com.ogerardin.guarana.core.ui.InstanceUI;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
 import javafx.scene.Parent;
 
 /**
@@ -14,5 +14,8 @@ import javafx.scene.Parent;
  */
 public interface JfxInstanceUI<T> extends InstanceUI<Parent, T>, JfxRenderable {
 
-    ObjectProperty<T> targetProperty();
+    /**
+     * The JavaFX-style property that encapsulates the target object for this UI
+     */
+    Property<T> targetProperty();
 }

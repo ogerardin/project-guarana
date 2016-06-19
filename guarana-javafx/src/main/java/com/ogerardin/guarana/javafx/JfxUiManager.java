@@ -22,6 +22,8 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Pair;
 import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
@@ -32,9 +34,9 @@ import java.util.function.Consumer;
  * @author oge
  * @since 07/09/2015
  */
-//TOTO split Builder from Manager
+//TODO split Builder from Manager
 public class JfxUiManager implements JfxUIBuilder {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(JfxUiManager.class);
 
     private static final String GUARANA_DEFAULT_CSS = "/guarana-default.css";
 
@@ -73,7 +75,7 @@ public class JfxUiManager implements JfxUIBuilder {
             return new DefaultJfxInstanceUI<>(this, clazz);
         }
         try {
-            // might throw ClassCastException if the specified class doesn't match JfxInstanceUI
+            // might throw ClassCastException if the specified class doesn't implement JfxInstanceUI
             return (JfxInstanceUI<C>) uiClass.newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -88,7 +90,7 @@ public class JfxUiManager implements JfxUIBuilder {
             return new DefaultJfxEmbeddedInstanceUI<>(this, clazz);
         }
         try {
-            // might throw ClassCastException if the specified class doesn't match JfxInstanceUI
+            // might throw ClassCastException if the specified class doesn't implement JfxInstanceUI
             return (JfxInstanceUI<C>) uiClass.newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -113,7 +115,7 @@ public class JfxUiManager implements JfxUIBuilder {
 
     public void displayException(Throwable e) {
         //TODO improve this
-        e.printStackTrace();
+        LOGGER.error("Displaying exception", e);
         JfxInstanceUI<Throwable> exceptionInstanceUI = buildInstanceUI(Throwable.class);
         exceptionInstanceUI.setTarget(e);
         display(exceptionInstanceUI, "Caught Exception");
@@ -225,7 +227,7 @@ public class JfxUiManager implements JfxUIBuilder {
     private void stageAction(Renderable renderable, Consumer<Stage> stageAction) {
         Stage stage = renderableStageMap.get(renderable);
         if (stage == null) {
-            System.err.println("WARNING: can't find stage for the specified renderable; maybe it was never displayed?");
+            LOGGER.error("WARNING: can't find stage for the specified renderable; maybe it was never displayed?");
             return;
         }
         stageAction.accept(stage);

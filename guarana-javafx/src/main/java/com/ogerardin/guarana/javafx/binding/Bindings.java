@@ -7,36 +7,38 @@ package com.ogerardin.guarana.javafx.binding;
 import com.google.common.base.Converter;
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.config.Configuration;
+import com.ogerardin.guarana.core.introspection.PropertyInformation;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 import jfxtras.labs.scene.control.BeanPathAdapter;
-
-import java.beans.PropertyDescriptor;
 
 /**
  * @author oge
  * @since 14/01/2016
  */
-public class Bindings {
+public enum Bindings {
 
-    public static <T> void bindTextField(Configuration configuration, TextField textField, PropertyDescriptor propertyDescriptor, T target) {
+    ;
+
+    public static <T> void bindTextField(Configuration configuration, TextField textField, PropertyInformation propertyInformation, T target) {
         if (textField.isEditable()) {
             BeanPathAdapter<T> beanPathAdapter = new BeanPathAdapter<>(target);
-            String propertyName = propertyDescriptor.getName();
+            String propertyName = propertyInformation.getName();
             beanPathAdapter.bindBidirectional(propertyName, textField.textProperty());
         } else {
             //FIXME we should bind (unidirectionally) and not just set property value
             try {
-                final Object value = propertyDescriptor.getReadMethod().invoke(target);
-                fieldSetValue(configuration, textField, propertyDescriptor, value);
+                final Object value = propertyInformation.getReadMethod().invoke(target);
+                fieldSetValue(configuration, textField, propertyInformation, value);
             } catch (Exception ignored) {
                 ignored.printStackTrace(System.err);
             }
         }
     }
 
-    public static void fieldSetValue(Configuration configuration, TextField textField, PropertyDescriptor propertyDescriptor, Object value) {
-        ClassConfiguration classConfig = configuration.forClass(propertyDescriptor.getPropertyType());
+    public static void fieldSetValue(Configuration configuration, TextField textField, PropertyInformation propertyInformation, Object value) {
+        ClassConfiguration classConfig = configuration.forClass(propertyInformation.getPropertyType());
         textField.setText(classConfig.toString(value));
     }
 
@@ -50,5 +52,20 @@ public class Bindings {
             A aValue = converter.reverse().convert(newValue);
             aProperty.setValue(aValue);
         });
+    }
+
+    public static <T> StringConverter<T> getStringConverter(Class<T> paramType, Configuration configuration) {
+        return new StringConverter<T>() {
+            @Override
+            public String toString(T object) {
+                ClassConfiguration<T> classConfig = configuration.forClass(paramType);
+                return classConfig.toString(object);
+            }
+
+            @Override
+            public T fromString(String string) {
+                return null;
+            }
+        };
     }
 }

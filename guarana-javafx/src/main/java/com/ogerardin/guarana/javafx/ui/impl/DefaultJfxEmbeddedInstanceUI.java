@@ -7,14 +7,14 @@ package com.ogerardin.guarana.javafx.ui.impl;
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.config.ToString;
 import com.ogerardin.guarana.javafx.JfxUiManager;
+import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * An implementation of JfxInstanceUI using a TextField, intended for use as an embedded field.
@@ -41,7 +41,17 @@ public class DefaultJfxEmbeddedInstanceUI<T> extends TextField implements JfxIns
         this.jfxUiManager = jfxUiManager;
         this.clazz = clazz;
 
-        textProperty().bindBidirectional(targetProperty, new TargetStringConverter<>(jfxUiManager, clazz));
+        //final TargetStringConverter<T> converter = new TargetStringConverter<>(jfxUiManager, clazz);
+        final StringConverter<T> converter = Bindings.getStringConverter(clazz, jfxUiManager.getConfiguration());
+        textProperty().bindBidirectional(targetProperty, converter);
+
+        addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() == KeyCode.F5) {
+                final T value = targetProperty.getValue();
+                final String s = converter.toString(value);
+                textProperty().setValue(s);
+            }
+        });
     }
 
     @Override
@@ -65,32 +75,4 @@ public class DefaultJfxEmbeddedInstanceUI<T> extends TextField implements JfxIns
     }
 
 
-    private static class TargetStringConverter<X> extends StringConverter<X> {
-        private final JfxUiManager jfxUiManager;
-        private final Class<X> clazz;
-
-        public TargetStringConverter(JfxUiManager jfxUiManager, Class<X> clazz) {
-            this.jfxUiManager = jfxUiManager;
-            this.clazz = clazz;
-        }
-
-        @Override
-        public String toString(X object) {
-            return jfxUiManager.getConfiguration().forClass(clazz).toString(object);
-        }
-
-        @Override
-        public X fromString(String string) {
-            try {
-                final Constructor<X> constructor = clazz.getConstructor(String.class);
-                final X object = constructor.newInstance(string);
-                return object;
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Can't convert from String to " + clazz + ": no contructor "
-                        + clazz.getName() + "(String) found");
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException("Contructor invocation " + clazz.getName() + "(\"" + string + "\") failed", e);
-            }
-        }
-    }
 }

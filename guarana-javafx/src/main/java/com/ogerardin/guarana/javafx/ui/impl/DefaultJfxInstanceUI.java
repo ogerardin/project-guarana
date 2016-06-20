@@ -11,7 +11,6 @@ import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.introspection.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
-import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -40,7 +39,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Observer;
@@ -62,16 +60,21 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
     private BiMap<Node, PropertyInformation> nodeToPropertyInformation = HashBiMap.create();
     private BiMap<JfxInstanceUI, PropertyInformation> uiToPropertyInformation = HashBiMap.create();
 
-    private final VBox root;
+    private final Parent root;
 
     private ObjectProperty<T> targetProperty = new SimpleObjectProperty<>();
+
 
     public DefaultJfxInstanceUI(JfxUiManager builder, Class<T> clazz) {
         super(builder);
 
         classInformation = Introspector.getClassInformation(clazz);
 
-        root = new VBox();
+        this.root = buildUi(classInformation);
+    }
+
+    private VBox buildUi(ClassInformation<T> classInformation) {
+        VBox root = new VBox();
         final String className = classInformation.getSimpleClassName();
         String displayName = classInformation.getDisplayName();
         if (displayName.equals(className) && getConfiguration().getHumanizeClassNames()) {
@@ -95,7 +98,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
         for (PropertyInformation propertyInformation : classInformation.getProperties()) {
             String propertyName = propertyInformation.getName();
             // ignore hidden properties
-            if (getConfiguration().isHiddenProperty(clazz, propertyName)) {
+            if (getConfiguration().isHiddenProperty(classInformation.getTargetClass(), propertyName)) {
                 continue;
             }
 
@@ -152,6 +155,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
             row++;
         }
+        return root;
     }
 
     private GridPane buildGridPane() {
@@ -180,10 +184,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
             final Class<C> itemClass = (Class<C>) actualTypeArguments[0];
             final Collection<C> collection = (Collection<C>) readMethod.invoke(getTarget());
 
-            JfxCollectionUI<C> collectionUI = getCollectionUI(itemClass);
-            collectionUI.setTarget(collection);
-            getBuilder().display(collectionUI, parent, title);
-
+            getBuilder().displayCollection(collection, itemClass, parent, title);
         } catch (Exception e) {
             getBuilder().displayException(e);
         }
@@ -192,17 +193,10 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
     private <C> void zoomArray(Node parent, Method readMethod, Class<C> componentType, String title) {
         try {
             final C[] array = (C[]) readMethod.invoke(getTarget());
-            JfxCollectionUI<C> collectionUI = getCollectionUI(componentType);
-            collectionUI.setTarget(Arrays.asList(array));
-            getBuilder().display(collectionUI, parent, title);
-
+            getBuilder().displayArray(array, componentType, parent, title);
         } catch (Exception e) {
             getBuilder().displayException(e);
         }
-    }
-
-    private <I> JfxCollectionUI<I> getCollectionUI(Class<I> itemClass) {
-        return getBuilder().buildCollectionUi(itemClass);
     }
 
     private <P> void zoomProperty(Node parent, Class<P> propertyType, Method readMethod, String title) {

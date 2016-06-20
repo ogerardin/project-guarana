@@ -73,7 +73,11 @@ public class ClassInformation<C> {
     }
 
     private void addReferencingMethod(Method method) {
-        LOGGER.debug("PUT " + this.getTargetClass() + " -> " + method);
+        LOGGER.debug("PUT " + this.getTargetClass().getSimpleName() + " -> " + method);
+//        LOGGER.debug("PUT " + this.getTargetClass().getSimpleName() + " -> " +
+//                method.getReturnType().getSimpleName() + " " +
+//                method.getDeclaringClass().getSimpleName() + "." +
+//                method.getName());
         relatedMethods.add(method);
     }
 

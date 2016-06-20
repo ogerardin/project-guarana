@@ -25,6 +25,9 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
@@ -82,6 +85,7 @@ public class JfxUiManager implements JfxUIBuilder {
         }
     }
 
+
     @Override
     public <C> JfxInstanceUI<C> buildEmbeddedInstanceUI(Class<C> clazz) {
         ClassConfiguration<C> classConfiguration = configuration.forClass(clazz);
@@ -128,14 +132,6 @@ public class JfxUiManager implements JfxUIBuilder {
 
     public JfxRenderable display(JfxRenderable renderable, Stage stage, String title) {
         return display(renderable, stage, null, title);
-    }
-
-    public JfxRenderable display(JfxRenderable renderable, Stage stage) {
-        return display(renderable, stage, null, null);
-    }
-
-    public JfxRenderable display(JfxRenderable renderable, Node parent) {
-        return display(renderable, null, parent, null);
     }
 
     public JfxRenderable display(JfxRenderable renderable) {
@@ -194,18 +190,40 @@ public class JfxUiManager implements JfxUIBuilder {
         return ui;
     }
 
-
-    public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, Node parent) {
-        return displayInstance(target, targetClass, null, parent, null);
+    public <C> JfxCollectionUI<C> displayCollection(Collection<C> collection, Class<C> itemClass, Node parent, String title) {
+        // check if target already has a UI
+        Pair<Class, Object> key = new Pair<>(Collection.class, collection);
+        JfxCollectionUI<C> ui = (JfxCollectionUI<C>) objectRenderableMap.get(key);
+        if (ui != null) {
+            show(ui);
+        } else {
+            // build UI for the target collection class and display it in stage
+            ui = buildCollectionUi(itemClass);
+            ui.setTarget(collection);
+            objectRenderableMap.put(key, ui);
+            display(ui, parent, title);
+        }
+        return ui;
     }
 
-    public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass) {
-        return displayInstance(target, targetClass, null, null, null);
+    public <C> JfxCollectionUI<C> displayArray(C[] array, Class<C> itemClass, Node parent, String title) {
+        // check if target already has a UI
+        Pair<Class, Object> key = new Pair<>(Array.class, array);
+        JfxCollectionUI<C> ui = (JfxCollectionUI<C>) objectRenderableMap.get(key);
+        if (ui != null) {
+            show(ui);
+        } else {
+            // build UI for the target collection class and display it in stage
+            ui = buildCollectionUi(itemClass);
+            ui.setTarget(Arrays.asList(array));
+            objectRenderableMap.put(key, ui);
+            display(ui, parent, title);
+        }
+        return ui;
+
+
     }
 
-    public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, Stage stage) {
-        return displayInstance(target, targetClass, stage, null, null);
-    }
 
     public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, Node parent, String title) {
         return displayInstance(target, targetClass, null, parent, title);
@@ -213,10 +231,6 @@ public class JfxUiManager implements JfxUIBuilder {
 
     public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, String title) {
         return displayInstance(target, targetClass, null, null, title);
-    }
-
-    public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, Stage stage, String title) {
-        return displayInstance(target, targetClass, stage, null, title);
     }
 
     public Configuration getConfiguration() {
@@ -227,7 +241,7 @@ public class JfxUiManager implements JfxUIBuilder {
     private void stageAction(Renderable renderable, Consumer<Stage> stageAction) {
         Stage stage = renderableStageMap.get(renderable);
         if (stage == null) {
-            LOGGER.error("WARNING: can't find stage for the specified renderable; maybe it was never displayed?");
+            LOGGER.warn("Can't find stage for the specified renderable; maybe it was never displayed?");
             return;
         }
         stageAction.accept(stage);

@@ -87,15 +87,15 @@ public class JfxUiManager implements JfxUIBuilder {
 
 
     @Override
-    public <C> JfxInstanceUI<C> buildEmbeddedInstanceUI(Class<C> clazz) {
-        ClassConfiguration<C> classConfiguration = configuration.forClass(clazz);
+    public <T> JfxInstanceUI<T> buildEmbeddedInstanceUI(Class<T> clazz) {
+        ClassConfiguration<T> classConfiguration = configuration.forClass(clazz);
         Class<?> uiClass = classConfiguration.getEmbeddedUiClass();
         if (uiClass == null) {
-            return new DefaultJfxEmbeddedInstanceUI<>(this, clazz);
+            return new DefaultJfxEmbeddedInstanceUI<T>(this, clazz);
         }
         try {
             // might throw ClassCastException if the specified class doesn't implement JfxInstanceUI
-            return (JfxInstanceUI<C>) uiClass.newInstance();
+            return (JfxInstanceUI<T>) uiClass.newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

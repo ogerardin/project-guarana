@@ -6,7 +6,6 @@ package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.javafx.JfxUiManager;
-import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import com.ogerardin.guarana.javafx.ui.JfxRenderable;
 import javafx.beans.property.ObjectProperty;
@@ -25,15 +24,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -44,9 +39,9 @@ import java.util.stream.Collectors;
  * @author Olivier
  * @since 05/06/15
  */
-public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
+public class JfxExecutableInvocationUI<C> extends JfxUI implements JfxRenderable {
 
-    private final VBox root;
+    private final Parent root;
 
     //private final Map<String, Property> paramNameToProperty;
     private List<JfxInstanceUI> paramFieldUiList = new ArrayList<>();
@@ -64,78 +59,32 @@ public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
     private ObjectProperty<C> targetProperty = new SimpleObjectProperty<>();
 
 
-    public JfxMethodCallUI(JfxUiManager builder, Executable executable) {
+    public JfxExecutableInvocationUI(JfxUiManager builder, Executable executable) {
         super(builder);
 
-        root = new VBox();
+        root = buildUi(executable);
+    }
+
+    private Parent buildUi(Executable executable) {
+        VBox root = new VBox();
         final Label title = new Label(Introspector.humanize(executable.getName()));
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         title.setTooltip(new Tooltip(executable.toGenericString()));
         root.getChildren().add(title);
 
         // build params list
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(Const.DEFAULT_INSETS);
-
-        ColumnConstraints column2 = new ColumnConstraints();
-        column2.setHgrow(Priority.ALWAYS);
-        grid.getColumnConstraints().setAll(new ColumnConstraints(), column2); // second column gets any extra width
-
+        GridPane grid = buildGridPane();
         root.getChildren().add(grid);
         int row = 0;
 
-        //paramNameToProperty = new HashMap<>();
-        for (Parameter param : executable.getParameters()) {
-            final Class<?> paramType = param.getType();
-            //SimpleObjectProperty jfxProperty = createSimpleObjectProperty(paramType);
-            //paramNameToProperty.put(param.getName(), jfxProperty);
+        final Parameter[] parameters = executable.getParameters();
+        final Type[] genericParameterTypes = executable.getGenericParameterTypes();
 
-            final String humanizedName = Introspector.humanize(param.getName());
-            Label label = new Label(humanizedName);
-            grid.add(label, 0, row);
+        for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
+            final Parameter param = parameters[i];
+            final Type genericParamType = genericParameterTypes[i];
 
-            //TextField field = new TextField();
-            //final StringConverter stringConverter = Bindings.getStringConverter(paramType, getConfiguration());
-            //field.textProperty().bindBidirectional(jfxProperty, stringConverter);
-            final JfxInstanceUI<Object> ui = (JfxInstanceUI<Object>) getBuilder().buildEmbeddedInstanceUI(paramType);
-            paramFieldUiList.add(ui);
-            final Node field = ui.render();
-
-            grid.add(field, 1, row);
-            if (row == 0) {
-                field.requestFocus();
-            }
-
-            // if it's a collection, add a button to open as list
-            if (Collection.class.isAssignableFrom(paramType)) {
-                Button button = new Button("...");
-                button.setOnAction(e -> {
-                    JfxCollectionUI<Object> collectionUI = getBuilder().buildCollectionUi(Object.class);
-                    collectionUI.setTarget(new ArrayList<>());
-                    getBuilder().display(collectionUI, button, "Collection parameter");
-                });
-                grid.add(button, 2, row);
-            }
-
-            // set the field as a target for drag and drop
-            configureDropTarget(field,
-                    new Predicate<Object>() {
-                        @Override
-                        public boolean test(Object value) {
-                            return paramType.isAssignableFrom(value.getClass());
-                        }
-                    },
-                    //value -> jfxProperty.setValue(value));
-                    new Consumer<Object>() {
-                        @Override
-                        public void accept(Object value) {
-                            ui.targetProperty().setValue(value);
-                        }
-                    }
-            );
+            buildPropertyUi(grid, row, param, genericParamType);
             row++;
         }
 
@@ -163,6 +112,65 @@ public class JfxMethodCallUI<C> extends JfxUI implements JfxRenderable {
             }
         });
         root.getChildren().add(goButton);
+        return root;
+    }
+
+    private <T> void buildPropertyUi(GridPane grid, int row, Parameter param, Type genericParamType) {
+        final Class<T> paramType = (Class<T>) param.getType();
+        final String paramName = param.getName();
+
+        final String humanizedName = Introspector.humanize(paramName);
+        Label label = new Label(humanizedName);
+        grid.add(label, 0, row);
+
+        //TextField field = new TextField();
+        //final StringConverter stringConverter = Bindings.getStringConverter(paramType, getConfiguration());
+        //field.textProperty().bindBidirectional(jfxProperty, stringConverter);
+        final JfxInstanceUI<T> ui = getEmbeddedInstanceUI(paramType);
+        paramFieldUiList.add(ui);
+        final Node field = ui.render();
+        grid.add(field, 1, row);
+        if (row == 0) {
+            field.requestFocus();
+        }
+
+        // if it's a collection, add a button to open as list
+        if (Collection.class.isAssignableFrom(paramType)) {
+            Button button = new Button("(+)");
+            button.setOnAction(e -> zoomCollection(button, genericParamType));
+            grid.add(button, 2, row);
+        }
+
+        // configure the field as a target for drag and drop
+        configureDropTarget(field,
+                (T value) -> paramType.isAssignableFrom(value.getClass()),
+                value -> ui.targetProperty().setValue(value)
+        );
+    }
+
+    private <T> JfxInstanceUI<T> getEmbeddedInstanceUI(Class<T> paramType) {
+        return getBuilder().buildEmbeddedInstanceUI(paramType);
+    }
+
+    private <T> void zoomCollection(Node parent, Type genericParamtype) {
+        final Class<T> itemType = Introspector.getSingleParameterType(genericParamtype);
+        final Collection<T> collection = new ArrayList<>();
+        getBuilder().displayCollection(collection, itemType, parent, "Collection parameter");
+    }
+
+
+    @NotNull
+    private GridPane buildGridPane() {
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(Const.DEFAULT_INSETS);
+
+        ColumnConstraints column2 = new ColumnConstraints();
+        column2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().setAll(new ColumnConstraints(), column2); // second column gets any extra width
+        return grid;
     }
 
     @NotNull

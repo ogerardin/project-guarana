@@ -65,7 +65,7 @@ public class DefaultJfxEmbeddedInstanceUI<T> extends TextField implements JfxIns
     }
 
     @Override
-    public TextField render() {
+    public TextField getRendering() {
         return this;
     }
 

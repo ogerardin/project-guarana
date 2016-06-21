@@ -29,14 +29,15 @@ public class ClassConfiguration<C> {
     private Class<?> uiClass;
     private Class<?> embeddedUiClass;
 
+    private String displayName = null;
     private Boolean humanizePropertyNames = null;
     private final Set<String> hiddenProperties = new HashSet<>();
+    private final Set<String> shownProperties = new HashSet<>();
     private final Set<Method> hiddenMethods = new HashSet<>();
 
 
     public ClassConfiguration(Class<C> clazz) {
         targetClass = clazz;
-//        hiddenProperties.add("class");
     }
 
     public ClassConfiguration<C> hideProperties(String... propertyNames) {
@@ -135,5 +136,22 @@ public class ClassConfiguration<C> {
             throw new ClassCastException("EmbeddedUiClass does not implement InstanceUI: " + className);
         }
         setEmbeddedUiClass((Class<? extends InstanceUI>) clazz);
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public boolean isShownProperty(String property) {
+        return shownProperties.contains(property);
+    }
+
+    public ClassConfiguration<C> showProperties(String... propertyNames) {
+        shownProperties.addAll(Arrays.asList(propertyNames));
+        return this;
     }
 }

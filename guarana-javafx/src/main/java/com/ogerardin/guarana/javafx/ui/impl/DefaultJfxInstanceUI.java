@@ -6,12 +6,12 @@ package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.introspection.ClassInformation;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.introspection.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
-import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -19,28 +19,18 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Observer;
@@ -53,39 +43,28 @@ import java.util.Observer;
  * @author Olivier
  * @since 29/05/15
  */
-public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
+public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJfxInstanceUI.class);
 
-    private final ClassInformation<T> classInformation;
-
     private BiMap<Node, PropertyInformation> nodeToPropertyInformation = HashBiMap.create();
     private BiMap<JfxInstanceUI, PropertyInformation> uiToPropertyInformation = HashBiMap.create();
-
-    private final VBox root;
 
     private ObjectProperty<T> targetProperty = new SimpleObjectProperty<>();
 
     public DefaultJfxInstanceUI(JfxUiManager builder, Class<T> clazz) {
         super(builder);
+        buildUi(clazz);
+    }
 
-        classInformation = Introspector.getClassInformation(clazz);
+    private void buildUi(Class<T> clazz) {
 
-        root = new VBox();
-        final String className = classInformation.getSimpleClassName();
-        String displayName = classInformation.getDisplayName();
-        if (displayName.equals(className) && getConfiguration().getHumanizeClassNames()) {
-            displayName = Introspector.humanize(className);
-        }
-        final Label title = new Label(displayName);
-        title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        root.getChildren().add(title);
+        ClassInformation<T> classInformation = Introspector.getClassInformation(clazz);
 
-        // set the title label as a source for drag and drop
-        title.setGraphic(new ImageView(ICON_DRAG_HANDLE));
+        // title
+        final String displayName = getConfiguration().getClassDisplayName(clazz);
+        final Label title = addTitle(displayName);
         configureDragSource(title, this::getTarget);
-
-        // build methods context menu
         configureContextMenu(title, classInformation, this::getTarget);
 
         // build properties form
@@ -94,115 +73,88 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
         int row = 0;
         for (PropertyInformation propertyInformation : classInformation.getProperties()) {
             String propertyName = propertyInformation.getName();
-            // ignore hidden properties
-            if (getConfiguration().isHiddenProperty(clazz, propertyName)) {
-                continue;
-            }
-
             final Class<?> propertyType = propertyInformation.getPropertyType();
             final Method readMethod = propertyInformation.getReadMethod();
 
-            final String humanizedName = Introspector.humanize(propertyInformation.getDisplayName());
+            // ignore hidden properties
+            if (! getConfiguration().isShownProperty(classInformation.getTargetClass(), propertyName)) {
+                continue;
+            }
+
+            // label
+            final String humanizedName = Configuration.humanize(propertyInformation.getDisplayName());
             Label label = new Label(humanizedName);
             label.setTooltip(new Tooltip(propertyInformation.toString()));
             grid.add(label, 0, row);
 
-            JfxInstanceUI<?> fieldUi = getBuilder().buildEmbeddedInstanceUI(propertyType);
-            Node field = fieldUi.render();
+            // field
+            final Node field = buildPropertyUi(propertyInformation, propertyType);
             grid.add(field, 1, row);
+            if (row == 0) {
+                field.requestFocus();
+            }
 
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(propertyType)) {
-                Button button = new Button("(+)");
-                button.setOnAction(e -> zoomCollection(button, readMethod, humanizedName));
-                grid.add(button, 2, row);
+                Button zoomButton = new Button("(+)");
+                zoomButton.setOnAction(e -> zoomCollection(zoomButton, readMethod, humanizedName));
+                grid.add(zoomButton, 2, row);
             }
             // if it's an array, add a button to open as a list only if element type is not primitive
             else if (propertyType.isArray()) {
                 final Class<?> componentType = propertyType.getComponentType();
                 if (!componentType.isPrimitive()) {
-                    Button button = new Button("[+]");
-                    button.setOnAction(e -> zoomArray(button, readMethod, componentType, humanizedName));
-                    grid.add(button, 2, row);
+                    Button zoomButton = new Button("[+]");
+                    zoomButton.setOnAction(e -> zoomArray(zoomButton, readMethod, componentType, humanizedName));
+                    grid.add(zoomButton, 2, row);
                 }
             }
             // otherwise if it's not a primitive type, add a button to zoom on property as single instance
             else if (!propertyType.isPrimitive()) {
-                Button button = new Button("...");
-                button.setOnAction(e -> zoomProperty(button, propertyType, readMethod, humanizedName));
-                grid.add(button, 2, row);
+                Button zoomButton = new Button("...");
+                zoomButton.setOnAction(e -> zoomProperty(zoomButton, propertyType, readMethod, humanizedName));
+                grid.add(zoomButton, 2, row);
             }
-
-            // set the field as a target for drag and drop
-            configureDropTarget(field,
-                    value -> propertyType.isAssignableFrom(value.getClass()),
-                    value -> {
-                        Method writeMethod = propertyInformation.getWriteMethod();
-                        try {
-                            writeMethod.invoke(getTarget(), value);
-                            //FIXME if the UI's target property is bound to a JavaBeanObjectProperty, we should call fireValueChangedEvent
-                            //propertyUpdated(propertyInformation, value);
-                        } catch (Exception e) {
-                            getBuilder().displayException(e);
-                        }
-                    });
-
-            uiToPropertyInformation.put(fieldUi, propertyInformation);
-            nodeToPropertyInformation.put(field, propertyInformation);
 
             row++;
         }
     }
 
-    private GridPane buildGridPane() {
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(Const.DEFAULT_INSETS);
 
-        ColumnConstraints column2 = new ColumnConstraints();
-        column2.setHgrow(Priority.ALWAYS);
-        grid.getColumnConstraints().setAll(new ColumnConstraints(), column2); // second column gets any extra width
-        return grid;
+    private <T> Node buildPropertyUi(PropertyInformation propertyInformation, Class<T> propertyType) {
+
+        JfxInstanceUI<T> ui = getBuilder().buildEmbeddedInstanceUI(propertyType);
+        Node field = ui.getRendering();
+
+        // set the field as a target for drag and drop
+        configureDropTarget(field,
+                (T value) -> propertyType.isAssignableFrom(value.getClass()),
+                value -> ui.targetProperty().setValue(value));
+
+        uiToPropertyInformation.put(ui, propertyInformation);
+        nodeToPropertyInformation.put(field, propertyInformation);
+
+        return field;
     }
 
     private <C> void zoomCollection(Node parent, Method readMethod, String title) {
         try {
             // Try to use generic introspection to determine the type of collection members.
-            final Type genericReturnType = readMethod.getGenericReturnType();
-            if (!(genericReturnType instanceof ParameterizedType)) {
-                throw new RuntimeException("Failed to obtain parameterized return type from read method " + readMethod);
-            }
-            // We know that the property is a Collection so the read method should return
-            // a parameterized type with exactly one actual type argument
-            final Type[] actualTypeArguments = ((ParameterizedType) genericReturnType).getActualTypeArguments();
-            final Class<C> itemClass = (Class<C>) actualTypeArguments[0];
+            final Class<C> itemType = Introspector.getCollectionItemType(readMethod);
             final Collection<C> collection = (Collection<C>) readMethod.invoke(getTarget());
-
-            JfxCollectionUI<C> collectionUI = getCollectionUI(itemClass);
-            collectionUI.setTarget(collection);
-            getBuilder().display(collectionUI, parent, title);
-
+            getBuilder().displayCollection(collection, itemType, parent, title);
         } catch (Exception e) {
             getBuilder().displayException(e);
         }
     }
 
-    private <C> void zoomArray(Node parent, Method readMethod, Class<C> componentType, String title) {
+    private <C> void zoomArray(Node parent, Method readMethod, Class<C> itemType, String title) {
         try {
             final C[] array = (C[]) readMethod.invoke(getTarget());
-            JfxCollectionUI<C> collectionUI = getCollectionUI(componentType);
-            collectionUI.setTarget(Arrays.asList(array));
-            getBuilder().display(collectionUI, parent, title);
-
+            getBuilder().displayArray(array, itemType, parent, title);
         } catch (Exception e) {
             getBuilder().displayException(e);
         }
-    }
-
-    private <I> JfxCollectionUI<I> getCollectionUI(Class<I> itemClass) {
-        return getBuilder().buildCollectionUi(itemClass);
     }
 
     private <P> void zoomProperty(Node parent, Class<P> propertyType, Method readMethod, String title) {
@@ -303,7 +255,7 @@ public class DefaultJfxInstanceUI<T> extends JfxUI implements JfxInstanceUI<T> {
 
 
     @Override
-    public Parent render() {
+    public Parent getRendering() {
         return root;
     }
 

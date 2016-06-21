@@ -40,7 +40,7 @@ public class JfxDateUi extends DatePicker implements JfxInstanceUI<Date> {
     }
 
     @Override
-    public Parent render() {
+    public Parent getRendering() {
         return this;
     }
 

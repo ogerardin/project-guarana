@@ -73,7 +73,11 @@ public class ClassInformation<C> {
     }
 
     private void addReferencingMethod(Method method) {
-        LOGGER.debug("PUT " + this.getTargetClass() + " -> " + method);
+        LOGGER.debug("PUT " + this.getTargetClass().getSimpleName() + " -> " + method);
+//        LOGGER.debug("PUT " + this.getTargetClass().getSimpleName() + " -> " +
+//                method.getReturnType().getSimpleName() + " " +
+//                method.getDeclaringClass().getSimpleName() + "." +
+//                method.getName());
         relatedMethods.add(method);
     }
 
@@ -93,7 +97,7 @@ public class ClassInformation<C> {
         return beanInfo.getBeanDescriptor().getBeanClass().getSimpleName();
     }
 
-    public String getDisplayName() {
+    public String getBeanDisplayName() {
         return beanInfo.getBeanDescriptor().getDisplayName();
     }
 

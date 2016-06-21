@@ -4,6 +4,8 @@
 
 package com.ogerardin.guarana.core.config;
 
+import com.ogerardin.guarana.core.introspection.ClassInformation;
+import com.ogerardin.guarana.core.introspection.Introspector;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -13,10 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author oge
@@ -68,6 +72,15 @@ public class Configuration extends CompositeConfiguration {
         applyConfiguration();
     }
 
+    public static String humanize(String name) {
+        // split "camelCase" to "camel" "Case"
+        final String[] parts = name.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+        // fix case of each part and join into a space-separated string
+        return Arrays.stream(parts)
+                .map(part -> part.substring(0, 1).toUpperCase() + part.substring(1).toLowerCase())
+                .collect(Collectors.joining(" "));
+    }
+
     private void addConfigurationResource(String resource) throws ConfigurationException {
         LOGGER.debug("reading configuration resource: " + resource);
         final URL url = getClass().getResource(resource);
@@ -100,7 +113,7 @@ public class Configuration extends CompositeConfiguration {
                     this.humanizeClassNames = getBoolean(key);
                     break;
                 default:
-                    LOGGER.error("ERROR: configuration: invalid property key: " + key);
+                    LOGGER.error("Configuration: invalid property key: " + key);
             }
         }
     }
@@ -121,8 +134,14 @@ public class Configuration extends CompositeConfiguration {
             case "hideProperties":
                 classConfiguration.hideProperties(getStringArray(key));
                 break;
+            case "showProperties":
+                classConfiguration.showProperties(getStringArray(key));
+                break;
             case "humanizePropertyNames":
                 classConfiguration.setHumanizePropertyNames(getBoolean(key));
+                break;
+            case "displayName":
+                classConfiguration.setDisplayName(getString(key));
                 break;
             case "embeddedUiClass":
                 try {
@@ -132,13 +151,34 @@ public class Configuration extends CompositeConfiguration {
                 }
                 break;
             default:
-                LOGGER.error("ERROR: configuration: invalid class property: " + property);
+                LOGGER.error("Configuration: invalid class property: " + property);
         }
     }
 
-    public boolean getHumanizeClassNames() {
+    public boolean isHumanizeClassNames() {
         return humanizeClassNames;
     }
+
+    public String getClassDisplayName(Class clazz) {
+        // if class display name configured, use it
+        final ClassConfiguration classConfiguration = forClass(clazz);
+        String displayName = classConfiguration.getDisplayName();
+        if (displayName != null) {
+            return displayName;
+        }
+
+        // otherwise if bean display name is different from class name, use it
+        final ClassInformation classInformation = Introspector.getClassInformation(clazz);
+        final String className = classInformation.getSimpleClassName();
+        String beanDisplayName = classInformation.getBeanDisplayName();
+        if (!beanDisplayName.equals(className)) {
+            return beanDisplayName;
+        }
+
+        // otherwise use class name (humanized if required)
+        return isHumanizeClassNames() ? Configuration.humanize(className) : className;
+    }
+
 
     /**
      * Retrieves the ClassConfiguration for the specified class. If it does not exist yet, creates
@@ -163,12 +203,20 @@ public class Configuration extends CompositeConfiguration {
     }
 
     /**
-     * Returns true if and only if the specified property is configured as hidden for the specified class or any of
+     * Returns true if and only if the specified property is configured as shown for the specified class or any of
      * its superclasses.
      */
-    public <C> boolean isHiddenProperty(Class<C> clazz, String property) {
-        final Optional<Boolean> isHidden = findClassConfigurationRecursively(clazz, cc -> cc.isHiddenProperty(property) ? true : null);
-        return isHidden.orElse(false);
+    public <C> boolean isShownProperty(Class<C> clazz, String property) {
+        final Optional<Boolean> isHidden = findClassConfigurationRecursively(clazz, cc -> {
+            if (cc.isShownProperty(property)) {
+                return true;
+            }
+            else if (cc.isHiddenProperty(property)) {
+                return false;
+            }
+            return null;
+        });
+        return isHidden.orElse(true);
     }
 
     /**

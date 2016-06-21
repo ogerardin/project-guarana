@@ -7,6 +7,7 @@ package com.ogerardin.guarana.core.introspection;
 import java.beans.MethodDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -28,9 +29,7 @@ public class MethodInformation {
         referencedClasses.add(method.getReturnType());
         referencedClasses.addParameterized(method.getGenericReturnType());
         // add parameters and their parameter types
-        for (Class c : method.getParameterTypes()) {
-            referencedClasses.add(c);
-        }
+        Collections.addAll(referencedClasses, method.getParameterTypes());
         for (Type t : method.getGenericParameterTypes()) {
             referencedClasses.addParameterized(t);
         }

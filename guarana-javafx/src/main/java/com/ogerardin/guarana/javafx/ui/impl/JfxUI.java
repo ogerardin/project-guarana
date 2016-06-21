@@ -117,7 +117,7 @@ abstract class JfxUI implements JfxRenderable {
                 Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
                 T value = (T) ObjectRegistry.INSTANCE.get(identifier);
                 if (value == null) {
-                    LOGGER.error("Identifier not found in object registry: " + identifier);
+                    LOGGER.error("Key not found in object registry: " + identifier);
                     return;
                 }
                 if (valueValidator.test(value)) {
@@ -233,20 +233,24 @@ abstract class JfxUI implements JfxRenderable {
      * @param constructor the constructor to call
      */
     private <T> void executeConstructorRequested(Constructor<T> constructor) {
-        T instance;
         if (constructor.getParameterCount() == 0) {
-            try {
-                instance = constructor.newInstance();
-                getBuilder().displayInstance(instance, constructor.getDeclaringClass(), "New Instance");
-            } catch (Exception e) {
-                e.printStackTrace();
-                getBuilder().displayException(e);
-            }
+            invokeNowParameterless(constructor);
         } else {
-            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), constructor);
+            JfxExecutableInvocationUI<T, T> methodCallUI = new JfxExecutableInvocationUI(getBuilder(), constructor);
             getBuilder().display(methodCallUI);
             //FIXME by default we just display the result, should be configurable
             methodCallUI.setOnSuccess(o -> getBuilder().displayInstance(o));
+        }
+    }
+
+    private <T> void invokeNowParameterless(Constructor<T> constructor) {
+        Validate.isTrue(constructor.getParameterCount() == 0);
+        try {
+            T instance = constructor.newInstance();
+            getBuilder().displayInstance(instance, constructor.getDeclaringClass(), "New Instance");
+        } catch (Exception e) {
+            e.printStackTrace();
+            getBuilder().displayException(e);
         }
     }
 
@@ -263,21 +267,26 @@ abstract class JfxUI implements JfxRenderable {
         final Class<R> returnType = (Class<R>) method.getReturnType();
         // if no arg, execute immediately, otherwise display arg dialog
         if (method.getParameterCount() == 0) {
-            try {
-                R result = (R) method.invoke(target);
-                // if the method returns something, display it
-                if (returnType != Void.TYPE) {
-                    getBuilder().displayInstance(result, returnType, "Result");
-                }
-                // TODO better handling of returned object
-            } catch (Exception e) {
-                e.printStackTrace();
-                getBuilder().displayException(e);
-            }
+            invokeNowParameterless(method, target, returnType);
         } else {
-            JfxMethodCallUI methodCallUI = new JfxMethodCallUI(getBuilder(), method);
+            JfxExecutableInvocationUI<T, R> methodCallUI = new JfxExecutableInvocationUI(getBuilder(), method);
             methodCallUI.setTarget(target);
             getBuilder().display(methodCallUI);
+        }
+    }
+
+    private <T, R> void invokeNowParameterless(Method method, T target, Class<R> returnType) {
+        Validate.isTrue(method.getParameterCount() == 0);
+        try {
+            R result = (R) method.invoke(target);
+            // if the method returns something, display it
+            // TODO better handling of returned object
+            if (returnType != Void.TYPE) {
+                getBuilder().displayInstance(result, returnType, "Result");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            getBuilder().displayException(e);
         }
     }
 

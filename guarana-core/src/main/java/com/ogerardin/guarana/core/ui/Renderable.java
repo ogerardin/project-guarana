@@ -14,7 +14,7 @@ package com.ogerardin.guarana.core.ui;
  */
 public interface Renderable<R> {
 
-    R render();
+    R getRendering();
 
     void setReadOnly(boolean readOnly);
 }

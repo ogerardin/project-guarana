@@ -4,25 +4,18 @@
 
 package com.ogerardin.guarana.javafx.ui.impl;
 
+import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import com.ogerardin.guarana.javafx.ui.JfxRenderable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -35,22 +28,20 @@ import java.util.stream.Collectors;
  * A UI for calling a specific method or constructor.
  *
  * @param <C> the declaring class of the method/constructor
+ * @param <R> the result type (same as C for constructors)
  *
  * @author Olivier
  * @since 05/06/15
  */
-public class JfxExecutableInvocationUI<C> extends JfxUI implements JfxRenderable {
+public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRenderable {
 
-    private final Parent root;
-
-    //private final Map<String, Property> paramNameToProperty;
-    private List<JfxInstanceUI> paramFieldUiList = new ArrayList<>();
+    private List<JfxInstanceUI> fieldUiList = new ArrayList<>();
 
     /**
      * {@link Consumer#accept} will be called with the result of the method call / constructor
      * in case of success
      */
-    private Consumer onSuccess = null;
+    private Consumer<R> onSuccess = null;
 
     /**
      * For a method call, the target object on which to invoke the method.
@@ -59,18 +50,24 @@ public class JfxExecutableInvocationUI<C> extends JfxUI implements JfxRenderable
     private ObjectProperty<C> targetProperty = new SimpleObjectProperty<>();
 
 
-    public JfxExecutableInvocationUI(JfxUiManager builder, Executable executable) {
-        super(builder);
-
-        root = buildUi(executable);
+    public JfxExecutableInvocationUI(JfxUiManager builder, Constructor<C> constructor) {
+        //noinspection unchecked
+        this(builder, constructor, constructor.getDeclaringClass(), (Class<R>) constructor.getDeclaringClass());
     }
 
-    private Parent buildUi(Executable executable) {
-        VBox root = new VBox();
-        final Label title = new Label(Introspector.humanize(executable.getName()));
-        title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        title.setTooltip(new Tooltip(executable.toGenericString()));
-        root.getChildren().add(title);
+    public JfxExecutableInvocationUI(JfxUiManager builder, Method method) {
+        //noinspection unchecked
+        this(builder, method, (Class<C>) method.getDeclaringClass(), (Class<R>) method.getReturnType());
+    }
+
+    private JfxExecutableInvocationUI(JfxUiManager builder, Executable executable, Class<C> declaringClass, Class<R> resultType) {
+        super(builder);
+        buildUi(executable);
+    }
+
+    private void buildUi(Executable executable) {
+        final String title = Configuration.humanize(executable.getName());
+        addTitle(title);
 
         // build params list
         GridPane grid = buildGridPane();
@@ -83,8 +80,29 @@ public class JfxExecutableInvocationUI<C> extends JfxUI implements JfxRenderable
         for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
             final Parameter param = parameters[i];
             final Type genericParamType = genericParameterTypes[i];
+            final String paramName = param.getName();
+            final Class<?> paramType = param.getType();
 
-            buildPropertyUi(grid, row, param, genericParamType);
+            // label
+            final String humanizedName = Configuration.humanize(paramName);
+            Label label = new Label(humanizedName);
+            grid.add(label, 0, row);
+
+            // field
+            final Node field = buildParamUi(paramType);
+            grid.add(field, 1, row);
+            if (row == 0) {
+                field.requestFocus();
+            }
+
+            // if it's a collection, add a button to open as list
+            if (Collection.class.isAssignableFrom(paramType)) {
+                Button zoomButton = new Button("(+)");
+                zoomButton.setOnAction(e -> zoomCollection(zoomButton, genericParamType));
+                grid.add(zoomButton, 2, row);
+            }
+
+
             row++;
         }
 
@@ -95,16 +113,10 @@ public class JfxExecutableInvocationUI<C> extends JfxUI implements JfxRenderable
                 final Object[] values = paramValues.toArray();
                 if (executable instanceof Constructor) {
                     final Constructor<C> constructor = (Constructor<C>) executable;
-                    C instance = constructor.newInstance(values);
-                    if (onSuccess != null) {
-                        onSuccess.accept(instance);
-                    }
+                    invokeConstructor(constructor, values, onSuccess);
                 } else if (executable instanceof Method) {
                     final Method method = (Method) executable;
-                    Object result = method.invoke(getTarget(), values);
-                    if (onSuccess != null) {
-                        onSuccess.accept(result);
-                    }
+                    invokeMethod(method, values, onSuccess);
                 }
                 getBuilder().hide(this);
             } catch (Exception e) {
@@ -112,44 +124,38 @@ public class JfxExecutableInvocationUI<C> extends JfxUI implements JfxRenderable
             }
         });
         root.getChildren().add(goButton);
-        return root;
     }
 
-    private <T> void buildPropertyUi(GridPane grid, int row, Parameter param, Type genericParamType) {
-        final Class<T> paramType = (Class<T>) param.getType();
-        final String paramName = param.getName();
+    private void invokeMethod(Method method, Object[] params, Consumer<R> onSuccess) throws IllegalAccessException, InvocationTargetException {
+        R result = (R) method.invoke(getTarget(), params);
+        if (onSuccess != null) {
+            onSuccess.accept(result);
+        }
+    }
 
-        final String humanizedName = Introspector.humanize(paramName);
-        Label label = new Label(humanizedName);
-        grid.add(label, 0, row);
+    private void invokeConstructor(Constructor<C> constructor, Object[] params, Consumer<R> onSuccess) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        C instance = constructor.newInstance(params);
+        if (onSuccess != null) {
+            onSuccess.accept((R) instance);
+        }
+    }
 
+    private <T> Node buildParamUi(Class<T> paramType) {
         //TextField field = new TextField();
         //final StringConverter stringConverter = Bindings.getStringConverter(paramType, getConfiguration());
         //field.textProperty().bindBidirectional(jfxProperty, stringConverter);
-        final JfxInstanceUI<T> ui = getEmbeddedInstanceUI(paramType);
-        paramFieldUiList.add(ui);
-        final Node field = ui.render();
-        grid.add(field, 1, row);
-        if (row == 0) {
-            field.requestFocus();
-        }
-
-        // if it's a collection, add a button to open as list
-        if (Collection.class.isAssignableFrom(paramType)) {
-            Button button = new Button("(+)");
-            button.setOnAction(e -> zoomCollection(button, genericParamType));
-            grid.add(button, 2, row);
-        }
+        final JfxInstanceUI<T> ui = getBuilder().buildEmbeddedInstanceUI(paramType);
+        final Node field = ui.getRendering();
 
         // configure the field as a target for drag and drop
         configureDropTarget(field,
                 (T value) -> paramType.isAssignableFrom(value.getClass()),
                 value -> ui.targetProperty().setValue(value)
         );
-    }
 
-    private <T> JfxInstanceUI<T> getEmbeddedInstanceUI(Class<T> paramType) {
-        return getBuilder().buildEmbeddedInstanceUI(paramType);
+        fieldUiList.add(ui);
+
+        return field;
     }
 
     private <T> void zoomCollection(Node parent, Type genericParamtype) {
@@ -158,40 +164,14 @@ public class JfxExecutableInvocationUI<C> extends JfxUI implements JfxRenderable
         getBuilder().displayCollection(collection, itemType, parent, "Collection parameter");
     }
 
-
-    @NotNull
-    private GridPane buildGridPane() {
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(Const.DEFAULT_INSETS);
-
-        ColumnConstraints column2 = new ColumnConstraints();
-        column2.setHgrow(Priority.ALWAYS);
-        grid.getColumnConstraints().setAll(new ColumnConstraints(), column2); // second column gets any extra width
-        return grid;
-    }
-
-    @NotNull
-    private <T> SimpleObjectProperty<T> createSimpleObjectProperty(Class<T> propertyClass) {
-        return new SimpleObjectProperty<T>();
-    }
-
     private List<Object> getParamValues() {
-        return paramFieldUiList.stream()
+        return fieldUiList.stream()
                 .map(ui -> ui.targetProperty().getValue())
                 .collect(Collectors.toList());
-
-//        return Arrays.stream(executable.getParameters())
-//                .map(Parameter::getName)
-//                .map(paramNameToProperty::get)
-//                .map(Property::getValue)
-//                .collect(Collectors.toList());
     }
 
     @Override
-    public Parent render() {
+    public Parent getRendering() {
         return root;
     }
 

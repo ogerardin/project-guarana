@@ -152,7 +152,7 @@ public class JfxUiManager implements JfxUIBuilder {
         if (title != null) {
             stage.setTitle(title);
         }
-        Parent root = renderable.render();
+        Parent root = renderable.getRendering();
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getDefaultStylesheet());
         stage.setScene(scene);

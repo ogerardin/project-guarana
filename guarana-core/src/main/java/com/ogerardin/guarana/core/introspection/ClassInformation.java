@@ -97,7 +97,7 @@ public class ClassInformation<C> {
         return beanInfo.getBeanDescriptor().getBeanClass().getSimpleName();
     }
 
-    public String getDisplayName() {
+    public String getBeanDisplayName() {
         return beanInfo.getBeanDescriptor().getDisplayName();
     }
 

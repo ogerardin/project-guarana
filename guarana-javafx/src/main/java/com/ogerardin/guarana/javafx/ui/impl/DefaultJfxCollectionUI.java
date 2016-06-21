@@ -4,6 +4,7 @@
 
 package com.ogerardin.guarana.javafx.ui.impl;
 
+import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.introspection.ClassInformation;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.introspection.PropertyInformation;
@@ -60,9 +61,10 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 //        }
 
         root = new VBox();
-        final Label title = new Label(classInformation.getDisplayName() + "...");
-        title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        root.getChildren().add(title);
+        final String title = getConfiguration().getClassDisplayName(itemClass);
+        final Label titleLabel = new Label(title);
+        titleLabel.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        root.getChildren().add(titleLabel);
 
         // build table
         tableView = new TableView<>();
@@ -71,7 +73,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
             final String propertyName = propertyInformation.getName();
             String displayName = propertyInformation.getDisplayName();
             if (propertyName.equals(displayName) && getConfiguration().isHumanizePropertyNames(itemClass)) {
-                displayName = Introspector.humanize(propertyName);
+                displayName = Configuration.humanize(propertyName);
             }
             TableColumn<T, ?> column = new TableColumn<>(displayName);
             column.setCellValueFactory(new PropertyValueFactory<>(propertyName));
@@ -139,7 +141,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 
 
     @Override
-    public Parent render() {
+    public Parent getRendering() {
         return root;
     }
 

@@ -11,8 +11,6 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * @author oge
@@ -33,15 +31,6 @@ public enum Introspector {
             throw new RuntimeException(e);
         }
         return classInformation;
-    }
-
-    public static String humanize(String name) {
-        // split "camelCase" to "camel" "Case"
-        final String[] parts = name.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
-        // fix case of each part and join into a space-separated string
-        return Arrays.stream(parts)
-                .map(part -> part.substring(0, 1).toUpperCase() + part.substring(1).toLowerCase())
-                .collect(Collectors.joining(" "));
     }
 
     /**

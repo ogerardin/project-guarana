@@ -42,7 +42,7 @@ public class Configuration extends CompositeConfiguration {
      * Build default configuration by using
      * -system properties
      * -core properties from _guarana_core.properties
-     * -toolkit-specific properties from guarana_ui_default.properties
+     * -toolkit-specific properties from _guarana_ui.properties
      * -user properties from guarana.properties
      */
     public Configuration() {
@@ -66,7 +66,7 @@ public class Configuration extends CompositeConfiguration {
         try {
             addConfigurationResource(USER_PROPERTIES);
         } catch (ConfigurationException e) {
-            LOGGER.error("WARNING: no user configuration " + USER_PROPERTIES + " found");
+            LOGGER.warn("No user configuration " + USER_PROPERTIES + " found");
         }
 
         applyConfiguration();
@@ -150,6 +150,13 @@ public class Configuration extends CompositeConfiguration {
                     LOGGER.error(e.toString());
                 }
                 break;
+            case "uiClass":
+                try {
+                    classConfiguration.setUiClass(getString(key));
+                } catch (ClassNotFoundException e) {
+                    LOGGER.error(e.toString());
+                }
+                break;
             default:
                 LOGGER.error("Configuration: invalid class property: " + property);
         }
@@ -207,16 +214,15 @@ public class Configuration extends CompositeConfiguration {
      * its superclasses.
      */
     public <C> boolean isShownProperty(Class<C> clazz, String property) {
-        final Optional<Boolean> isHidden = findClassConfigurationRecursively(clazz, cc -> {
+        final Optional<Boolean> isShown = findClassConfigurationRecursively(clazz, cc -> {
             if (cc.isShownProperty(property)) {
                 return true;
-            }
-            else if (cc.isHiddenProperty(property)) {
+            } else if (cc.isHiddenProperty(property)) {
                 return false;
             }
             return null;
         });
-        return isHidden.orElse(true);
+        return isShown.orElse(true);
     }
 
     /**
@@ -237,13 +243,13 @@ public class Configuration extends CompositeConfiguration {
      * @return A non-empty {@link Optional} containing the function's result, or {@link Optional#empty()} if the function
      * never returned a non-null result.
      */
-    private <R> Optional<R> findClassConfigurationRecursively(Class<?> clazz, Function<ClassConfiguration<?>, R> getter) {
-        ClassConfiguration<?> classConfig = this.forClass(clazz);
+    private <C, R> Optional<R> findClassConfigurationRecursively(Class<C> clazz, Function<ClassConfiguration<?>, R> getter) {
+        ClassConfiguration<C> classConfig = this.forClass(clazz);
         final R result = getter.apply(classConfig);
         if (result != null) {
             return Optional.of(result);
         }
-        Class parent = clazz.getSuperclass();
+        Class<?> parent = clazz.getSuperclass();
         if (parent == null) {
             return Optional.empty();
         }

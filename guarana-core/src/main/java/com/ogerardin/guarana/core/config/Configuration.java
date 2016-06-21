@@ -134,6 +134,9 @@ public class Configuration extends CompositeConfiguration {
             case "hideProperties":
                 classConfiguration.hideProperties(getStringArray(key));
                 break;
+            case "showProperties":
+                classConfiguration.showProperties(getStringArray(key));
+                break;
             case "humanizePropertyNames":
                 classConfiguration.setHumanizePropertyNames(getBoolean(key));
                 break;
@@ -200,12 +203,20 @@ public class Configuration extends CompositeConfiguration {
     }
 
     /**
-     * Returns true if and only if the specified property is configured as hidden for the specified class or any of
+     * Returns true if and only if the specified property is configured as shown for the specified class or any of
      * its superclasses.
      */
-    public <C> boolean isHiddenProperty(Class<C> clazz, String property) {
-        final Optional<Boolean> isHidden = findClassConfigurationRecursively(clazz, cc -> cc.isHiddenProperty(property) ? true : null);
-        return isHidden.orElse(false);
+    public <C> boolean isShownProperty(Class<C> clazz, String property) {
+        final Optional<Boolean> isHidden = findClassConfigurationRecursively(clazz, cc -> {
+            if (cc.isShownProperty(property)) {
+                return true;
+            }
+            else if (cc.isHiddenProperty(property)) {
+                return false;
+            }
+            return null;
+        });
+        return isHidden.orElse(true);
     }
 
     /**

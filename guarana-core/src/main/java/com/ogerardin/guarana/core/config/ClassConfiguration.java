@@ -32,6 +32,7 @@ public class ClassConfiguration<C> {
     private String displayName = null;
     private Boolean humanizePropertyNames = null;
     private final Set<String> hiddenProperties = new HashSet<>();
+    private final Set<String> shownProperties = new HashSet<>();
     private final Set<Method> hiddenMethods = new HashSet<>();
 
 
@@ -143,5 +144,14 @@ public class ClassConfiguration<C> {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public boolean isShownProperty(String property) {
+        return shownProperties.contains(property);
+    }
+
+    public ClassConfiguration<C> showProperties(String... propertyNames) {
+        shownProperties.addAll(Arrays.asList(propertyNames));
+        return this;
     }
 }

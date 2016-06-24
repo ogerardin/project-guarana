@@ -77,7 +77,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             final Method readMethod = propertyInformation.getReadMethod();
 
             // ignore hidden properties
-            if (getConfiguration().isHiddenProperty(classInformation.getTargetClass(), propertyName)) {
+            if (! getConfiguration().isShownProperty(classInformation.getTargetClass(), propertyName)) {
                 continue;
             }
 

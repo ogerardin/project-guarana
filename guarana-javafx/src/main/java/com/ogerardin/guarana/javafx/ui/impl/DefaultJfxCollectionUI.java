@@ -77,7 +77,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
             }
             TableColumn<T, ?> column = new TableColumn<>(displayName);
             column.setCellValueFactory(new PropertyValueFactory<>(propertyName));
-            column.setVisible(!builder.getConfiguration().isHiddenProperty(itemClass, propertyName));
+            column.setVisible(builder.getConfiguration().isShownProperty(itemClass, propertyName));
             tableView.getColumns().add(column);
         }
 

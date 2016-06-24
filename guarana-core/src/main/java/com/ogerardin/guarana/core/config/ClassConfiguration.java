@@ -5,6 +5,7 @@
 package com.ogerardin.guarana.core.config;
 
 import com.ogerardin.guarana.core.ui.InstanceUI;
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +27,13 @@ public class ClassConfiguration<C> {
     private final Class<C> targetClass;
 
     private ToString<C> toString;
-    private Class<?> uiClass;
-    private Class<?> embeddedUiClass;
+    private Class<? extends InstanceUI<C, ?>> uiClass;
+    private Class<? extends InstanceUI<C, ?>> embeddedUiClass;
 
     private String displayName = null;
     private Boolean humanizePropertyNames = null;
     private final Set<String> hiddenProperties = new HashSet<>();
+    private final Set<String> shownProperties = new HashSet<>();
     private final Set<Method> hiddenMethods = new HashSet<>();
 
 
@@ -61,20 +63,20 @@ public class ClassConfiguration<C> {
         }
     }
 
-    public Class getUiClass() {
+    public Class<? extends InstanceUI<C, ?>> getUiClass() {
         return uiClass;
     }
 
-    public Class getEmbeddedUiClass() {
+    public Class<? extends InstanceUI<C, ?>> getEmbeddedUiClass() {
         return embeddedUiClass;
     }
 
-    public <U extends InstanceUI> ClassConfiguration<C> setEmbeddedUiClass(Class<U> embeddedUiClass) {
+    public <U extends InstanceUI<C, ?>> ClassConfiguration<C> setEmbeddedUiClass(Class<U> embeddedUiClass) {
         this.embeddedUiClass = embeddedUiClass;
         return this;
     }
 
-    public <U extends InstanceUI> ClassConfiguration<C> setUiClass(Class<U> uiClass) {
+    public <U extends InstanceUI<C, ?>> ClassConfiguration<C> setUiClass(Class<U> uiClass) {
         this.uiClass = uiClass;
         return this;
     }
@@ -118,6 +120,7 @@ public class ClassConfiguration<C> {
     }
 
     public boolean isHiddenMethod(Method method) {
+        Validate.isTrue(method.getDeclaringClass() == this.targetClass);
         return hiddenMethods.contains(method);
     }
 
@@ -132,9 +135,17 @@ public class ClassConfiguration<C> {
     public void setEmbeddedUiClass(String className) throws ClassNotFoundException {
         Class<?> clazz = Class.forName(className);
         if (!InstanceUI.class.isAssignableFrom(clazz)) {
-            throw new ClassCastException("EmbeddedUiClass does not implement InstanceUI: " + className);
+            throw new ClassCastException("Class does not implement InstanceUI: " + className);
         }
         setEmbeddedUiClass((Class<? extends InstanceUI>) clazz);
+    }
+
+    public void setUiClass(String className) throws ClassNotFoundException {
+        Class<?> clazz = Class.forName(className);
+        if (!InstanceUI.class.isAssignableFrom(clazz)) {
+            throw new ClassCastException("Class does not implement InstanceUI: " + className);
+        }
+        setUiClass((Class<? extends InstanceUI>) clazz);
     }
 
     public void setDisplayName(String displayName) {
@@ -143,5 +154,14 @@ public class ClassConfiguration<C> {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public boolean isShownProperty(String property) {
+        return shownProperties.contains(property);
+    }
+
+    public ClassConfiguration<C> showProperties(String... propertyNames) {
+        shownProperties.addAll(Arrays.asList(propertyNames));
+        return this;
     }
 }

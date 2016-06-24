@@ -42,7 +42,7 @@ public class Configuration extends CompositeConfiguration {
      * Build default configuration by using
      * -system properties
      * -core properties from _guarana_core.properties
-     * -toolkit-specific properties from guarana_ui_default.properties
+     * -toolkit-specific properties from _guarana_ui.properties
      * -user properties from guarana.properties
      */
     public Configuration() {
@@ -134,6 +134,9 @@ public class Configuration extends CompositeConfiguration {
             case "hideProperties":
                 classConfiguration.hideProperties(getStringArray(key));
                 break;
+            case "showProperties":
+                classConfiguration.showProperties(getStringArray(key));
+                break;
             case "humanizePropertyNames":
                 classConfiguration.setHumanizePropertyNames(getBoolean(key));
                 break;
@@ -143,6 +146,13 @@ public class Configuration extends CompositeConfiguration {
             case "embeddedUiClass":
                 try {
                     classConfiguration.setEmbeddedUiClass(getString(key));
+                } catch (ClassNotFoundException e) {
+                    LOGGER.error(e.toString());
+                }
+                break;
+            case "uiClass":
+                try {
+                    classConfiguration.setUiClass(getString(key));
                 } catch (ClassNotFoundException e) {
                     LOGGER.error(e.toString());
                 }
@@ -200,12 +210,19 @@ public class Configuration extends CompositeConfiguration {
     }
 
     /**
-     * Returns true if and only if the specified property is configured as hidden for the specified class or any of
+     * Returns true if and only if the specified property is configured as shown for the specified class or any of
      * its superclasses.
      */
-    public <C> boolean isHiddenProperty(Class<C> clazz, String property) {
-        final Optional<Boolean> isHidden = findClassConfigurationRecursively(clazz, cc -> cc.isHiddenProperty(property) ? true : null);
-        return isHidden.orElse(false);
+    public <C> boolean isShownProperty(Class<C> clazz, String property) {
+        final Optional<Boolean> isShown = findClassConfigurationRecursively(clazz, cc -> {
+            if (cc.isShownProperty(property)) {
+                return true;
+            } else if (cc.isHiddenProperty(property)) {
+                return false;
+            }
+            return null;
+        });
+        return isShown.orElse(true);
     }
 
     /**
@@ -226,13 +243,13 @@ public class Configuration extends CompositeConfiguration {
      * @return A non-empty {@link Optional} containing the function's result, or {@link Optional#empty()} if the function
      * never returned a non-null result.
      */
-    private <R> Optional<R> findClassConfigurationRecursively(Class<?> clazz, Function<ClassConfiguration<?>, R> getter) {
-        ClassConfiguration<?> classConfig = this.forClass(clazz);
+    private <C, R> Optional<R> findClassConfigurationRecursively(Class<C> clazz, Function<ClassConfiguration<?>, R> getter) {
+        ClassConfiguration<C> classConfig = this.forClass(clazz);
         final R result = getter.apply(classConfig);
         if (result != null) {
             return Optional.of(result);
         }
-        Class parent = clazz.getSuperclass();
+        Class<?> parent = clazz.getSuperclass();
         if (parent == null) {
             return Optional.empty();
         }

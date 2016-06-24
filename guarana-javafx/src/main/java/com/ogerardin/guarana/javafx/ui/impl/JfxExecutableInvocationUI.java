@@ -171,11 +171,6 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
     }
 
     @Override
-    public Parent getRendering() {
-        return root;
-    }
-
-    @Override
     public void setReadOnly(boolean readOnly) {
         throw new UnsupportedOperationException();
     }

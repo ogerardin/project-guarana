@@ -66,7 +66,7 @@ public class Configuration extends CompositeConfiguration {
         try {
             addConfigurationResource(USER_PROPERTIES);
         } catch (ConfigurationException e) {
-            LOGGER.error("WARNING: no user configuration " + USER_PROPERTIES + " found");
+            LOGGER.warn("No user configuration " + USER_PROPERTIES + " found");
         }
 
         applyConfiguration();
@@ -82,7 +82,7 @@ public class Configuration extends CompositeConfiguration {
     }
 
     private void addConfigurationResource(String resource) throws ConfigurationException {
-        LOGGER.debug("reading configuration resource: " + resource);
+        LOGGER.debug("Reading configuration resource: " + resource);
         final URL url = getClass().getResource(resource);
         if (url == null) {
             throw new ConfigurationException("Resource not found: " + resource);
@@ -124,7 +124,7 @@ public class Configuration extends CompositeConfiguration {
             Class<?> clazz = Class.forName(className);
             classConfiguration = this.forClass(clazz);
         } catch (ClassNotFoundException e) {
-            LOGGER.error("ERROR: configuration: class not found: " + className);
+            LOGGER.error("Class not found: " + className);
             return;
         }
         switch (property) {

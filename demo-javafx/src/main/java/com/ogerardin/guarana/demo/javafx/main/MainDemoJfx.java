@@ -9,12 +9,15 @@ package com.ogerardin.guarana.demo.javafx.main;
  * @since 28/05/15
  */
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
 import com.ogerardin.guarana.demo.javafx.adapters.DemoManagerDb4OImpl;
 import com.ogerardin.guarana.demo.model.DemoManager;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 
 public class MainDemoJfx extends Application {
 

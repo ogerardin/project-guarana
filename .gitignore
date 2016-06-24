@@ -7,3 +7,4 @@ logs/
 .boot
 .ivy
 out/
+data.db4o

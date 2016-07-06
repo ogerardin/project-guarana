@@ -5,7 +5,6 @@
 package com.ogerardin.guarana.core.config;
 
 import com.ogerardin.guarana.core.ui.InstanceUI;
-import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +119,7 @@ public class ClassConfiguration<C> {
     }
 
     public boolean isHiddenMethod(Method method) {
-        Validate.isTrue(method.getDeclaringClass() == this.targetClass);
+//        Validate.isTrue(method.getDeclaringClass() == this.targetClass);
         return hiddenMethods.contains(method);
     }
 

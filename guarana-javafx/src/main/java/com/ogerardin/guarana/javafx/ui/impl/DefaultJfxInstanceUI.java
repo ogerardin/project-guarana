@@ -140,7 +140,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     private <C> void zoomCollection(Node parent, Method readMethod, String title) {
         try {
             // Try to use generic introspection to determine the type of collection members.
-            final Class<C> itemType = Introspector.getCollectionItemType(readMethod);
+            final Class<C> itemType = Introspector.getMethodResultSingleParameterType(readMethod);
             final Collection<C> collection = (Collection<C>) readMethod.invoke(getTarget());
             getBuilder().displayCollection(collection, itemType, parent, title);
         } catch (Exception e) {

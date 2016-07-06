@@ -34,11 +34,12 @@ public enum Introspector {
     }
 
     /**
-     * Given a method assumed to return a parameterized type with a single parameter type, returns the single paramater
+     * Given a method assumed to return a parameterized type with a single parameter type, returns the single parameter
      * type as declared by the method.
+     * E.g. if method is List<Date> getDates(), the result will be Date.class
      */
-    public static <C> Class<C> getCollectionItemType(Method readMethod) {
-        final Type genericReturnType = readMethod.getGenericReturnType();
+    public static <C> Class<C> getMethodResultSingleParameterType(Method method) {
+        final Type genericReturnType = method.getGenericReturnType();
         return getSingleParameterType(genericReturnType);
     }
 

@@ -255,11 +255,6 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
 
     @Override
-    public Parent getRendering() {
-        return root;
-    }
-
-    @Override
     public void setReadOnly(boolean readOnly) {
         //TODO
     }

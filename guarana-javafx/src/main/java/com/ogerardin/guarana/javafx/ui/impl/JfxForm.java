@@ -6,6 +6,7 @@ package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
@@ -49,6 +50,11 @@ public abstract class JfxForm extends JfxUI {
         titleLabel.setGraphic(new ImageView(ICON_DRAG_HANDLE));
         root.getChildren().add(titleLabel);
         return titleLabel;
+    }
+
+    @Override
+    public Parent getRendering() {
+        return root;
     }
 
 }

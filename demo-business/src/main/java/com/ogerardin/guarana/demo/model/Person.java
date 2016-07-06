@@ -35,10 +35,7 @@ public class Person {
 
     @Override
     public String toString() {
-        return "Person{" +
-                "lastName='" + lastName + '\'' +
-                ", firstName='" + firstName + '\'' +
-                '}';
+        return firstName + " " + lastName;
     }
 
     public String getFullNameLastFirst() {
@@ -48,5 +45,4 @@ public class Person {
     public String getFullNameFirstLast() {
         return getFirstName() + " " + getLastName();
     }
-
 }

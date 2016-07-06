@@ -12,7 +12,6 @@ import com.ogerardin.guarana.javafx.ui.JfxRenderable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -127,6 +126,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
     }
 
     private void invokeMethod(Method method, Object[] params, Consumer<R> onSuccess) throws IllegalAccessException, InvocationTargetException {
+        //FIXME that won't work if the method is a related method (referencing target type but not exposed by it)
         R result = (R) method.invoke(getTarget(), params);
         if (onSuccess != null) {
             onSuccess.accept(result);

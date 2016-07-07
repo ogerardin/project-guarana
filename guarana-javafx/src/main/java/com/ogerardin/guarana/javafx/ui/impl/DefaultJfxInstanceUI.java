@@ -20,7 +20,6 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -90,9 +89,6 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             // field
             final Node field = buildPropertyUi(propertyInformation, propertyType);
             grid.add(field, 1, row);
-            if (row == 0) {
-                field.requestFocus();
-            }
 
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(propertyType)) {

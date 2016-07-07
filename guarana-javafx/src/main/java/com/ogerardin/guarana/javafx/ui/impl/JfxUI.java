@@ -270,7 +270,7 @@ abstract class JfxUI implements JfxRenderable {
             invokeNowParameterless(method, target, returnType);
         } else {
             JfxExecutableInvocationUI<T, R> methodCallUI = new JfxExecutableInvocationUI(getBuilder(), method);
-            methodCallUI.setTarget(target);
+            methodCallUI.setContext(target);
             getBuilder().display(methodCallUI);
         }
     }

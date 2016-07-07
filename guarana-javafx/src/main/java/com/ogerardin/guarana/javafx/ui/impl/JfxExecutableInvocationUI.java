@@ -9,8 +9,6 @@ import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import com.ogerardin.guarana.javafx.ui.JfxRenderable;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -34,6 +32,8 @@ import java.util.stream.Collectors;
  */
 public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRenderable {
 
+    private final Class<C> declaringClass;
+    private final Class<R> resultType;
     private List<JfxInstanceUI> fieldUiList = new ArrayList<>();
 
     /**
@@ -46,7 +46,8 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
      * For a method call, the target object on which to invoke the method.
      * Not relevant for a constructor.
      */
-    private ObjectProperty<C> targetProperty = new SimpleObjectProperty<>();
+    private Node targetField;
+    private JfxInstanceUI<C> targetUi;
 
 
     public JfxExecutableInvocationUI(JfxUiManager builder, Constructor<C> constructor) {
@@ -61,6 +62,8 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
 
     private JfxExecutableInvocationUI(JfxUiManager builder, Executable executable, Class<C> declaringClass, Class<R> resultType) {
         super(builder);
+        this.declaringClass = declaringClass;
+        this.resultType = resultType;
         buildUi(executable);
     }
 
@@ -68,11 +71,29 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
         final String title = Configuration.humanize(executable.getName());
         addTitle(title);
 
-        // build params list
+        // build params grid
         GridPane grid = buildGridPane();
         root.getChildren().add(grid);
         int row = 0;
 
+        // if invoking a method, the first field is the target object
+        if (executable instanceof Method) {
+            Label label = new Label("Target");
+            grid.add(label, 0, row);
+
+            targetUi = getBuilder().buildEmbeddedInstanceUI(declaringClass);
+            targetField = targetUi.getRendering();
+
+            configureDropTarget(targetField,
+                    (C value) -> declaringClass.isAssignableFrom(value.getClass()),
+                    value -> targetUi.targetProperty().setValue(value)
+            );
+            grid.add(targetField, 1, row);
+
+            row++;
+        }
+
+        // rest of the parameters
         final Parameter[] parameters = executable.getParameters();
         final Type[] genericParameterTypes = executable.getGenericParameterTypes();
 
@@ -90,9 +111,6 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
             // field
             final Node field = buildParamUi(paramType);
             grid.add(field, 1, row);
-            if (row == 0) {
-                field.requestFocus();
-            }
 
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(paramType)) {
@@ -101,21 +119,20 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
                 grid.add(zoomButton, 2, row);
             }
 
-
             row++;
         }
 
         Button goButton = new Button(executable instanceof Constructor ? "Create" : "Go");
         goButton.setOnAction(event -> {
             try {
-                List paramValues = getParamValues();
-                final Object[] values = paramValues.toArray();
+                final Object[] paramValues = getParamValues();
+
                 if (executable instanceof Constructor) {
                     final Constructor<C> constructor = (Constructor<C>) executable;
-                    invokeConstructor(constructor, values, onSuccess);
+                    invokeConstructor(constructor, paramValues, onSuccess);
                 } else if (executable instanceof Method) {
                     final Method method = (Method) executable;
-                    invokeMethod(method, values, onSuccess);
+                    invokeMethod(method, getTargetValue(), paramValues, onSuccess);
                 }
                 getBuilder().hide(this);
             } catch (Exception e) {
@@ -125,10 +142,12 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
         root.getChildren().add(goButton);
     }
 
-    private void invokeMethod(Method method, Object[] params, Consumer<R> onSuccess) throws IllegalAccessException, InvocationTargetException {
-        //FIXME that won't work if the method is a "related" method (referencing the target type C but not exposed by it)
-        // in that case we need to find a way to provide/select the instance on which to invoke the method
-        R result = (R) method.invoke(getTarget(), params);
+    private C getTargetValue() {
+        return targetUi.targetProperty().getValue();
+    }
+
+    private void invokeMethod(Method method, Object target, Object[] params, Consumer<R> onSuccess) throws IllegalAccessException, InvocationTargetException {
+        R result = (R) method.invoke(target, params);
         if (onSuccess != null) {
             onSuccess.accept(result);
         }
@@ -146,6 +165,8 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
         //final StringConverter stringConverter = Bindings.getStringConverter(paramType, getConfiguration());
         //field.textProperty().bindBidirectional(jfxProperty, stringConverter);
         final JfxInstanceUI<T> ui = getBuilder().buildEmbeddedInstanceUI(paramType);
+        fieldUiList.add(ui);
+
         final Node field = ui.getRendering();
 
         // configure the field as a target for drag and drop
@@ -153,8 +174,6 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
                 (T value) -> paramType.isAssignableFrom(value.getClass()),
                 value -> ui.targetProperty().setValue(value)
         );
-
-        fieldUiList.add(ui);
 
         return field;
     }
@@ -165,10 +184,11 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
         getBuilder().displayCollection(collection, itemType, parent, "Collection parameter");
     }
 
-    private List<Object> getParamValues() {
-        return fieldUiList.stream()
+    private Object[] getParamValues() {
+        final List<Object> paramValueList = fieldUiList.stream()
                 .map(ui -> ui.targetProperty().getValue())
                 .collect(Collectors.toList());
+        return paramValueList.toArray();
     }
 
     @Override
@@ -180,16 +200,18 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
         this.onSuccess = handler;
     }
 
-    protected C getTarget() {
-        return targetProperty.get();
-    }
 
-    public void setTarget(C target) {
-        targetProperty.setValue(target);
-    }
-
-    public ObjectProperty<C> targetProperty() {
-        return targetProperty;
+    public void setContext(Object context) {
+        if (declaringClass.isAssignableFrom(context.getClass())) {
+            // the context is of the declaring class, use it as target
+            targetUi.targetProperty().setValue((C) context);
+            targetUi.setReadOnly(true);
+        } else {
+            //TODO the target is not of the declaring class, what should we do ?
+            // (At least one of the params should be assignable from the target)
+            targetUi.targetProperty().setValue(null);
+            targetUi.setReadOnly(false);
+        }
     }
 
 

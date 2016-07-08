@@ -89,6 +89,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             // field
             final Node field = buildPropertyUi(propertyInformation, propertyType);
             grid.add(field, 1, row);
+            label.setLabelFor(field);
 
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(propertyType)) {

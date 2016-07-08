@@ -6,7 +6,7 @@ package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.introspection.ClassInformation;
-import com.ogerardin.guarana.core.introspection.MethodInformation;
+import com.ogerardin.guarana.core.introspection.ExecutableInformation;
 import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import com.ogerardin.guarana.javafx.JfxUiManager;
@@ -63,7 +63,7 @@ abstract class JfxUI implements JfxRenderable {
         // add methods
         targetClassInformation.getMethods().stream()
                 .filter(methodInfo -> !methodInfo.isGetterOrSetter())
-                .filter(methodInfo -> !getConfiguration().isHiddenMethod(beanClass, methodInfo.getMethod()))
+                .filter(methodInfo -> !getConfiguration().isHiddenMethod(beanClass, methodInfo.getExecutable()))
                 .map(methodInfo -> new MethodMenuItem<>(methodInfo, targetSupplier, new ImageView(ICON_METHOD)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
@@ -163,8 +163,8 @@ abstract class JfxUI implements JfxRenderable {
      * @param <T> type of the target object
      */
     private class MethodMenuItem<T> extends MenuItem {
-        public MethodMenuItem(MethodInformation methodInformation, Supplier<T> supplier, ImageView icon) {
-            this(methodInformation.getMethod(), supplier, icon);
+        public MethodMenuItem(ExecutableInformation<Method> methodInformation, Supplier<T> supplier, ImageView icon) {
+            this(methodInformation.getExecutable(), supplier, icon);
         }
 
         public MethodMenuItem(Method method, Supplier<T> supplier, ImageView icon) {

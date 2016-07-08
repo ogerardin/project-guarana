@@ -50,12 +50,12 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
     private JfxInstanceUI<C> targetUi;
 
 
-    public JfxExecutableInvocationUI(JfxUiManager builder, Constructor<C> constructor) {
+    JfxExecutableInvocationUI(JfxUiManager builder, Constructor<C> constructor) {
         //noinspection unchecked
         this(builder, constructor, constructor.getDeclaringClass(), (Class<R>) constructor.getDeclaringClass());
     }
 
-    public JfxExecutableInvocationUI(JfxUiManager builder, Method method) {
+    JfxExecutableInvocationUI(JfxUiManager builder, Method method) {
         //noinspection unchecked
         this(builder, method, (Class<C>) method.getDeclaringClass(), (Class<R>) method.getReturnType());
     }
@@ -78,11 +78,12 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
 
         // if invoking a method, the first field is the target object
         if (executable instanceof Method) {
-            Label label = new Label("Target");
+            Label label = new Label(declaringClass.getSimpleName());
             grid.add(label, 0, row);
 
             targetUi = getBuilder().buildEmbeddedInstanceUI(declaringClass);
             targetField = targetUi.getRendering();
+            label.setLabelFor(targetField);
 
             configureDropTarget(targetField,
                     (C value) -> declaringClass.isAssignableFrom(value.getClass()),
@@ -111,6 +112,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
             // field
             final Node field = buildParamUi(paramType);
             grid.add(field, 1, row);
+            label.setLabelFor(field);
 
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(paramType)) {
@@ -124,36 +126,40 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
 
         Button goButton = new Button(executable instanceof Constructor ? "Create" : "Go");
         goButton.setOnAction(event -> {
-            try {
-                final Object[] paramValues = getParamValues();
-
-                if (executable instanceof Constructor) {
-                    final Constructor<C> constructor = (Constructor<C>) executable;
-                    invokeConstructor(constructor, paramValues, onSuccess);
-                } else if (executable instanceof Method) {
-                    final Method method = (Method) executable;
-                    invokeMethod(method, getTargetValue(), paramValues, onSuccess);
-                }
-                getBuilder().hide(this);
-            } catch (Exception e) {
-                getBuilder().displayException(e);
-            }
+            doInvoke(executable);
         });
         root.getChildren().add(goButton);
+    }
+
+    private void doInvoke(Executable executable) {
+        try {
+            final Object[] paramValues = getParamValues();
+
+            if (executable instanceof Constructor) {
+                final Constructor<C> constructor = (Constructor<C>) executable;
+                doInvokeConstructor(constructor, paramValues, onSuccess);
+            } else if (executable instanceof Method) {
+                final Method method = (Method) executable;
+                doInvokeMethod(method, getTargetValue(), paramValues, onSuccess);
+            }
+            getBuilder().hide(this);
+        } catch (Exception e) {
+            getBuilder().displayException(e);
+        }
     }
 
     private C getTargetValue() {
         return targetUi.targetProperty().getValue();
     }
 
-    private void invokeMethod(Method method, Object target, Object[] params, Consumer<R> onSuccess) throws IllegalAccessException, InvocationTargetException {
+    private static <R> void doInvokeMethod(Method method, Object target, Object[] params, Consumer<R> onSuccess) throws IllegalAccessException, InvocationTargetException {
         R result = (R) method.invoke(target, params);
         if (onSuccess != null) {
             onSuccess.accept(result);
         }
     }
 
-    private void invokeConstructor(Constructor<C> constructor, Object[] params, Consumer<R> onSuccess) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+    private static <C, R> void doInvokeConstructor(Constructor<C> constructor, Object[] params, Consumer<R> onSuccess) throws InstantiationException, IllegalAccessException, InvocationTargetException {
         C instance = constructor.newInstance(params);
         if (onSuccess != null) {
             onSuccess.accept((R) instance);

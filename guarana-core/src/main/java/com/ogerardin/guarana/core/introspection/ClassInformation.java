@@ -9,10 +9,13 @@ import org.slf4j.LoggerFactory;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
+import java.beans.MethodDescriptor;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Encapsulates information about a class obtained through introspection.
@@ -28,13 +31,14 @@ public class ClassInformation<C> {
     private final Class<C> targetClass;
     private final BeanInfo beanInfo;
 
-    private List<MethodInformation> methods = null;
+    private List<ExecutableInformation<Method>> methods = null;
+    private List<ExecutableInformation<Constructor>> constructors = null;
     private List<PropertyInformation> properties = null;
 
     /**
      * Set of {@link Method}s that reference this class
      */
-    private final Set<Method> relatedMethods = new HashSet<>();
+    private final Set<Executable> relatedExecutables = new HashSet<>();
 
 
     private ClassInformation(Class<C> targetClass) throws IntrospectionException {
@@ -43,22 +47,26 @@ public class ClassInformation<C> {
     }
 
     private void scanMethods() throws IntrospectionException {
-        LOGGER.debug("scanning " + this.getTargetClass());
+        LOGGER.debug("Scanning " + this.getTargetClass());
 
-        for (MethodInformation methodInformation : getMethods()) {
-            final Method method = methodInformation.getMethod();
+        for (ExecutableInformation ei : getMethodsAndConstructors()) {
+            final Executable executable = ei.getExecutable();
 
             // collect all types referenced in this method's declaration
-            Set<Class> classes = methodInformation.getReferencedClasses();
+            Set<Class> classes = ei.getReferencedClasses();
 
             // associate this method with each of the referenced classes
-            classes.forEach(clazz -> addReferencingMethod(clazz, method));
+            classes.forEach(clazz -> addReferencingExecutable(clazz, executable));
         }
     }
 
-    private static void addReferencingMethod(Class type, Method method) {
+    private List<ExecutableInformation<?>> getMethodsAndConstructors() {
+        return Stream.concat(getMethods().stream(), getConstructors().stream()).collect(Collectors.toList());
+    }
+
+    private static void addReferencingExecutable(Class type, Executable executable) {
         if (type.isArray()) {
-            addReferencingMethod(type.getComponentType(), method);
+            addReferencingExecutable(type.getComponentType(), executable);
             return;
         }
         if (type.isPrimitive() || type.getPackage().getName().startsWith("java.")) {
@@ -66,19 +74,20 @@ public class ClassInformation<C> {
         }
         try {
             ClassInformation returnTypeClassInfo = forClass(type);
-            returnTypeClassInfo.addReferencingMethod(method);
+            returnTypeClassInfo.addReferencingExecutable(executable);
         } catch (IntrospectionException e) {
             LOGGER.warn("Failed to obtain class information for " + type);
         }
     }
 
-    private void addReferencingMethod(Method method) {
-        LOGGER.debug("PUT " + this.getTargetClass().getSimpleName() + " -> " + method);
-//        LOGGER.debug("PUT " + this.getTargetClass().getSimpleName() + " -> " +
+    private void addReferencingExecutable(Executable method) {
+        LOGGER.debug("Add referencing " + method.getClass().getSimpleName()
+                + " for " + this.getTargetClass().getSimpleName() + ": " + method);
+//        LOGGER.debug("Add referencing executable for " + this.getTargetClass().getSimpleName() + " -> " +
 //                method.getReturnType().getSimpleName() + " " +
 //                method.getDeclaringClass().getSimpleName() + "." +
 //                method.getName());
-        relatedMethods.add(method);
+        relatedExecutables.add(method);
     }
 
     static <T> ClassInformation<T> forClass(Class<T> targetClass) throws IntrospectionException {
@@ -105,18 +114,28 @@ public class ClassInformation<C> {
         return targetClass;
     }
 
-    public List<MethodInformation> getMethods() {
+    public List<ExecutableInformation<Method>> getMethods() {
         if (methods == null) {
-            methods = Arrays.asList(beanInfo.getMethodDescriptors()).stream()
-                    .map(MethodInformation::new)
+            methods = Arrays.stream(beanInfo.getMethodDescriptors())
+                    .map(MethodDescriptor::getMethod)
+                    .map(ExecutableInformation::new)
                     .collect(Collectors.toList());
         }
         return methods;
     }
 
+    public List<ExecutableInformation<Constructor>> getConstructors() {
+        if (constructors == null) {
+            constructors = Arrays.stream(beanInfo.getBeanDescriptor().getBeanClass().getConstructors())
+                    .map(ExecutableInformation::new)
+                    .collect(Collectors.toList());
+        }
+        return constructors;
+    }
+
     public List<PropertyInformation> getProperties() {
         if (properties == null) {
-            properties = Arrays.asList(beanInfo.getPropertyDescriptors()).stream()
+            properties = Arrays.stream(beanInfo.getPropertyDescriptors())
                     .map(PropertyInformation::new)
                     .collect(Collectors.toList());
         }
@@ -127,9 +146,15 @@ public class ClassInformation<C> {
         return Arrays.asList(targetClass.getDeclaredConstructors());
     }
 
-    public Set<Method> getRelatedMethods() {
-        return relatedMethods;
+    public Set<Executable> getRelatedExecutables() {
+        return relatedExecutables;
     }
 
+    public Set<Method> getRelatedMethods() {
+        return relatedExecutables.stream()
+                .filter(e -> e instanceof Method)
+                .map(e -> (Method) e)
+                .collect(Collectors.toSet());
+    }
 
 }

@@ -70,7 +70,7 @@ abstract class JfxUI implements JfxRenderable {
         // add constructors
         contextMenu.getItems().add(new SeparatorMenuItem());
         targetClassInformation.getDeclaredConstructors().stream()
-                .map(constructor -> new ConstructorMenuItem<>(constructor, new ImageView(ICON_CONSTRUCTOR)))
+                .map(constructor -> new ConstructorMenuItem(constructor, new ImageView(ICON_CONSTRUCTOR)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         control.setContextMenu(contextMenu);
 
@@ -78,7 +78,7 @@ abstract class JfxUI implements JfxRenderable {
         contextMenu.getItems().add(new SeparatorMenuItem());
         //FIXME targetSupplier cannot be used here since those methods do not belong to the target class !!!
         targetClassInformation.getRelatedMethods().stream()
-                .map(method -> new MethodMenuItem<>(method, targetSupplier, new ImageView(ICON_METHOD)))
+                .map(method -> new MethodMenuItem(method, targetSupplier, new ImageView(ICON_METHOD)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
 

@@ -127,7 +127,7 @@ public class ClassInformation<C> {
     public List<ExecutableInformation<Constructor>> getConstructors() {
         if (constructors == null) {
             constructors = Arrays.stream(beanInfo.getBeanDescriptor().getBeanClass().getConstructors())
-                    .map(ExecutableInformation::new)
+                    .map(e -> new ExecutableInformation<Constructor>(e))
                     .collect(Collectors.toList());
         }
         return constructors;

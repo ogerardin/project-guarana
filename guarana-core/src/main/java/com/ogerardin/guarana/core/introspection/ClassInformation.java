@@ -142,7 +142,7 @@ public class ClassInformation<C> {
         return properties;
     }
 
-    public List<Constructor<?>> getDeclaredConstructors() {
+    public List<Constructor> getDeclaredConstructors() {
         return Arrays.asList(targetClass.getDeclaredConstructors());
     }
 

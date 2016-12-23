@@ -11,7 +11,7 @@ import java.util.List;
  * @author Olivier
  * @since 26/05/15
  */
-public interface DemoManager {
+public interface DomainManager {
 
     void clearAll();
 

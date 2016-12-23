@@ -4,18 +4,27 @@
 
 package com.ogerardin.guarana.demo.model;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 /**
  * @author oge
  * @since 09/06/2016
  */
+@Data
 public class Leave {
 
-    final Person person;
-    Date start;
-    Date end;
+    private final Person person;
 
+    private Date start;
+
+    private Date end;
+
+    @Getter
+    @Setter
     double duration;
 
     public Leave(Person person, Date start, Date end) {
@@ -31,31 +40,4 @@ public class Leave {
         duration = days + 1;
     }
 
-    public Person getPerson() {
-        return person;
-    }
-
-    public Date getStart() {
-        return start;
-    }
-
-    public void setStart(Date start) {
-        this.start = start;
-    }
-
-    public Date getEnd() {
-        return end;
-    }
-
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
-    public double getDuration() {
-        return duration;
-    }
-
-    public void setDuration(double duration) {
-        this.duration = duration;
-    }
 }

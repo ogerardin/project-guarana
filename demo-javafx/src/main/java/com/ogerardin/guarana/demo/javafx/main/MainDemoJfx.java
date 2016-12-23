@@ -9,19 +9,16 @@ package com.ogerardin.guarana.demo.javafx.main;
  * @since 28/05/15
  */
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.util.StatusPrinter;
-import com.ogerardin.guarana.demo.javafx.adapters.DemoManagerDb4OImpl;
-import com.ogerardin.guarana.demo.model.DemoManager;
+import com.ogerardin.guarana.demo.javafx.adapters.DomainManagerDb4OImpl;
+import com.ogerardin.guarana.demo.model.DomainManager;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.slf4j.LoggerFactory;
 
 public class MainDemoJfx extends Application {
 
-    private static DemoManager demoManager;
+    private static DomainManager domainManager;
 
     @Override
     public void start(Stage primaryStage) {
@@ -29,11 +26,11 @@ public class MainDemoJfx extends Application {
         // instantiate UiManager for JavaFX
         JfxUiManager uiManager = new JfxUiManager();
 
-        // build UI for a DemoManager
-        JfxInstanceUI<DemoManager> ui = uiManager.buildInstanceUI(DemoManager.class);
+        // build UI for a DomainManager
+        JfxInstanceUI<DomainManager> ui = uiManager.buildInstanceUI(DomainManager.class);
 
         // populate UI with actual instance
-        ui.setTarget(demoManager);
+        ui.setTarget(domainManager);
 
         //display UI in primary Stage
         uiManager.display(ui, primaryStage, "Hello Guarana!");
@@ -42,7 +39,7 @@ public class MainDemoJfx extends Application {
     public static void main(String[] args) {
 
         // instantiate our main business object
-        demoManager = new DemoManagerDb4OImpl();
+        domainManager = new DomainManagerDb4OImpl();
 
         // handoff to JavaFX; this will call the start() method
         launch(args);

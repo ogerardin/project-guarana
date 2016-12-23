@@ -8,7 +8,7 @@ import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
 import com.db4o.config.Configuration;
-import com.ogerardin.guarana.demo.model.DemoManager;
+import com.ogerardin.guarana.demo.model.DomainManager;
 import com.ogerardin.guarana.demo.model.Event;
 import com.ogerardin.guarana.demo.model.Leave;
 import com.ogerardin.guarana.demo.model.Person;
@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
  * @author Olivier
  * @since 26/05/15
  */
-public class DemoManagerDb4OImpl implements DemoManager {
+public class DomainManagerDb4OImpl implements DomainManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DemoManagerDb4OImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomainManagerDb4OImpl.class);
 
     private final ObjectContainer objectContainer;
 
@@ -38,7 +38,7 @@ public class DemoManagerDb4OImpl implements DemoManager {
     private ObservableList<Leave> allLeaves;
 
 
-    public DemoManagerDb4OImpl() {
+    public DomainManagerDb4OImpl() {
         Configuration configuration = Db4o.newConfiguration();
         objectContainer = Db4o.openFile(configuration, "data.db4o");
     }
@@ -115,7 +115,7 @@ public class DemoManagerDb4OImpl implements DemoManager {
         final Person person2 = new Person("OBAMA", "Barack");
         save(person2);
 
-        save(new Event(new Date(), person0));
+        save(new Event(person0, new Date()));
 
         getAllPersons().forEach(System.out::println);
         getAllEvents().forEach(System.out::println);

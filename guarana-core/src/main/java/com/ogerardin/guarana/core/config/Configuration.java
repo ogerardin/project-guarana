@@ -23,6 +23,17 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * Configuration reader for Guarana.
+ *
+ * Configuration is read from the following resources:
+ * {@code /.guarana-core.properties} contains default core properties
+ * {@code /.guarana-ui.properties} contains UI toolkit specific properties
+ * {@code /guarana.properties} contains user properties
+ *
+ * Each file contains a list of properties. Guarana properties are in one of the following forms:
+ * {@code guarana.key=value} to set a global property
+ * {@code guarana.class.fqcn.key=value} to set a property for a specific class (where fqcn is the fully qualified class name)
+ *
  * @author oge
  * @since 24/09/2015
  */
@@ -31,30 +42,28 @@ public class Configuration extends CompositeConfiguration {
 
     private static final String PROPERTY_PREFIX = "guarana.";
 
-    private static final String CORE_PROPERTIES = "/_guarana_core.properties";
-    private static final String TOOLKIT_PROPERTIES = "/_guarana_ui.properties";
+    private static final String CORE_PROPERTIES = "/.guarana-core.properties";
+    private static final String TOOLKIT_PROPERTIES = "/.guarana-ui.properties";
     private static final String USER_PROPERTIES = "/guarana.properties";
 
-    private final Map<Class, ClassConfiguration> classConfigurationMap = new HashMap<>();
+    private final Map<Class, ClassConfiguration> classConfigurationByClass = new HashMap<>();
     private boolean humanizeClassNames = false;
 
     /**
-     * Build default configuration by using
-     * -system properties
-     * -core properties from _guarana_core.properties
-     * -toolkit-specific properties from _guarana_ui.properties
-     * -user properties from guarana.properties
+     * Build configuration by using default sources
      */
     public Configuration() {
-        // common defaults
+        // priority 1: system properties
         addConfiguration(new SystemConfiguration());
+
+        // priority 2: user-defined properties
         try {
-            addConfigurationResource(CORE_PROPERTIES);
+            addConfigurationResource(USER_PROPERTIES);
         } catch (ConfigurationException e) {
-            throw new RuntimeException("Failed to load " + CORE_PROPERTIES, e);
+            LOGGER.warn("No user configuration " + USER_PROPERTIES + " found");
         }
 
-        // toolkit-specific properties
+        // priority 3: toolkit-specific properties
         try {
             addConfigurationResource(TOOLKIT_PROPERTIES);
         } catch (ConfigurationException e) {
@@ -62,12 +71,14 @@ public class Configuration extends CompositeConfiguration {
                     " - you need one UI implementation in your classpath!", e);
         }
 
-        // user-defined properties
+        // priority 4: Guarana core defaults
         try {
-            addConfigurationResource(USER_PROPERTIES);
+            addConfigurationResource(CORE_PROPERTIES);
         } catch (ConfigurationException e) {
-            LOGGER.warn("No user configuration " + USER_PROPERTIES + " found");
+            throw new RuntimeException("Failed to load " + CORE_PROPERTIES, e);
         }
+
+
 
         applyConfiguration();
     }
@@ -158,7 +169,7 @@ public class Configuration extends CompositeConfiguration {
                 }
                 break;
             default:
-                LOGGER.error("Invalid class property: " + property);
+                LOGGER.error("Invalid class property: " + property + " in " + key);
         }
     }
 
@@ -192,10 +203,10 @@ public class Configuration extends CompositeConfiguration {
      * and return a default ClassConfiguration
      */
     public <C> ClassConfiguration<C> forClass(Class<C> clazz) {
-        ClassConfiguration<C> classConfig = classConfigurationMap.get(clazz);
+        ClassConfiguration<C> classConfig = classConfigurationByClass.get(clazz);
         if (classConfig == null) {
             classConfig = new ClassConfiguration<>(clazz);
-            classConfigurationMap.put(clazz, classConfig);
+            classConfigurationByClass.put(clazz, classConfig);
         }
         return classConfig;
     }

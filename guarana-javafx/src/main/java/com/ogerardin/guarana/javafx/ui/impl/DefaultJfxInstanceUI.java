@@ -46,8 +46,8 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJfxInstanceUI.class);
 
-    private BiMap<Node, PropertyInformation> nodeToPropertyInformation = HashBiMap.create();
-    private BiMap<JfxInstanceUI, PropertyInformation> uiToPropertyInformation = HashBiMap.create();
+    private BiMap<Node, PropertyInformation> propertyInformationByNode = HashBiMap.create();
+    private BiMap<JfxInstanceUI, PropertyInformation> propertyInformationByUi = HashBiMap.create();
 
     private ObjectProperty<T> boundObjectProperty = new SimpleObjectProperty<>();
 
@@ -128,8 +128,8 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
                 (T value) -> propertyType.isAssignableFrom(value.getClass()),
                 value -> ui.boundObjectProperty().setValue(value));
 
-        uiToPropertyInformation.put(ui, propertyInformation);
-        nodeToPropertyInformation.put(field, propertyInformation);
+        propertyInformationByUi.put(ui, propertyInformation);
+        propertyInformationByNode.put(field, propertyInformation);
 
         return field;
     }
@@ -165,6 +165,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
 
     public void bind(T object) {
+        LOGGER.debug("Binding " + object + " to " + this);
         if (getBoundObject() != null) {
             unbindProperties();
         }
@@ -173,21 +174,21 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     }
 
     private void unbindProperties() {
-        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : uiToPropertyInformation.entrySet()) {
+        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : propertyInformationByUi.entrySet()) {
             final JfxInstanceUI ui = entry.getKey();
             ui.boundObjectProperty().unbind();
         }
     }
 
-    private void bindProperties(T target) {
+    private void bindProperties(T object) {
 
-        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : uiToPropertyInformation.entrySet()) {
+        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : propertyInformationByUi.entrySet()) {
             final JfxInstanceUI ui = entry.getKey();
             final PropertyInformation propertyInformation = entry.getValue();
 
             final Object value;
             try {
-                value = propertyInformation.getReadMethod().invoke(target);
+                value = propertyInformation.getReadMethod().invoke(object);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 LOGGER.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
                 continue;
@@ -209,7 +210,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             // otherwise try to bind bidirectionally to a generated JavaBeanObjectProperty
             try {
                 Property<?> jfxProperty = JavaBeanObjectPropertyBuilder.create()
-                        .bean(target)
+                        .bean(object)
                         .name(propertyInformation.getName())
                         .build();
                 ui.boundObjectProperty().bindBidirectional(jfxProperty);
@@ -257,7 +258,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     }
 
     protected void propertyUpdated(PropertyInformation propertyInformation, Object value) {
-        Node node = nodeToPropertyInformation.inverse().get(propertyInformation);
+        Node node = propertyInformationByNode.inverse().get(propertyInformation);
         if (node instanceof TextField) {
             Bindings.fieldSetValue(getConfiguration(), ((TextField) node), propertyInformation, value);
         }

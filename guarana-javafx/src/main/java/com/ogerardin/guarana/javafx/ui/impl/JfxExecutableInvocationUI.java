@@ -60,7 +60,8 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
         this(builder, method, (Class<C>) method.getDeclaringClass(), (Class<R>) method.getReturnType());
     }
 
-    private JfxExecutableInvocationUI(JfxUiManager builder, Executable executable, Class<C> declaringClass, Class<R> resultType) {
+    private JfxExecutableInvocationUI(JfxUiManager builder, Executable executable,
+                                      Class<C> declaringClass, Class<R> resultType) {
         super(builder);
         this.declaringClass = declaringClass;
         this.resultType = resultType;

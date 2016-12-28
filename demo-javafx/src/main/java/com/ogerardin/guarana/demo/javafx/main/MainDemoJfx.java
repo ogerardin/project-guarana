@@ -26,13 +26,11 @@ public class MainDemoJfx extends Application {
         // instantiate UiManager for JavaFX
         JfxUiManager uiManager = new JfxUiManager();
 
-        // build UI for a DomainManager
+        // build UI for a DomainManager and bind it to actual instance
         JfxInstanceUI<DomainManager> ui = uiManager.buildInstanceUI(DomainManager.class);
-
-        // populate UI with actual instance
         ui.bind(domainManager);
 
-        //display UI in primary Stage
+        //display UI in JavaFX primary Stage
         uiManager.display(ui, primaryStage, "Hello Guarana!");
     }
 

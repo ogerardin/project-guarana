@@ -86,7 +86,7 @@ public class ClassConfiguration<C> {
             if (method.getName().equals(methodName)) {
                 found = true;
                 hiddenMethods.add(method);
-                LOGGER.debug("hide method: " + method);
+                LOGGER.debug(targetClass + ": hide method: " + method);
             }
         }
         if (!found) {
@@ -110,7 +110,7 @@ public class ClassConfiguration<C> {
                 throw new InvalidParameterException("Method " + method + " is not declared in class " + targetClass);
             }
             hiddenMethods.add(method);
-            LOGGER.debug("hide method: " + method);
+            LOGGER.debug(targetClass + ": hide method: " + method);
         }
     }
 

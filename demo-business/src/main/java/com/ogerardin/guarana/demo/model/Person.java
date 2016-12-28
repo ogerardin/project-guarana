@@ -5,12 +5,15 @@
 package com.ogerardin.guarana.demo.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Olivier
  * @since 26/05/15
  */
-@Data
+@Getter
+@Setter
 public class Person {
 
     private String lastName;

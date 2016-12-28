@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 public class ClassInformation<C> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassInformation.class);
 
-    private static final Map<Class, ClassInformation> classInfoMap = new HashMap<>();
+    private static final Map<Class, ClassInformation> classInformationByClass = new HashMap<>();
 
     private final Class<C> targetClass;
     private final BeanInfo beanInfo;
@@ -91,12 +91,12 @@ public class ClassInformation<C> {
     }
 
     static <T> ClassInformation<T> forClass(Class<T> targetClass) throws IntrospectionException {
-        ClassInformation<T> classInformation = classInfoMap.get(targetClass);
+        ClassInformation<T> classInformation = classInformationByClass.get(targetClass);
         if (classInformation != null) {
             return classInformation;
         }
         classInformation = new ClassInformation<T>(targetClass);
-        classInfoMap.put(targetClass, classInformation);
+        classInformationByClass.put(targetClass, classInformation);
         classInformation.scanMethods();
         return classInformation;
     }

@@ -18,19 +18,19 @@ import java.util.stream.Collectors;
  */
 public class DefaultJfxMapUI<K, V> extends DefaultJfxCollectionUI<DefaultJfxMapUI.MapEntry> implements JfxMapUI<K, V> {
 
-    private Map<K, V> target;
+    private Map<K, V> boundMap;
 
     public DefaultJfxMapUI(JfxUiManager builder) {
         super(builder, MapEntry.class);
     }
 
     @Override
-    public void setTarget(Map<K, V> target) {
-        super.setTarget(target.entrySet().stream()
+    public void bind(Map<K, V> map) {
+        super.bind(map.entrySet().stream()
                         .map(MapEntry<K, V>::new)
                         .collect(Collectors.toList())
         );
-        this.target = target;
+        this.boundMap = map;
     }
 
     // HashMap.Entry is not public so we can't use it

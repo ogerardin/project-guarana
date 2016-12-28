@@ -34,7 +34,7 @@ public class DefaultJfxEmbeddedInstanceUI<T> extends TextField implements JfxIns
     private final JfxUiManager jfxUiManager;
     private final Class<T> clazz;
 
-    private ObjectProperty<T> targetProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<T> boundObjectProperty = new SimpleObjectProperty<>();
 
 
     public DefaultJfxEmbeddedInstanceUI(JfxUiManager jfxUiManager, Class<T> clazz) {
@@ -43,11 +43,11 @@ public class DefaultJfxEmbeddedInstanceUI<T> extends TextField implements JfxIns
 
         //final TargetStringConverter<T> converter = new TargetStringConverter<>(jfxUiManager, clazz);
         final StringConverter<T> converter = Bindings.getStringConverter(clazz, jfxUiManager.getConfiguration());
-        textProperty().bindBidirectional(targetProperty, converter);
+        textProperty().bindBidirectional(boundObjectProperty, converter);
 
         addEventHandler(KeyEvent.KEY_RELEASED, event -> {
             if (event.getCode() == KeyCode.F5) {
-                final T value = targetProperty.getValue();
+                final T value = boundObjectProperty.getValue();
                 final String s = converter.toString(value);
                 textProperty().setValue(s);
             }
@@ -55,13 +55,13 @@ public class DefaultJfxEmbeddedInstanceUI<T> extends TextField implements JfxIns
     }
 
     @Override
-    public ObjectProperty<T> targetProperty() {
-        return targetProperty;
+    public ObjectProperty<T> boundObjectProperty() {
+        return boundObjectProperty;
     }
 
     @Override
-    public void setTarget(T target) {
-        targetProperty.setValue(target);
+    public void bind(T object) {
+        boundObjectProperty.setValue(object);
     }
 
     @Override

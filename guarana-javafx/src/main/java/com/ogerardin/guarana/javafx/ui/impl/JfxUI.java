@@ -293,7 +293,7 @@ abstract class JfxUI implements JfxRenderable {
     @SuppressWarnings("unused")
     public void displayObjectRegistry() {
         JfxMapUI<Identifier, Object> ui = builder.buildMapUI();
-        ui.setTarget(ObjectRegistry.INSTANCE.getMap());
+        ui.bind(ObjectRegistry.INSTANCE.getMap());
         builder.display(ui);
     }
 

@@ -28,15 +28,15 @@ import java.util.Date;
  */
 public class JfxDateUi extends DatePicker implements JfxInstanceUI<Date> {
 
-    private ObjectProperty<Date> targetProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<Date> boundDateProperty = new SimpleObjectProperty<>();
 
     public JfxDateUi() {
-        Bindings.bindBidirectional(valueProperty(), targetProperty(), new LocalDateDateConverter());
+        Bindings.bindBidirectional(valueProperty(), boundObjectProperty(), new LocalDateDateConverter());
     }
 
     @Override
-    public void setTarget(Date target) {
-        targetProperty().setValue(target);
+    public void bind(Date target) {
+        boundObjectProperty().setValue(target);
     }
 
     @Override
@@ -50,8 +50,8 @@ public class JfxDateUi extends DatePicker implements JfxInstanceUI<Date> {
     }
 
     @Override
-    public ObjectProperty<Date> targetProperty() {
-        return targetProperty;
+    public ObjectProperty<Date> boundObjectProperty() {
+        return boundDateProperty;
     }
 
 

@@ -87,7 +87,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
 
             configureDropTarget(targetField,
                     (C value) -> declaringClass.isAssignableFrom(value.getClass()),
-                    value -> targetUi.targetProperty().setValue(value)
+                    value -> targetUi.boundObjectProperty().setValue(value)
             );
             grid.add(targetField, 1, row);
 
@@ -149,7 +149,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
     }
 
     private C getTargetValue() {
-        return targetUi.targetProperty().getValue();
+        return targetUi.boundObjectProperty().getValue();
     }
 
     private static <R> void doInvokeMethod(Method method, Object target, Object[] params, Consumer<R> onSuccess) throws IllegalAccessException, InvocationTargetException {
@@ -178,7 +178,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
         // configure the field as a target for drag and drop
         configureDropTarget(field,
                 (T value) -> paramType.isAssignableFrom(value.getClass()),
-                value -> ui.targetProperty().setValue(value)
+                value -> ui.boundObjectProperty().setValue(value)
         );
 
         return field;
@@ -192,7 +192,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
 
     private Object[] getParamValues() {
         final List<Object> paramValueList = fieldUiList.stream()
-                .map(ui -> ui.targetProperty().getValue())
+                .map(ui -> ui.boundObjectProperty().getValue())
                 .collect(Collectors.toList());
         return paramValueList.toArray();
     }
@@ -210,12 +210,12 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
     public void setContext(Object context) {
         if (declaringClass.isAssignableFrom(context.getClass())) {
             // the context is of the declaring class, use it as target
-            targetUi.targetProperty().setValue((C) context);
+            targetUi.boundObjectProperty().setValue((C) context);
             targetUi.setReadOnly(true);
         } else {
             //TODO the target is not of the declaring class, what should we do ?
             // (At least one of the params should be assignable from the target)
-            targetUi.targetProperty().setValue(null);
+            targetUi.boundObjectProperty().setValue(null);
             targetUi.setReadOnly(false);
         }
     }

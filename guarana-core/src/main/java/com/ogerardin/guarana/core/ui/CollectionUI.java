@@ -15,6 +15,6 @@ import java.util.Collection;
  */
 public interface CollectionUI<R, T> extends Renderable<R> {
 
-    void setTarget(Collection<? extends T> target);
+    void bind(Collection<? extends T> collection);
 
 }

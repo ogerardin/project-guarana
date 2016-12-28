@@ -121,7 +121,7 @@ public class JfxUiManager implements JfxUIBuilder {
         //TODO improve this
         LOGGER.error("Displaying exception", e);
         JfxInstanceUI<Throwable> exceptionInstanceUI = buildInstanceUI(Throwable.class);
-        exceptionInstanceUI.setTarget(e);
+        exceptionInstanceUI.bind(e);
         display(exceptionInstanceUI, "Caught Exception");
     }
 
@@ -183,7 +183,7 @@ public class JfxUiManager implements JfxUIBuilder {
         } else {
             // build instanceUI for the target class and display it in stage
             ui = buildInstanceUI(targetClass);
-            ui.setTarget(target);
+            ui.bind(target);
             objectRenderableMap.put(key, ui);
             display(ui, stage, parent, title);
         }
@@ -199,7 +199,7 @@ public class JfxUiManager implements JfxUIBuilder {
         } else {
             // build UI for the target collection class and display it in stage
             ui = buildCollectionUi(itemClass);
-            ui.setTarget(collection);
+            ui.bind(collection);
             objectRenderableMap.put(key, ui);
             display(ui, parent, title);
         }
@@ -215,7 +215,7 @@ public class JfxUiManager implements JfxUIBuilder {
         } else {
             // build UI for the target collection class and display it in stage
             ui = buildCollectionUi(itemClass);
-            ui.setTarget(Arrays.asList(array));
+            ui.bind(Arrays.asList(array));
             objectRenderableMap.put(key, ui);
             display(ui, parent, title);
         }

@@ -113,7 +113,7 @@ public class Configuration extends CompositeConfiguration {
                     this.humanizeClassNames = getBoolean(key);
                     break;
                 default:
-                    LOGGER.error("Configuration: invalid property key: " + key);
+                    LOGGER.error("Invalid property key: " + key);
             }
         }
     }
@@ -158,7 +158,7 @@ public class Configuration extends CompositeConfiguration {
                 }
                 break;
             default:
-                LOGGER.error("Configuration: invalid class property: " + property);
+                LOGGER.error("Invalid class property: " + property);
         }
     }
 

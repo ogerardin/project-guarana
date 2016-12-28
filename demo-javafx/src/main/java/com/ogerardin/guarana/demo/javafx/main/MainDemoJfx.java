@@ -30,7 +30,7 @@ public class MainDemoJfx extends Application {
         JfxInstanceUI<DomainManager> ui = uiManager.buildInstanceUI(DomainManager.class);
 
         // populate UI with actual instance
-        ui.setTarget(domainManager);
+        ui.bind(domainManager);
 
         //display UI in primary Stage
         uiManager.display(ui, primaryStage, "Hello Guarana!");

@@ -151,13 +151,13 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
     }
 
     @Override
-    public void setTarget(Collection<? extends T> target) {
-        if (target instanceof ObservableList) {
-            tableView.setItems((ObservableList<T>) target);
-        } else if (target instanceof List) {
-            tableView.setItems(FXCollections.observableList((List<T>) target));
+    public void bind(Collection<? extends T> collection) {
+        if (collection instanceof ObservableList) {
+            tableView.setItems((ObservableList<T>) collection);
+        } else if (collection instanceof List) {
+            tableView.setItems(FXCollections.observableList((List<T>) collection));
         } else {
-            tableView.setItems(FXCollections.observableList(new ArrayList<T>(target)));
+            tableView.setItems(FXCollections.observableList(new ArrayList<T>(collection)));
         }
     }
 }

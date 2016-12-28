@@ -13,6 +13,6 @@ package com.ogerardin.guarana.core.ui;
  */
 public interface InstanceUI<R, T> extends Renderable<R> {
 
-    void setTarget(T target);
+    void bind(T object);
 
 }

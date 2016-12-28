@@ -5,7 +5,6 @@
 package com.ogerardin.guarana.javafx.ui;
 
 import com.ogerardin.guarana.core.ui.UIBuilder;
-import javafx.scene.Parent;
 
 /**
  * Specialized {@link UIBuilder} for JavaFX
@@ -13,5 +12,5 @@ import javafx.scene.Parent;
  * @author oge
  * @since 10/02/2016
  */
-public interface JfxUIBuilder extends UIBuilder<Parent> {
+public interface JfxUIBuilder extends UIBuilder<javafx.scene.Parent> {
 }

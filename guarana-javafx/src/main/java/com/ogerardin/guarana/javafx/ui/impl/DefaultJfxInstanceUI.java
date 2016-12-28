@@ -49,7 +49,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     private BiMap<Node, PropertyInformation> nodeToPropertyInformation = HashBiMap.create();
     private BiMap<JfxInstanceUI, PropertyInformation> uiToPropertyInformation = HashBiMap.create();
 
-    private ObjectProperty<T> targetProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<T> boundObjectProperty = new SimpleObjectProperty<>();
 
     public DefaultJfxInstanceUI(JfxUiManager builder, Class<T> clazz) {
         super(builder);
@@ -63,8 +63,8 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         // title
         final String displayName = getConfiguration().getClassDisplayName(clazz);
         final Label title = addTitle(displayName);
-        configureDragSource(title, this::getTarget);
-        configureContextMenu(title, classInformation, this::getTarget);
+        configureDragSource(title, this::getBoundObject);
+        configureContextMenu(title, classInformation, this::getBoundObject);
 
         // build properties form
         GridPane grid = buildGridPane();
@@ -126,7 +126,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         // set the field as a target for drag and drop
         configureDropTarget(field,
                 (T value) -> propertyType.isAssignableFrom(value.getClass()),
-                value -> ui.targetProperty().setValue(value));
+                value -> ui.boundObjectProperty().setValue(value));
 
         uiToPropertyInformation.put(ui, propertyInformation);
         nodeToPropertyInformation.put(field, propertyInformation);
@@ -138,7 +138,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         try {
             // Try to use generic introspection to determine the type of collection members.
             final Class<C> itemType = Introspector.getMethodResultSingleParameterType(readMethod);
-            final Collection<C> collection = (Collection<C>) readMethod.invoke(getTarget());
+            final Collection<C> collection = (Collection<C>) readMethod.invoke(getBoundObject());
             getBuilder().displayCollection(collection, itemType, parent, title);
         } catch (Exception e) {
             getBuilder().displayException(e);
@@ -147,7 +147,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
     private <C> void zoomArray(Node parent, Method readMethod, Class<C> itemType, String title) {
         try {
-            final C[] array = (C[]) readMethod.invoke(getTarget());
+            final C[] array = (C[]) readMethod.invoke(getBoundObject());
             getBuilder().displayArray(array, itemType, parent, title);
         } catch (Exception e) {
             getBuilder().displayException(e);
@@ -156,7 +156,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
     private <P> void zoomProperty(Node parent, Class<P> propertyType, Method readMethod, String title) {
         try {
-            final P value = (P) readMethod.invoke(getTarget());
+            final P value = (P) readMethod.invoke(getBoundObject());
             getBuilder().displayInstance(value, propertyType, parent, title);
         } catch (Exception ex) {
             getBuilder().displayException(ex);
@@ -164,22 +164,22 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     }
 
 
-    public void setTarget(T target) {
-        if (getTarget() != null) {
-            unbind();
+    public void bind(T object) {
+        if (getBoundObject() != null) {
+            unbindProperties();
         }
-        targetProperty.set(target);
-        bind(target);
+        boundObjectProperty.set(object);
+        bindProperties(object);
     }
 
-    private void unbind() {
+    private void unbindProperties() {
         for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : uiToPropertyInformation.entrySet()) {
             final JfxInstanceUI ui = entry.getKey();
-            ui.targetProperty().unbind();
+            ui.boundObjectProperty().unbind();
         }
     }
 
-    private void bind(T target) {
+    private void bindProperties(T target) {
 
         for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : uiToPropertyInformation.entrySet()) {
             final JfxInstanceUI ui = entry.getKey();
@@ -193,7 +193,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
                 continue;
             }
             if (value == null) {
-                //ui.targetProperty().unbind();
+                //ui.boundObjectProperty().unbind();
                 return;
             }
             final Class<?> valueClass = value.getClass();
@@ -201,7 +201,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             // if the property is a JavaFX-style property, bind directly to it
             if (Property.class.isAssignableFrom(valueClass)) {
                 Property<?> jfxProperty = (Property) value;
-                ui.targetProperty().bindBidirectional(jfxProperty);
+                ui.boundObjectProperty().bindBidirectional(jfxProperty);
                 LOGGER.debug(propertyInformation.getDisplayName() + " bound using javafx.beans.property.Property method");
                 continue;
             }
@@ -212,7 +212,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
                         .bean(target)
                         .name(propertyInformation.getName())
                         .build();
-                ui.targetProperty().bindBidirectional(jfxProperty);
+                ui.boundObjectProperty().bindBidirectional(jfxProperty);
                 LOGGER.debug(propertyInformation.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
                 continue;
             } catch (NoSuchMethodException e) {
@@ -223,7 +223,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             // otherwise if the property implements java.util.Observable, register a listener
             if (java.util.Observable.class.isAssignableFrom(valueClass)) {
                 java.util.Observable observableValue = (java.util.Observable) value;
-                final Observer observer = (observable, o) -> ui.targetProperty().setValue(observable);
+                final Observer observer = (observable, o) -> ui.boundObjectProperty().setValue(observable);
                 observableValue.addObserver(observer);
                 observer.update(observableValue, this);
                 LOGGER.debug(propertyInformation.getDisplayName() + " bound using java.util.Observable method");
@@ -233,7 +233,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             // otherwise if the property implements javafx.beans.Observable, register a listener
             if (Observable.class.isAssignableFrom(valueClass)) {
                 Observable observableValue = (Observable) value;
-                final InvalidationListener listener = observable -> ui.targetProperty().setValue(observable);
+                final InvalidationListener listener = observable -> ui.boundObjectProperty().setValue(observable);
                 observableValue.addListener(listener);
                 //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
                 listener.invalidated(observableValue);
@@ -245,7 +245,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             LOGGER.warn("no binding for property '" + propertyInformation.getDisplayName() + "'");
 
             ui.setReadOnly(true);
-            ui.targetProperty().setValue(value);
+            ui.boundObjectProperty().setValue(value);
         }
 
     }
@@ -263,12 +263,12 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         }
     }
 
-    protected T getTarget() {
-        return targetProperty.get();
+    protected T getBoundObject() {
+        return boundObjectProperty.get();
     }
 
     @Override
-    public ObjectProperty<T> targetProperty() {
-        return targetProperty;
+    public ObjectProperty<T> boundObjectProperty() {
+        return boundObjectProperty;
     }
 }

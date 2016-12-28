@@ -16,6 +16,6 @@ import java.util.Map;
  */
 public interface MapUI<R, K, V> extends Renderable<R> {
 
-    void setTarget(Map<K, V> target);
+    void bind(Map<K, V> map);
 
 }

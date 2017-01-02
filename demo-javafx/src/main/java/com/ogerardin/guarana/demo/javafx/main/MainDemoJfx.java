@@ -10,7 +10,8 @@ package com.ogerardin.guarana.demo.javafx.main;
  */
 
 import com.ogerardin.guarana.demo.javafx.adapters.DomainManagerDb4OImpl;
-import com.ogerardin.guarana.demo.model.DomainManager;
+import com.ogerardin.guarana.demo.model.core.Person;
+import com.ogerardin.guarana.demo.model.manager.DomainManager;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;

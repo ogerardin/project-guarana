@@ -4,12 +4,15 @@
 
 package com.ogerardin.guarana.core.introspection;
 
+import com.ogerardin.guarana.core.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.annotation.AnnotationSupport;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.MethodDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -31,6 +34,8 @@ public class ClassInformation<C> {
     private final Class<C> targetClass;
     private final BeanInfo beanInfo;
 
+    private final boolean service;
+
     private List<ExecutableInformation<Method>> methods = null;
     private List<ExecutableInformation<Constructor>> constructors = null;
     private List<PropertyInformation> properties = null;
@@ -43,11 +48,17 @@ public class ClassInformation<C> {
 
     private ClassInformation(Class<C> targetClass) throws IntrospectionException {
         this.targetClass = targetClass;
-        beanInfo = java.beans.Introspector.getBeanInfo(this.targetClass);
+        this.beanInfo = java.beans.Introspector.getBeanInfo(this.targetClass);
+        this.service = isService(targetClass);
+    }
+
+    private static boolean isService(Class<?> targetClass) {
+        return Arrays.stream(targetClass.getAnnotations())
+                .anyMatch(annotation -> annotation.getClass() == Service.class);
     }
 
     private void scanMethods() throws IntrospectionException {
-        LOGGER.debug("Scanning " + this.getTargetClass());
+        LOGGER.debug("Scanning methods of " + this.getTargetClass());
 
         for (ExecutableInformation ei : getMethodsAndConstructors()) {
             final Executable executable = ei.getExecutable();
@@ -56,7 +67,7 @@ public class ClassInformation<C> {
             Set<Class> classes = ei.getReferencedClasses();
 
             // associate this method with each of the referenced classes
-            classes.forEach(clazz -> addReferencingExecutable(clazz, executable));
+            classes.forEach(clazz -> addContributingExecutable(clazz, executable));
         }
     }
 
@@ -64,26 +75,27 @@ public class ClassInformation<C> {
         return Stream.concat(getMethods().stream(), getConstructors().stream()).collect(Collectors.toList());
     }
 
-    private static void addReferencingExecutable(Class type, Executable executable) {
+    private static void addContributingExecutable(Class type, Executable executable) {
         if (type.isArray()) {
-            addReferencingExecutable(type.getComponentType(), executable);
+            addContributingExecutable(type.getComponentType(), executable);
             return;
         }
         if (type.isPrimitive() || type.getPackage().getName().startsWith("java.")) {
             return;
         }
+
         try {
             ClassInformation returnTypeClassInfo = forClass(type);
-            returnTypeClassInfo.addReferencingExecutable(executable);
+            returnTypeClassInfo.addContributingExecutable(executable);
         } catch (IntrospectionException e) {
             LOGGER.warn("Failed to obtain class information for " + type);
         }
     }
 
-    private void addReferencingExecutable(Executable method) {
-        LOGGER.debug("Add referencing " + method.getClass().getSimpleName()
+    private void addContributingExecutable(Executable method) {
+        LOGGER.debug("Add contributing " + method.getClass().getSimpleName()
                 + " for " + this.getTargetClass().getSimpleName() + ": " + method);
-//        LOGGER.debug("Add referencing executable for " + this.getTargetClass().getSimpleName() + " -> " +
+//        LOGGER.debug("Add contributing executable for " + this.getTargetClass().getSimpleName() + " -> " +
 //                method.getReturnType().getSimpleName() + " " +
 //                method.getDeclaringClass().getSimpleName() + "." +
 //                method.getName());
@@ -155,6 +167,10 @@ public class ClassInformation<C> {
                 .filter(e -> e instanceof Method)
                 .map(e -> (Method) e)
                 .collect(Collectors.toSet());
+    }
+
+    public boolean isService() {
+        return service;
     }
 
 }

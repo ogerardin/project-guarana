@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2016 Olivier Gérardin
+ * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.demo.model;
+package com.ogerardin.guarana.demo.model.core;
 
 import lombok.Data;
 

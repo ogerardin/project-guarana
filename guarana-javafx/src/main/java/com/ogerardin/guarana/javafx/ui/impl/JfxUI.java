@@ -74,7 +74,7 @@ abstract class JfxUI implements JfxRenderable {
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         control.setContextMenu(contextMenu);
 
-        // add releated methods
+        // add related methods
         contextMenu.getItems().add(new SeparatorMenuItem());
         //FIXME targetSupplier cannot be used here since those methods do not belong to the target class !!!
         targetClassInformation.getRelatedMethods().stream()
@@ -198,8 +198,9 @@ abstract class JfxUI implements JfxRenderable {
 
     private static String getLabel(Method method) {
         StringBuilder sb = new StringBuilder();
-        sb.append(method.getReturnType().getSimpleName()).append(' ');
-        sb.append(method.getName());
+        sb.append(method.getReturnType().getSimpleName())
+                .append(' ').append(method.getDeclaringClass().getSimpleName())
+                .append('.').append(method.getName());
         appendParameters(method, sb);
         return sb.toString();
     }
@@ -272,6 +273,8 @@ abstract class JfxUI implements JfxRenderable {
             JfxExecutableInvocationUI<T, R> methodCallUI = new JfxExecutableInvocationUI(getBuilder(), method);
             methodCallUI.setContext(target);
             getBuilder().display(methodCallUI);
+            //FIXME by default we just display the result, should be configurable
+            methodCallUI.setOnSuccess(o -> getBuilder().displayInstance(o));
         }
     }
 

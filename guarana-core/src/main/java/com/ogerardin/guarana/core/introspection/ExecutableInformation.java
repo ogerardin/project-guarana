@@ -8,12 +8,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Encapsulates information about an {@link Executable} ({@link Method} or {@link Constructor}) obtained through
- * introspection
+ * introspection.
  *
  * @author oge
  * @since 14/06/2016
@@ -21,9 +25,17 @@ import java.util.Set;
 public class ExecutableInformation<E extends Executable> {
 
     private final E executable;
+    private final List<ParameterInformation> parameters;
 
     ExecutableInformation(E executable) {
         this.executable = executable;
+        this.parameters = parseParameters(executable);
+    }
+
+    private List<ParameterInformation> parseParameters(E executable) {
+        return Arrays.asList(executable.getParameters()).stream()
+                .map(ParameterInformation::new)
+                .collect(Collectors.toList());
     }
 
     Set<Class> getReferencedClasses() {

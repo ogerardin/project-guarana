@@ -74,11 +74,11 @@ abstract class JfxUI implements JfxRenderable {
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         control.setContextMenu(contextMenu);
 
-        // add related methods
+        // add contributed methods
         contextMenu.getItems().add(new SeparatorMenuItem());
         //FIXME targetSupplier cannot be used here since those methods do not belong to the target class !!!
         targetClassInformation.getRelatedMethods().stream()
-                .map(method -> new MethodMenuItem(method, targetSupplier, new ImageView(ICON_METHOD)))
+                .map(method -> new MethodMenuItem(method, null, new ImageView(ICON_METHOD)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
 
@@ -261,10 +261,10 @@ abstract class JfxUI implements JfxRenderable {
      *  @param <T>            the target type
      * @param <R>            the return type of the method
      * @param method             the descriptor of the method to execute
-     * @param targetSupplier a Supplier used to obtain the target object
+     * @param targetSupplier a Supplier used to obtain the target object (or null if method is static)
      */
     private <T, R> void executeMethodRequested(Method method, Supplier<T> targetSupplier) {
-        final T target = targetSupplier.get();
+        final T target = targetSupplier != null ? targetSupplier.get() : null;
         final Class<R> returnType = (Class<R>) method.getReturnType();
         // if no arg, execute immediately, otherwise display arg dialog
         if (method.getParameterCount() == 0) {

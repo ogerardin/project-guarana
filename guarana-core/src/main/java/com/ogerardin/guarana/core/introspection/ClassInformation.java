@@ -62,9 +62,11 @@ public class ClassInformation<C> {
 
         for (ExecutableInformation ei : getMethodsAndConstructors()) {
             final Executable executable = ei.getExecutable();
+            LOGGER.debug("executable: " + executable);
 
             // collect all types referenced in this method's declaration
             Set<Class> classes = ei.getReferencedClasses();
+            LOGGER.debug("references classes: " + classes);
 
             // associate this method with each of the referenced classes
             classes.forEach(clazz -> addContributingExecutable(clazz, executable));
@@ -76,6 +78,7 @@ public class ClassInformation<C> {
     }
 
     private static void addContributingExecutable(Class type, Executable executable) {
+        LOGGER.debug("executable: " + executable);
         if (type.isArray()) {
             addContributingExecutable(type.getComponentType(), executable);
             return;
@@ -103,8 +106,10 @@ public class ClassInformation<C> {
     }
 
     static <T> ClassInformation<T> forClass(Class<T> targetClass) throws IntrospectionException {
+        LOGGER.debug("Getting class information for: " + targetClass);
         ClassInformation<T> classInformation = classInformationByClass.get(targetClass);
         if (classInformation != null) {
+            LOGGER.debug("CACHE HIT: " + targetClass);
             return classInformation;
         }
         classInformation = new ClassInformation<T>(targetClass);

@@ -77,7 +77,7 @@ abstract class JfxUI implements JfxRenderable {
         // add contributed methods
         contextMenu.getItems().add(new SeparatorMenuItem());
         //FIXME targetSupplier cannot be used here since those methods do not belong to the target class !!!
-        targetClassInformation.getRelatedMethods().stream()
+        targetClassInformation.getContributedMethods().stream()
                 .map(method -> new MethodMenuItem(method, null, new ImageView(ICON_METHOD)))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 

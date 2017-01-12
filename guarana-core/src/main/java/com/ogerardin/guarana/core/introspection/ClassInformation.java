@@ -7,12 +7,10 @@ package com.ogerardin.guarana.core.introspection;
 import com.ogerardin.guarana.core.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.annotation.AnnotationSupport;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.MethodDescriptor;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -43,7 +41,7 @@ public class ClassInformation<C> {
     /**
      * Set of {@link Method}s that reference this class
      */
-    private final Set<Executable> relatedExecutables = new HashSet<>();
+    private final Set<Executable> contributedExecutables = new HashSet<>();
 
 
     private ClassInformation(Class<C> targetClass) throws IntrospectionException {
@@ -102,10 +100,10 @@ public class ClassInformation<C> {
 //                method.getReturnType().getSimpleName() + " " +
 //                method.getDeclaringClass().getSimpleName() + "." +
 //                method.getName());
-        relatedExecutables.add(method);
+        contributedExecutables.add(method);
     }
 
-    static <T> ClassInformation<T> forClass(Class<T> targetClass) throws IntrospectionException {
+    public static <T> ClassInformation<T> forClass(Class<T> targetClass) throws IntrospectionException {
         LOGGER.debug("Getting class information for: " + targetClass);
         ClassInformation<T> classInformation = classInformationByClass.get(targetClass);
         if (classInformation != null) {
@@ -163,12 +161,12 @@ public class ClassInformation<C> {
         return Arrays.asList(targetClass.getDeclaredConstructors());
     }
 
-    public Set<Executable> getRelatedExecutables() {
-        return relatedExecutables;
+    public Set<Executable> getContributedExecutables() {
+        return contributedExecutables;
     }
 
-    public Set<Method> getRelatedMethods() {
-        return relatedExecutables.stream()
+    public Set<Method> getContributedMethods() {
+        return contributedExecutables.stream()
                 .filter(e -> e instanceof Method)
                 .map(e -> (Method) e)
                 .collect(Collectors.toSet());

@@ -19,5 +19,6 @@ public class ClassInformationTest {
         ClassInformation<Person> classInformation = ClassInformation.forClass(Person.class);
 
         classInformation.getContributedMethods().forEach(System.out::println);
+//        classInformation.getMethods().forEach(System.out::println);
     }
 }

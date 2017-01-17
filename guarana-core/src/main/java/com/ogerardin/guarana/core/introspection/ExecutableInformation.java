@@ -4,18 +4,16 @@
 
 package com.ogerardin.guarana.core.introspection;
 
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.Arrays;
+import java.beans.IntrospectionException;
+import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Encapsulates information about an {@link Executable} ({@link Method} or {@link Constructor}) obtained through
@@ -24,6 +22,7 @@ import java.util.stream.Collectors;
  * @author oge
  * @since 14/06/2016
  */
+@ToString
 public class ExecutableInformation<E extends Executable> {
 
     private static final Logger LOGGER =  LoggerFactory.getLogger(ExecutableInformation.class);;
@@ -31,16 +30,18 @@ public class ExecutableInformation<E extends Executable> {
     private final E executable;
     private final List<ParameterInformation> parameters;
 
-    ExecutableInformation(E executable) {
+    ExecutableInformation(E executable) throws IntrospectionException {
         this.executable = executable;
         this.parameters = parseParameters(executable);
     }
 
-    private List<ParameterInformation> parseParameters(E executable) {
+    private List<ParameterInformation> parseParameters(E executable) throws IntrospectionException {
         LOGGER.debug("parsing parameters of: " + executable);
-        return Arrays.asList(executable.getParameters()).stream()
-                .map(ParameterInformation::new)
-                .collect(Collectors.toList());
+        List<ParameterInformation> list = new ArrayList<>();
+        for (Parameter parameter : executable.getParameters()) {
+            list.add(new ParameterInformation(parameter));
+        }
+        return list;
     }
 
     Set<Class> getReferencedClasses() {

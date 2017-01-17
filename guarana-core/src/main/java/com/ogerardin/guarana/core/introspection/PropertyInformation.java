@@ -4,6 +4,8 @@
 
 package com.ogerardin.guarana.core.introspection;
 
+import lombok.ToString;
+
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 
@@ -11,6 +13,7 @@ import java.lang.reflect.Method;
  * @author oge
  * @since 14/06/2016
  */
+@ToString
 public class PropertyInformation {
 
     private final PropertyDescriptor propertyDescriptor;

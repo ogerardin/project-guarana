@@ -5,6 +5,7 @@
 package com.ogerardin.guarana.core.introspection;
 
 import com.ogerardin.guarana.core.annotations.Service;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,42 +56,47 @@ public class ClassInformation<C> {
                 .anyMatch(annotation -> annotation.getClass() == Service.class);
     }
 
+    static boolean isSystem(Class targetClass) {
+        final String targetClassName = targetClass.getName();
+        return targetClassName.startsWith("java.")
+                || targetClassName.startsWith("javax.")
+                || targetClassName.startsWith("sun.");
+    }
+
+
     private void scanMethods() throws IntrospectionException {
-        LOGGER.debug("Scanning methods of " + this.getTargetClass());
+        LOGGER.debug("Scanning methods/constructors of " + this.getTargetClass());
 
         for (ExecutableInformation ei : getMethodsAndConstructors()) {
             final Executable executable = ei.getExecutable();
-            LOGGER.debug("executable: " + executable);
+            LOGGER.debug("scanning: " + executable);
 
             // collect all types referenced in this method's declaration
             Set<Class> classes = ei.getReferencedClasses();
-            LOGGER.debug("references classes: " + classes);
+//            LOGGER.debug("references classes: " + classes);
 
             // associate this method with each of the referenced classes
-            classes.forEach(clazz -> addContributingExecutable(clazz, executable));
+            for (Class c : classes) {
+                addContributingExecutable(c, executable);
+            }
         }
     }
 
-    private List<ExecutableInformation<?>> getMethodsAndConstructors() {
-        return Stream.concat(getMethods().stream(), getConstructors().stream()).collect(Collectors.toList());
+    private List<ExecutableInformation<?>> getMethodsAndConstructors() throws IntrospectionException {
+        return Stream.concat(getMethods().stream(), getConstructors().stream())
+                .collect(Collectors.toList());
     }
 
-    private static void addContributingExecutable(Class type, Executable executable) {
-        LOGGER.debug("executable: " + executable);
+    private static void addContributingExecutable(Class type, Executable executable) throws IntrospectionException {
+        if (type.isPrimitive() || isSystem(type)) {
+            return;
+        }
         if (type.isArray()) {
             addContributingExecutable(type.getComponentType(), executable);
             return;
         }
-        if (type.isPrimitive() || type.getPackage().getName().startsWith("java.")) {
-            return;
-        }
-
-        try {
-            ClassInformation returnTypeClassInfo = forClass(type);
-            returnTypeClassInfo.addContributingExecutable(executable);
-        } catch (IntrospectionException e) {
-            LOGGER.warn("Failed to obtain class information for " + type);
-        }
+        ClassInformation returnTypeClassInfo = forClass(type);
+        returnTypeClassInfo.addContributingExecutable(executable);
     }
 
     private void addContributingExecutable(Executable method) {
@@ -104,18 +110,23 @@ public class ClassInformation<C> {
     }
 
     public static <T> ClassInformation<T> forClass(Class<T> targetClass) throws IntrospectionException {
-        LOGGER.debug("Getting class information for: " + targetClass);
         ClassInformation<T> classInformation = classInformationByClass.get(targetClass);
         if (classInformation != null) {
-            LOGGER.debug("CACHE HIT: " + targetClass);
             return classInformation;
         }
+
+        LOGGER.debug("Getting class information for: " + targetClass);
         classInformation = new ClassInformation<T>(targetClass);
         classInformationByClass.put(targetClass, classInformation);
-        classInformation.scanMethods();
+        if (!targetClass.isPrimitive() && !classInformation.isSystem()) {
+            classInformation.scanMethods();
+        }
         return classInformation;
     }
 
+    private boolean isSystem() {
+        return isSystem(getTargetClass());
+    }
 
     public String getSimpleClassName() {
         return beanInfo.getBeanDescriptor().getBeanClass().getSimpleName();
@@ -129,21 +140,26 @@ public class ClassInformation<C> {
         return targetClass;
     }
 
-    public List<ExecutableInformation<Method>> getMethods() {
+    public List<ExecutableInformation<Method>> getMethods() throws IntrospectionException {
         if (methods == null) {
-            methods = Arrays.stream(beanInfo.getMethodDescriptors())
-                    .map(MethodDescriptor::getMethod)
-                    .map(ExecutableInformation::new)
-                    .collect(Collectors.toList());
+            methods = new ArrayList<>();
+            final MethodDescriptor[] methodDescriptors = beanInfo.getMethodDescriptors();
+            for (MethodDescriptor methodDescriptor : methodDescriptors) {
+                Method method = methodDescriptor.getMethod();
+                ExecutableInformation executableInformation = new ExecutableInformation<>(method);
+                methods.add(executableInformation);
+            }
         }
         return methods;
     }
 
-    public List<ExecutableInformation<Constructor>> getConstructors() {
+    public List<ExecutableInformation<Constructor>> getConstructors() throws IntrospectionException {
         if (constructors == null) {
-            constructors = Arrays.stream(beanInfo.getBeanDescriptor().getBeanClass().getConstructors())
-                    .map(e -> new ExecutableInformation<Constructor>(e))
-                    .collect(Collectors.toList());
+            constructors = new ArrayList<>();
+            for (Constructor<?> e : beanInfo.getBeanDescriptor().getBeanClass().getConstructors()) {
+                ExecutableInformation<Constructor> executableInformation = new ExecutableInformation<>(e);
+                constructors.add(executableInformation);
+            }
         }
         return constructors;
     }

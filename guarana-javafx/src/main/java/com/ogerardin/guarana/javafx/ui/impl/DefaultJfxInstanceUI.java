@@ -7,9 +7,9 @@ package com.ogerardin.guarana.javafx.ui.impl;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.ogerardin.guarana.core.config.Configuration;
-import com.ogerardin.guarana.core.introspection.ClassInformation;
+import com.ogerardin.guarana.core.metadata.ClassInformation;
 import com.ogerardin.guarana.core.introspection.Introspector;
-import com.ogerardin.guarana.core.introspection.PropertyInformation;
+import com.ogerardin.guarana.core.metadata.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
@@ -58,7 +58,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
     private void buildUi(Class<T> clazz) {
 
-        ClassInformation<T> classInformation = Introspector.getClassInformation(clazz);
+        ClassInformation<T> classInformation = ClassInformation.forClass(clazz);
 
         // title
         final String displayName = getConfiguration().getClassDisplayName(clazz);

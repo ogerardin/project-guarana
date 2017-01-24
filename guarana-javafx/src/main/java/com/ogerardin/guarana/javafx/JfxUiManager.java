@@ -79,6 +79,7 @@ public class JfxUiManager implements JfxUIBuilder {
         }
         try {
             // might throw ClassCastException if the specified class doesn't implement JfxInstanceUI
+            //noinspection unchecked
             return (JfxInstanceUI<C>) uiClass.newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -95,6 +96,7 @@ public class JfxUiManager implements JfxUIBuilder {
         }
         try {
             // might throw ClassCastException if the specified class doesn't implement JfxInstanceUI
+            //noinspection unchecked
             return (JfxInstanceUI<T>) uiClass.newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);

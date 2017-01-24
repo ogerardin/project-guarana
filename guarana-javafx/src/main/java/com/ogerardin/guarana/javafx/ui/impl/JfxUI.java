@@ -5,8 +5,8 @@
 package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.config.Configuration;
-import com.ogerardin.guarana.core.introspection.ClassInformation;
-import com.ogerardin.guarana.core.introspection.ExecutableInformation;
+import com.ogerardin.guarana.core.metadata.ClassInformation;
+import com.ogerardin.guarana.core.metadata.ExecutableInformation;
 import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import com.ogerardin.guarana.javafx.JfxUiManager;
@@ -28,7 +28,6 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.IntrospectionException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -61,31 +60,26 @@ abstract class JfxUI implements JfxRenderable {
         ContextMenu contextMenu = new ContextMenu();
         final Class<?> beanClass = targetClassInformation.getTargetClass();
 
-        try {
-            // add methods
-            targetClassInformation.getMethods().stream()
-                    .filter(methodInfo -> !methodInfo.isGetterOrSetter())
-                    .filter(methodInfo -> !getConfiguration().isHiddenMethod(beanClass, methodInfo.getExecutable()))
-                    .map(methodInfo -> new MethodMenuItem<>(methodInfo, targetSupplier, new ImageView(ICON_METHOD)))
-                    .forEach(menuItem -> contextMenu.getItems().add(menuItem));
+        // add methods
+        targetClassInformation.getMethods().stream()
+                .filter(methodInfo -> !methodInfo.isGetterOrSetter())
+                .filter(methodInfo -> !getConfiguration().isHiddenMethod(beanClass, methodInfo.getExecutable()))
+                .map(methodInfo -> new MethodMenuItem<>(methodInfo, targetSupplier, new ImageView(ICON_METHOD)))
+                .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
-            // add constructors
-            contextMenu.getItems().add(new SeparatorMenuItem());
-            targetClassInformation.getDeclaredConstructors().stream()
-                    .map(constructor -> new ConstructorMenuItem(constructor, new ImageView(ICON_CONSTRUCTOR)))
-                    .forEach(menuItem -> contextMenu.getItems().add(menuItem));
-            control.setContextMenu(contextMenu);
+        // add constructors
+        contextMenu.getItems().add(new SeparatorMenuItem());
+        targetClassInformation.getDeclaredConstructors().stream()
+                .map(constructor -> new ConstructorMenuItem(constructor, new ImageView(ICON_CONSTRUCTOR)))
+                .forEach(menuItem -> contextMenu.getItems().add(menuItem));
+        control.setContextMenu(contextMenu);
 
-            // add contributed methods
-            contextMenu.getItems().add(new SeparatorMenuItem());
-            //FIXME targetSupplier cannot be used here since those methods do not belong to the target class !!!
-            targetClassInformation.getContributedMethods().stream()
-                    .map(method -> new MethodMenuItem(method, null, new ImageView(ICON_METHOD)))
-                    .forEach(menuItem -> contextMenu.getItems().add(menuItem));
-
-        } catch (IntrospectionException e) {
-            throw new RuntimeException("Introspection failed", e);
-        }
+        // add contributed methods
+        contextMenu.getItems().add(new SeparatorMenuItem());
+        //FIXME targetSupplier cannot be used here since those methods do not belong to the target class !!!
+        targetClassInformation.getContributedMethods().stream()
+                .map(method -> new MethodMenuItem(method, null, new ImageView(ICON_METHOD)))
+                .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
 
         // add other items

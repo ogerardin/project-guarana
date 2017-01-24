@@ -10,7 +10,7 @@
 
     <groupId>com.ogerardin.guarana</groupId>
     <artifactId>guarana-javafx</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
 
     <prerequisites>
         <maven>3.0</maven>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>com.ogerardin.guarana</groupId>
             <artifactId>guarana-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

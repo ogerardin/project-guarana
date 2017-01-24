@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2016 Olivier Gérardin
+ * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.core.introspection;
+package com.ogerardin.guarana.core.metadata;
 
 import lombok.ToString;
 

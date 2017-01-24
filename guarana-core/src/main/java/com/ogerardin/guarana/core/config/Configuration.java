@@ -4,8 +4,7 @@
 
 package com.ogerardin.guarana.core.config;
 
-import com.ogerardin.guarana.core.introspection.ClassInformation;
-import com.ogerardin.guarana.core.introspection.Introspector;
+import com.ogerardin.guarana.core.metadata.ClassInformation;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -186,7 +185,7 @@ public class Configuration extends CompositeConfiguration {
         }
 
         // otherwise if bean display name is different from class name, use it
-        final ClassInformation classInformation = Introspector.getClassInformation(clazz);
+        final ClassInformation classInformation = ClassInformation.forClass(clazz);
         final String className = classInformation.getSimpleClassName();
         String beanDisplayName = classInformation.getBeanDisplayName();
         if (!beanDisplayName.equals(className)) {

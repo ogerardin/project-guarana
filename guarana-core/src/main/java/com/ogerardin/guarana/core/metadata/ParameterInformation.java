@@ -2,15 +2,12 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.core.introspection;
+package com.ogerardin.guarana.core.metadata;
 
-import com.google.common.reflect.ClassPath;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Parameter;
 
 /**
@@ -25,12 +22,12 @@ public class ParameterInformation {
     private final Parameter parameter;
     private final boolean injected;
 
-    public ParameterInformation(Parameter parameter) throws IntrospectionException {
+    public ParameterInformation(Parameter parameter) {
         this.parameter = parameter;
         this.injected = isInjectable(parameter.getType());
     }
 
-    private boolean isInjectable(Class<?> type) throws IntrospectionException {
+    private boolean isInjectable(Class<?> type) {
         if (ClassInformation.isSystem(type)) {
             return false;
         }

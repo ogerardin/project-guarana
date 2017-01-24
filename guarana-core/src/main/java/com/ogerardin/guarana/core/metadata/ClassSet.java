@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2016 Olivier Gérardin
+ * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.core.introspection;
+package com.ogerardin.guarana.core.metadata;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -12,7 +12,7 @@ import java.util.HashSet;
  * @author oge
  * @since 15/06/2016
  */
-class ClassSet extends HashSet<Class> {
+class ClassSet extends HashSet<Class<?>> {
 
     /**
      * Add the specified type's class and its parameters' classes recursively

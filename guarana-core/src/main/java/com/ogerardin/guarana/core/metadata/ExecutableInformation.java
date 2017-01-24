@@ -1,14 +1,13 @@
 /*
- * Copyright (c) 2016 Olivier Gérardin
+ * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.core.introspection;
+package com.ogerardin.guarana.core.metadata;
 
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.IntrospectionException;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,17 +24,17 @@ import java.util.Set;
 @ToString
 public class ExecutableInformation<E extends Executable> {
 
-    private static final Logger LOGGER =  LoggerFactory.getLogger(ExecutableInformation.class);;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutableInformation.class);
 
     private final E executable;
     private final List<ParameterInformation> parameters;
 
-    ExecutableInformation(E executable) throws IntrospectionException {
+    ExecutableInformation(E executable) {
         this.executable = executable;
         this.parameters = parseParameters(executable);
     }
 
-    private List<ParameterInformation> parseParameters(E executable) throws IntrospectionException {
+    private List<ParameterInformation> parseParameters(E executable) {
         LOGGER.debug("parsing parameters of: " + executable);
         List<ParameterInformation> list = new ArrayList<>();
         for (Parameter parameter : executable.getParameters()) {
@@ -44,7 +43,7 @@ public class ExecutableInformation<E extends Executable> {
         return list;
     }
 
-    Set<Class> getReferencedClasses() {
+    Set<Class<?>> getReferencedClasses() {
         ClassSet referencedClasses = new ClassSet();
         // add return type and its parameter types
 //        if (executable instanceof Method) {
@@ -73,5 +72,9 @@ public class ExecutableInformation<E extends Executable> {
 
     public String getName() {
         return executable.getName();
+    }
+
+    public <C> boolean references(Class<C> targetClass) {
+        return getReferencedClasses().contains(targetClass);
     }
 }

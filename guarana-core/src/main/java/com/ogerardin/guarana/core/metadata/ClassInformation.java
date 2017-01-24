@@ -38,10 +38,8 @@ public class ClassInformation<C> {
 
     private Collection<ExecutableInformation<Method>> methods = null;
     private Collection<ExecutableInformation<Constructor>> constructors = null;
-    /**
-     * {@link Method}s that reference this class
-     */
-    private Collection<Executable> contributedExecutables = null;
+
+    private Collection<ExecutableInformation<? extends Executable>> contributedExecutables = null;
 
     private Collection<PropertyInformation> properties = null;
 
@@ -101,7 +99,7 @@ public class ClassInformation<C> {
             for (ExecutableInformation ei : methodsAndConstructors) {
                 if (ei.references(targetClass)) {
                     LOGGER.debug("" + ei + " references " + targetClass);
-                    addContributingExecutable(this.getTargetClass(), ei.getExecutable());
+                    addContributingExecutable(targetClass, ei);
                 }
             }
         }
@@ -116,7 +114,7 @@ public class ClassInformation<C> {
                 .collect(Collectors.toList());
     }
 
-    private static void addContributingExecutable(Class type, Executable executable) {
+    private static void addContributingExecutable(Class type, ExecutableInformation executable) {
         if (type.isPrimitive() || isSystem(type)) {
             return;
         }
@@ -128,14 +126,14 @@ public class ClassInformation<C> {
         returnTypeClassInfo.addContributingExecutable(executable);
     }
 
-    private void addContributingExecutable(Executable method) {
-        LOGGER.debug("Add contributing " + method.getClass().getSimpleName()
-                + " for " + this.getTargetClass().getSimpleName() + ": " + method);
+    private void addContributingExecutable(ExecutableInformation executableInformation) {
+        LOGGER.debug("Add contributing " + executableInformation.getClass().getSimpleName()
+                + " for " + this.getTargetClass().getSimpleName() + ": " + executableInformation);
 //        LOGGER.debug("Add contributing executable for " + this.getTargetClass().getSimpleName() + " -> " +
 //                method.getReturnType().getSimpleName() + " " +
 //                method.getDeclaringClass().getSimpleName() + "." +
 //                method.getName());
-        getContributedExecutables().add(method);
+        getContributedExecutables().add(executableInformation);
     }
 
     public static <T> ClassInformation<T> forClass(Class<T> targetClass) {
@@ -168,22 +166,18 @@ public class ClassInformation<C> {
 
     public Collection<ExecutableInformation<Method>> getMethods() {
         if (methods == null) {
-            methods = new ArrayList<>();
-            for (Method method : introspector.getMethods()) {
-                ExecutableInformation executableInformation = new ExecutableInformation<>(method);
-                methods.add(executableInformation);
-            }
+            methods = Arrays.stream(introspector.getMethods())
+                    .map(ExecutableInformation::new)
+                    .collect(Collectors.toSet());
         }
         return methods;
     }
 
     public Collection<ExecutableInformation<Constructor>> getConstructors() {
         if (constructors == null) {
-            constructors = new ArrayList<>();
-            for (Constructor<?> e : introspector.getConstructors()) {
-                ExecutableInformation<Constructor> executableInformation = new ExecutableInformation<>(e);
-                constructors.add(executableInformation);
-            }
+            constructors = Arrays.stream(introspector.getConstructors())
+                    .map(ExecutableInformation::new)
+                    .collect(Collectors.toSet());
         }
         return constructors;
     }
@@ -192,29 +186,18 @@ public class ClassInformation<C> {
         if (properties == null) {
             properties = Arrays.stream(introspector.getPropertyDescriptors())
                     .map(PropertyInformation::new)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
         return properties;
     }
 
-    public Collection<Constructor> getDeclaredConstructors() {
-        return Arrays.asList(targetClass.getDeclaredConstructors());
-    }
-
-    public Collection<Executable> getContributedExecutables() {
+    public Collection<ExecutableInformation<? extends Executable>> getContributedExecutables() {
         if (contributedExecutables != null) {
             return contributedExecutables;
         }
         contributedExecutables = new HashSet<>();
         scanReferencing();
         return contributedExecutables;
-    }
-
-    public Set<Method> getContributedMethods() {
-        return getContributedExecutables().stream()
-                .filter(e -> e instanceof Method)
-                .map(e -> (Method) e)
-                .collect(Collectors.toSet());
     }
 
     public boolean isService() {

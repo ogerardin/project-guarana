@@ -64,21 +64,22 @@ abstract class JfxUI implements JfxRenderable {
         targetClassInformation.getMethods().stream()
                 .filter(methodInfo -> !methodInfo.isGetterOrSetter())
                 .filter(methodInfo -> !getConfiguration().isHiddenMethod(beanClass, methodInfo.getExecutable()))
-                .map(methodInfo -> new MethodMenuItem<>(methodInfo, targetSupplier, new ImageView(ICON_METHOD)))
+                .map(methodInfo -> new ActionMenuItem<>(methodInfo, targetSupplier))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
         // add constructors
         contextMenu.getItems().add(new SeparatorMenuItem());
-        targetClassInformation.getDeclaredConstructors().stream()
-                .map(constructor -> new ConstructorMenuItem(constructor, new ImageView(ICON_CONSTRUCTOR)))
+        targetClassInformation.getConstructors().stream()
+                .map(constructor -> new ActionMenuItem(constructor))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         control.setContextMenu(contextMenu);
 
         // add contributed methods
         contextMenu.getItems().add(new SeparatorMenuItem());
         //FIXME targetSupplier cannot be used here since those methods do not belong to the target class !!!
-        targetClassInformation.getContributedMethods().stream()
-                .map(method -> new MethodMenuItem(method, null, new ImageView(ICON_METHOD)))
+        targetClassInformation.getContributedExecutables().stream()
+//                .filter(ExecutableInformation::isMethod)
+                .map(executable -> new ActionMenuItem(executable, null))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
 
@@ -157,72 +158,34 @@ abstract class JfxUI implements JfxRenderable {
         return getBuilder().getConfiguration();
     }
 
-    /**
-     * A specialized MenuItem that triggers a method call
-     *
-     * @param <T> type of the target object
-     */
-    private class MethodMenuItem<T> extends MenuItem {
-        public MethodMenuItem(ExecutableInformation<Method> methodInformation, Supplier<T> supplier, ImageView icon) {
-            this(methodInformation.getExecutable(), supplier, icon);
+
+    private class ActionMenuItem<T> extends MenuItem {
+        public ActionMenuItem(ExecutableInformation executableInformation) {
+            this(executableInformation, null);
         }
 
-        public MethodMenuItem(Method method, Supplier<T> supplier, ImageView icon) {
-            super(getLabel(method));
+        public ActionMenuItem(ExecutableInformation executableInformation, Supplier<T> supplier) {
+            this(executableInformation, supplier,
+                    executableInformation.isConstructor() ? new ImageView(ICON_CONSTRUCTOR) : new ImageView(ICON_METHOD));
+        }
+
+        public ActionMenuItem(ExecutableInformation executableInformation, Supplier<T> supplier, ImageView icon) {
+            super(executableInformation.getDefaultLabel(), icon);
             setOnAction(
-                    event -> Platform.runLater(() -> executeMethodRequested(method, supplier))
+                    event -> Platform.runLater(() -> {
+                        final Executable executable = executableInformation.getExecutable();
+                        if (executableInformation.isConstructor()) {
+                            executeConstructorRequested((Constructor<?>) executable);
+                        } else {
+                            executeMethodRequested((Method) executable, supplier);
+                        }
+                    })
             );
-            if (icon != null) {
-                setGraphic(icon);
-            }
         }
+
     }
 
 
-    /**
-     * A specialized menuItem that triggers a constructor call
-     *
-     * @param <T> the target class
-     */
-    private class ConstructorMenuItem<T> extends MenuItem {
-        public ConstructorMenuItem(Constructor<T> constructor, ImageView icon) {
-            super(getLabel(constructor));
-            setOnAction(
-                    event -> Platform.runLater(() -> executeConstructorRequested(constructor))
-            );
-            if (icon != null) {
-                setGraphic(icon);
-            }
-        }
-    }
-
-    private static String getLabel(Method method) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(method.getReturnType().getSimpleName())
-                .append(' ').append(method.getDeclaringClass().getSimpleName())
-                .append('.').append(method.getName());
-        appendParameters(method, sb);
-        return sb.toString();
-    }
-
-    private static String getLabel(Constructor constructor) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(constructor.getDeclaringClass().getSimpleName());
-        appendParameters(constructor, sb);
-        return sb.toString();
-    }
-
-    private static void appendParameters(Executable method, StringBuilder sb) {
-        sb.append('(');
-        final Class<?>[] parameterTypes = method.getParameterTypes();
-        for (int i = 0; i < parameterTypes.length; ++i) {
-            sb.append(parameterTypes[i].getSimpleName());
-            if (i < parameterTypes.length - 1) {
-                sb.append(",");
-            }
-        }
-        sb.append(')');
-    }
 
 
     /**

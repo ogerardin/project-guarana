@@ -35,7 +35,7 @@ public class ExecutableInformation<E extends Executable> {
     }
 
     private List<ParameterInformation> parseParameters(E executable) {
-        LOGGER.debug("parsing parameters of: " + executable);
+//        LOGGER.debug("parsing parameters of: " + executable);
         List<ParameterInformation> list = new ArrayList<>();
         for (Parameter parameter : executable.getParameters()) {
             list.add(new ParameterInformation(parameter));
@@ -77,4 +77,50 @@ public class ExecutableInformation<E extends Executable> {
     public <C> boolean references(Class<C> targetClass) {
         return getReferencedClasses().contains(targetClass);
     }
+
+    public boolean isMethod() {
+        return executable instanceof Method;
+    }
+
+    public boolean isConstructor() {
+        return executable instanceof Constructor;
+    }
+
+    public String getDefaultLabel() {
+        if (isMethod()) {
+            return getDefaultLabel((Method) executable);
+        } else {
+            return getDefaultLabel((Constructor) executable);
+        }
+    }
+
+    private static String getDefaultLabel(Method method) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(method.getReturnType().getSimpleName())
+                .append(' ').append(method.getDeclaringClass().getSimpleName())
+                .append('.').append(method.getName());
+        appendParameters(method, sb);
+        return sb.toString();
+    }
+
+    private static String getDefaultLabel(Constructor constructor) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(constructor.getDeclaringClass().getSimpleName());
+        appendParameters(constructor, sb);
+        return sb.toString();
+    }
+
+    private static void appendParameters(Executable method, StringBuilder sb) {
+        sb.append('(');
+        final Class<?>[] parameterTypes = method.getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; ++i) {
+            sb.append(parameterTypes[i].getSimpleName());
+            if (i < parameterTypes.length - 1) {
+                sb.append(",");
+            }
+        }
+        sb.append(')');
+    }
+
+
 }

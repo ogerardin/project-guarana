@@ -176,7 +176,7 @@ public class ClassInformation<C> {
     public Collection<ExecutableInformation<Constructor>> getConstructors() {
         if (constructors == null) {
             constructors = Arrays.stream(introspector.getConstructors())
-                    .map(ExecutableInformation::new)
+                    .map(ExecutableInformation<Constructor>::new)
                     .collect(Collectors.toSet());
         }
         return constructors;

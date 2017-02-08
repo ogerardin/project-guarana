@@ -8,8 +8,6 @@ import com.ogerardin.guarana.core.metadata.ClassInformation;
 import com.ogerardin.guarana.core.metadata.ExecutableInformation;
 import com.ogerardin.guarana.test.model.Person;
 import com.ogerardin.guarana.test.model.Thing;
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -24,6 +22,21 @@ import java.util.stream.Collectors;
  * @since 12/01/2017
  */
 public class ClassInformationTest {
+
+    @Test
+    public void testConstructors() {
+        ClassInformation<Person> classInformation = ClassInformation.forClass(Person.class);
+
+        final Set<Constructor> expected = Arrays.stream(Person.class.getConstructors())
+                .collect(Collectors.toSet());
+
+        final Set<Constructor> actual = classInformation.getConstructors().stream()
+                .map(ExecutableInformation::getExecutable)
+                .collect(Collectors.toSet());
+
+        Assert.assertEquals(expected, actual);
+    }
+
 
     @Test
     public void testContributedConstructor() throws Exception {

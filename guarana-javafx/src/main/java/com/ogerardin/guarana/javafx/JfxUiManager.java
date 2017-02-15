@@ -20,7 +20,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class JfxUiManager implements JfxUIBuilder {
 
     private static final String GUARANA_DEFAULT_CSS = "/guarana-default.css";
 
-    private BiMap<Pair<Class, Object>, Renderable> objectRenderableMap = HashBiMap.create();
+    private BiMap<Object, Renderable> objectRenderableMap = HashBiMap.create();
     private BiMap<Renderable, Stage> renderableStageMap = HashBiMap.create();
 
     private final Configuration configuration;
@@ -178,7 +179,7 @@ public class JfxUiManager implements JfxUIBuilder {
 
     public <T> JfxInstanceUI<T> displayInstance(T target, Class<T> targetClass, Stage stage, Node parent, String title) {
         // check if target already has a UI
-        Pair<Class, Object> key = new Pair<>(targetClass, target);
+        Object key = getUiKey(target);
         JfxInstanceUI<T> ui = (JfxInstanceUI<T>) objectRenderableMap.get(key);
         if (ui != null) {
             show(ui);
@@ -194,7 +195,7 @@ public class JfxUiManager implements JfxUIBuilder {
 
     public <C> JfxCollectionUI<C> displayCollection(Collection<C> collection, Class<C> itemClass, Node parent, String title) {
         // check if target already has a UI
-        Pair<Class, Object> key = new Pair<>(Collection.class, collection);
+        Object key = getUiKey(collection);
         JfxCollectionUI<C> ui = (JfxCollectionUI<C>) objectRenderableMap.get(key);
         if (ui != null) {
             show(ui);
@@ -210,7 +211,7 @@ public class JfxUiManager implements JfxUIBuilder {
 
     public <C> JfxCollectionUI<C> displayArray(C[] array, Class<C> itemClass, Node parent, String title) {
         // check if target already has a UI
-        Pair<Class, Object> key = new Pair<>(Array.class, array);
+        Object key = getUiKey(array);
         JfxCollectionUI<C> ui = (JfxCollectionUI<C>) objectRenderableMap.get(key);
         if (ui != null) {
             show(ui);
@@ -259,5 +260,10 @@ public class JfxUiManager implements JfxUIBuilder {
             stage.toFront();
         });
     }
+
+    private <T> Object getUiKey(T target) {
+        return System.identityHashCode(target);
+    }
+
 
 }

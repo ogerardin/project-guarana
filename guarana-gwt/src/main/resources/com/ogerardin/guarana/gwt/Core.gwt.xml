@@ -6,7 +6,7 @@
         "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd">
 <module rename-to="Core">
 
-    <!-- Inherit the core Web Toolkit stuff.                  -->
+    <!-- Inherit modelcore Web Toolkit stuff.                  -->
     <inherits name='com.google.gwt.user.User'/>
 
     <!-- Specify the app entry point class.                   -->

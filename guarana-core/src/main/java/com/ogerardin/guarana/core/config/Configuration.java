@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * Configuration reader for Guarana.
  *
  * Configuration is read from the following resources:
- * {@code /.guarana-core.properties} contains default core properties
+ * {@code /.guarana-model.properties} contains default model properties
  * {@code /.guarana-ui.properties} contains UI toolkit specific properties
  * {@code /guarana.properties} contains user properties
  *
@@ -70,7 +70,7 @@ public class Configuration extends CompositeConfiguration {
                     " - you need one UI implementation in your classpath!", e);
         }
 
-        // priority 4: Guarana core defaults
+        // priority 4: Guarana model defaults
         try {
             addConfigurationResource(CORE_PROPERTIES);
         } catch (ConfigurationException e) {

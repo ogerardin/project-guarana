@@ -2,7 +2,7 @@
         "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd">
 <module rename-to="MainDemoGwt">
 
-    <!-- Inherit the core Web Toolkit stuff.                  -->
+    <!-- Inherit modelcore Web Toolkit stuff.                  -->
     <inherits name='com.google.gwt.user.User'/>
     <inherits name="com.ogerardin.guarana.gwt.Core"/>
 

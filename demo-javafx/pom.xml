@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>com.ogerardin.guarana</groupId>
-            <artifactId>demo-business</artifactId>
+            <artifactId>sample-business</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

@@ -208,18 +208,20 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             }
 
             // otherwise try to bind bidirectionally to a generated JavaBeanObjectProperty
-            try {
-                Property<?> jfxProperty = JavaBeanObjectPropertyBuilder.create()
-                        .bean(object)
-                        .name(propertyInformation.getName())
-                        .build();
-                ui.boundObjectProperty().bindBidirectional(jfxProperty);
-                LOGGER.debug(propertyInformation.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
-                continue;
-            } catch (NoSuchMethodException e) {
-                // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
-                //LOGGER.debug("DEBUG: " + e.toString());
-            }
+            //FIXME bidirectional binding is somehow broken
+//            try {
+//                Property<?> jfxProperty = JavaBeanObjectPropertyBuilder.create()
+//                        .bean(object)
+//                        .name(propertyInformation.getName())
+//                        .build();
+//                ui.boundObjectProperty().bindBidirectional(jfxProperty);
+//                ui.boundObjectProperty().setValue(value);
+//                LOGGER.debug(propertyInformation.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
+//                continue;
+//            } catch (NoSuchMethodException e) {
+//                // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
+//                //LOGGER.debug("DEBUG: " + e.toString());
+//            }
 
             // otherwise if the property implements java.util.Observable, register a listener
             if (java.util.Observable.class.isAssignableFrom(valueClass)) {

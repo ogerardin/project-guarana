@@ -2,26 +2,23 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.demo.javafx.domain2;
+package com.ogerardin.guarana.demo.javafx.domain0;
 
 /**
  * @author Olivier
  * @since 28/05/15
  */
 
-import com.ogerardin.guarana.domain2.model.Category;
+import com.ogerardin.guarana.demo.javafx.domain0.adapters.DomainManagerDb4OImpl;
+import com.ogerardin.guarana.domain0.service.DomainManager;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.Collections;
+public class DemoJfx extends Application {
 
-public class MainDemoJfx extends Application {
-
-
-    private static Category category;
+    private static DomainManager domainManager;
 
     @Override
     public void start(Stage primaryStage) {
@@ -30,8 +27,8 @@ public class MainDemoJfx extends Application {
         JfxUiManager uiManager = new JfxUiManager();
 
         // build UI for a DomainManager and bind it to actual instance
-        JfxInstanceUI<Category> ui = uiManager.buildInstanceUI(Category.class);
-        ui.bind(category);
+        JfxInstanceUI<DomainManager> ui = uiManager.buildInstanceUI(DomainManager.class);
+        ui.bind(domainManager);
 
         //display UI in JavaFX primary Stage
         uiManager.display(ui, primaryStage, "Hello Guarana!");
@@ -40,10 +37,7 @@ public class MainDemoJfx extends Application {
     public static void main(String[] args) {
 
         // instantiate our main business object
-        category = new Category();
-        category.setName("root");
-        category.setHighlightedItems(new ArrayList<>());
-        category.setFeatures(new ArrayList<>());
+        domainManager = new DomainManagerDb4OImpl();
 
         // handoff to JavaFX; this will call the start() method
         launch(args);

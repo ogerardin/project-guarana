@@ -17,6 +17,7 @@ import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
@@ -184,79 +185,97 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     private void bindProperties(T object) {
 
         for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : propertyInformationByUi.entrySet()) {
-            final JfxInstanceUI ui = entry.getKey();
+            final JfxInstanceUI propertyUi = entry.getKey();
             final PropertyInformation propertyInformation = entry.getValue();
 
-            final Object value;
-            try {
-                Method readMethod = propertyInformation.getReadMethod();
-                if (!readMethod.isAccessible()) {
-                    readMethod.setAccessible(true);
-                }
-                value = readMethod.invoke(object);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                LOGGER.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
-                continue;
-            }
-            if (value == null) {
-                //ui.boundObjectProperty().unbind();
-                return;
-            }
-            final Class<?> valueClass = value.getClass();
-
-            // if the property is a JavaFX-style property, bind directly to it
-            if (Property.class.isAssignableFrom(valueClass)) {
-                Property<?> jfxProperty = (Property) value;
-                ui.boundObjectProperty().bindBidirectional(jfxProperty);
-                LOGGER.debug(propertyInformation.getDisplayName() + " bound using javafx.beans.property.Property method");
-                continue;
-            }
-
-            // otherwise try to bind bidirectionally to a generated JavaBeanObjectProperty
-            //FIXME bidirectional binding is somehow broken
-            try {
-                Property<?> jfxProperty = JavaBeanObjectPropertyBuilder.create()
-                        .bean(object)
-                        .name(propertyInformation.getName())
-                        .build();
-                ui.boundObjectProperty().bindBidirectional(jfxProperty);
-                LOGGER.debug(propertyInformation.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
-                continue;
-            } catch (NoSuchMethodException e) {
-                // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
-                LOGGER.debug("DEBUG: bindBidirectional threw NoSuchMethodException: " + e.toString());
-            } catch (Exception e) {
-                LOGGER.debug("DEBUG: bindBidirectional threw exception", e);
-            }
-
-            // otherwise if the property implements java.util.Observable, register a listener
-            if (java.util.Observable.class.isAssignableFrom(valueClass)) {
-                java.util.Observable observableValue = (java.util.Observable) value;
-                final Observer observer = (observable, o) -> ui.boundObjectProperty().setValue(observable);
-                observableValue.addObserver(observer);
-                observer.update(observableValue, this);
-                LOGGER.debug(propertyInformation.getDisplayName() + " bound using java.util.Observable method");
-                continue;
-            }
-
-            // otherwise if the property implements javafx.beans.Observable, register a listener
-            if (Observable.class.isAssignableFrom(valueClass)) {
-                Observable observableValue = (Observable) value;
-                final InvalidationListener listener = observable -> ui.boundObjectProperty().setValue(observable);
-                observableValue.addListener(listener);
-                //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
-                listener.invalidated(observableValue);
-                LOGGER.debug(propertyInformation.getDisplayName() + " bound using javafx.beans.Observable method");
-                continue;
-            }
-
-            // otherwise just set the value and put the UI in read-only mode
-            LOGGER.warn("no binding for property '" + propertyInformation.getDisplayName() + "'");
-
-            //ui.setReadOnly(true);
-            ui.bind(value);
+            bindProperty(object, propertyUi, propertyInformation);
         }
 
+    }
+
+    private void bindProperty(T object, JfxInstanceUI propertyUi, PropertyInformation propertyInformation) {
+
+        final Object value;
+        try {
+            Method readMethod = propertyInformation.getReadMethod();
+            if (!readMethod.isAccessible()) {
+                readMethod.setAccessible(true);
+            }
+            value = readMethod.invoke(object);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            LOGGER.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
+            return;
+        }
+
+        if (value == null) {
+            //ui.boundObjectProperty().unbind();
+            return;
+        }
+        final Class<?> valueClass = value.getClass();
+
+        // if the property is a JavaFX-style property, bind directly to it
+        if (Property.class.isAssignableFrom(valueClass)) {
+            Property<?> jfxProperty = (Property) value;
+            propertyUi.boundObjectProperty().bindBidirectional(jfxProperty);
+            LOGGER.debug(propertyInformation.getDisplayName() + " bound using javafx.beans.property.Property method");
+            return;
+        }
+
+        // otherwise try to bind bidirectionally to a generated JavaBeanObjectProperty
+        //FIXME bidirectional binding is somehow broken
+        try {
+            Property<?> jfxProperty = JavaBeanObjectPropertyBuilder.create()
+                    .bean(object)
+                    .name(propertyInformation.getName())
+                    .build();
+
+            propertyUi.boundObjectProperty().bindBidirectional(jfxProperty);
+            LOGGER.debug(propertyInformation.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
+
+
+            jfxProperty.addListener((observable, oldValue, newValue) -> {
+                System.out.println("jfx property changed: " + oldValue + " --> " + newValue);
+            });
+
+            propertyUi.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
+                System.out.println("bound object changed: " + oldValue + " --> " + newValue);
+            });
+
+
+            return;
+        } catch (NoSuchMethodException e) {
+            // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
+            LOGGER.debug("DEBUG: bindBidirectional threw NoSuchMethodException: " + e.toString());
+        } catch (Exception e) {
+            LOGGER.debug("DEBUG: bindBidirectional threw exception", e);
+        }
+
+        // otherwise if the property implements java.util.Observable, register a listener
+        if (java.util.Observable.class.isAssignableFrom(valueClass)) {
+            java.util.Observable observableValue = (java.util.Observable) value;
+            final Observer observer = (observable, o) -> propertyUi.boundObjectProperty().setValue(observable);
+            observableValue.addObserver(observer);
+            observer.update(observableValue, this);
+            LOGGER.debug(propertyInformation.getDisplayName() + " bound using java.util.Observable method");
+            return;
+        }
+
+        // otherwise if the property implements javafx.beans.Observable, register a listener
+        if (Observable.class.isAssignableFrom(valueClass)) {
+            Observable observableValue = (Observable) value;
+            final InvalidationListener listener = observable -> propertyUi.boundObjectProperty().setValue(observable);
+            observableValue.addListener(listener);
+            //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
+            listener.invalidated(observableValue);
+            LOGGER.debug(propertyInformation.getDisplayName() + " bound using javafx.beans.Observable method");
+            return;
+        }
+
+        // otherwise just set the value
+        LOGGER.warn("no binding for property '" + propertyInformation.getDisplayName() + "'");
+
+        //ui.setReadOnly(true);
+        propertyUi.bind(value);
     }
 
 

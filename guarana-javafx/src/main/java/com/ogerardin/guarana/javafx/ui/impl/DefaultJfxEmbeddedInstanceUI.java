@@ -10,6 +10,7 @@ import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -34,23 +35,29 @@ public class DefaultJfxEmbeddedInstanceUI<T> extends TextField implements JfxIns
     private final JfxUiManager jfxUiManager;
     private final Class<T> clazz;
 
-    private ObjectProperty<T> boundObjectProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<T> boundObjectProperty = new SimpleObjectProperty<>(this, "boundObject");
 
 
     public DefaultJfxEmbeddedInstanceUI(JfxUiManager jfxUiManager, Class<T> clazz) {
         this.jfxUiManager = jfxUiManager;
         this.clazz = clazz;
 
-        final StringConverter<T> converter = Bindings.getStringConverter(clazz, jfxUiManager.getConfiguration());
-        textProperty().bindBidirectional(boundObjectProperty, converter);
+        if (clazz == String.class) {
+            //binding with a String property: no converter required
+            textProperty().bindBidirectional((Property<String>) boundObjectProperty());
+        } else {
+            final StringConverter<T> converter = Bindings.getStringConverter(clazz, jfxUiManager.getConfiguration());
+            textProperty().bindBidirectional(boundObjectProperty, converter);
+        }
 
-//        addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-//            if (event.getCode() == KeyCode.F5) {
-//                final T value = boundObjectProperty.getValue();
-//                final String s = converter.toString(value);
-//                textProperty().setValue(s);
-//            }
+//        textProperty().addListener((observable, oldValue, newValue) -> {
+//            System.out.println("text changed: " + oldValue + " --> " + newValue);
 //        });
+//
+//        boundObjectProperty().addListener((observable, oldValue, newValue) -> {
+//            System.out.println("bound object changed: " + oldValue + " --> " + newValue);
+//        });
+
     }
 
     @Override

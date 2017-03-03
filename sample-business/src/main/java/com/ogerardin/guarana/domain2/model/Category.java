@@ -22,4 +22,5 @@ public class Category {
     List<Feature> features;
 
     List<Item> highlightedItems;
+
 }

@@ -2,23 +2,34 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.demo.javafx.domain0;
+package com.ogerardin.guarana.demo.javafx;
 
 /**
  * @author Olivier
  * @since 28/05/15
  */
 
-import com.ogerardin.guarana.demo.javafx.domain0.adapters.DomainManagerDb4OImpl;
-import com.ogerardin.guarana.domain0.service.DomainManager;
+import com.ogerardin.guarana.domain2.model.Category;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import lombok.Data;
 
-public class MainDemoJfx extends Application {
+public class DummyTestJfx extends Application {
 
-    private static DomainManager domainManager;
+    @Data
+    public static class Container {
+        public String name;
+
+        public void doSomething() {
+            System.out.println("name=" + name);
+        }
+
+    }
+
+
+    private static Container container;
 
     @Override
     public void start(Stage primaryStage) {
@@ -27,8 +38,8 @@ public class MainDemoJfx extends Application {
         JfxUiManager uiManager = new JfxUiManager();
 
         // build UI for a DomainManager and bind it to actual instance
-        JfxInstanceUI<DomainManager> ui = uiManager.buildInstanceUI(DomainManager.class);
-        ui.bind(domainManager);
+        JfxInstanceUI<Container> ui = uiManager.buildInstanceUI(Container.class);
+        ui.bind(container);
 
         //display UI in JavaFX primary Stage
         uiManager.display(ui, primaryStage, "Hello Guarana!");
@@ -37,7 +48,8 @@ public class MainDemoJfx extends Application {
     public static void main(String[] args) {
 
         // instantiate our main business object
-        domainManager = new DomainManagerDb4OImpl();
+        container = new Container();
+        container.setName("root");
 
         // handoff to JavaFX; this will call the start() method
         launch(args);

@@ -36,12 +36,12 @@ public class ClassInformation<C> {
     private final String simpleClassName;
     private final String displayName;
 
-    private Collection<ExecutableInformation<Method>> methods = null;
-    private Collection<ExecutableInformation<Constructor>> constructors = null;
+    private List<ExecutableInformation<Method>> methods = null;
+    private List<ExecutableInformation<Constructor>> constructors = null;
 
-    private Collection<ExecutableInformation<? extends Executable>> contributedExecutables = null;
+    private List<ExecutableInformation<? extends Executable>> contributedExecutables = null;
 
-    private Collection<PropertyInformation> properties = null;
+    private List<PropertyInformation> properties = null;
 
 
     private ClassInformation(Class<C> targetClass) {
@@ -164,29 +164,29 @@ public class ClassInformation<C> {
         return targetClass;
     }
 
-    public Collection<ExecutableInformation<Method>> getMethods() {
+    public List<ExecutableInformation<Method>> getMethods() {
         if (methods == null) {
             methods = Arrays.stream(introspector.getMethods())
                     .map(ExecutableInformation::new)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
         }
         return methods;
     }
 
-    public Collection<ExecutableInformation<Constructor>> getConstructors() {
+    public List<ExecutableInformation<Constructor>> getConstructors() {
         if (constructors == null) {
             constructors = Arrays.stream(introspector.getConstructors())
-                    .map(ExecutableInformation<Constructor>::new)
-                    .collect(Collectors.toSet());
+                    .map(ExecutableInformation::new)
+                    .collect(Collectors.toList());
         }
         return constructors;
     }
 
-    public Collection<PropertyInformation> getProperties() {
+    public List<PropertyInformation> getProperties() {
         if (properties == null) {
             properties = Arrays.stream(introspector.getPropertyDescriptors())
                     .map(PropertyInformation::new)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
         }
         return properties;
     }
@@ -195,7 +195,7 @@ public class ClassInformation<C> {
         if (contributedExecutables != null) {
             return contributedExecutables;
         }
-        contributedExecutables = new HashSet<>();
+        contributedExecutables = new ArrayList<>();
         scanReferencing();
         return contributedExecutables;
     }

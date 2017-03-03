@@ -9,6 +9,7 @@ import com.google.common.collect.HashBiMap;
 import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.metadata.ClassInformation;
 import com.ogerardin.guarana.core.introspection.Introspector;
+import com.ogerardin.guarana.core.metadata.ExecutableInformation;
 import com.ogerardin.guarana.core.metadata.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
@@ -188,7 +189,11 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
             final Object value;
             try {
-                value = propertyInformation.getReadMethod().invoke(object);
+                Method readMethod = propertyInformation.getReadMethod();
+                if (!readMethod.isAccessible()) {
+                    readMethod.setAccessible(true);
+                }
+                value = readMethod.invoke(object);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 LOGGER.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
                 continue;
@@ -209,19 +214,20 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
             // otherwise try to bind bidirectionally to a generated JavaBeanObjectProperty
             //FIXME bidirectional binding is somehow broken
-//            try {
-//                Property<?> jfxProperty = JavaBeanObjectPropertyBuilder.create()
-//                        .bean(object)
-//                        .name(propertyInformation.getName())
-//                        .build();
-//                ui.boundObjectProperty().bindBidirectional(jfxProperty);
-//                ui.boundObjectProperty().setValue(value);
-//                LOGGER.debug(propertyInformation.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
-//                continue;
-//            } catch (NoSuchMethodException e) {
-//                // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
-//                //LOGGER.debug("DEBUG: " + e.toString());
-//            }
+            try {
+                Property<?> jfxProperty = JavaBeanObjectPropertyBuilder.create()
+                        .bean(object)
+                        .name(propertyInformation.getName())
+                        .build();
+                ui.boundObjectProperty().bindBidirectional(jfxProperty);
+                LOGGER.debug(propertyInformation.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
+                continue;
+            } catch (NoSuchMethodException e) {
+                // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
+                LOGGER.debug("DEBUG: bindBidirectional threw NoSuchMethodException: " + e.toString());
+            } catch (Exception e) {
+                LOGGER.debug("DEBUG: bindBidirectional threw exception", e);
+            }
 
             // otherwise if the property implements java.util.Observable, register a listener
             if (java.util.Observable.class.isAssignableFrom(valueClass)) {
@@ -247,8 +253,8 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             // otherwise just set the value and put the UI in read-only mode
             LOGGER.warn("no binding for property '" + propertyInformation.getDisplayName() + "'");
 
-            ui.setReadOnly(true);
-            ui.boundObjectProperty().setValue(value);
+            //ui.setReadOnly(true);
+            ui.bind(value);
         }
 
     }

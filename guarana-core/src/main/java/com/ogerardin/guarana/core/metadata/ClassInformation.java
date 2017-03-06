@@ -175,8 +175,9 @@ public class ClassInformation<C> {
 
     public List<ExecutableInformation<Constructor>> getConstructors() {
         if (constructors == null) {
+            //noinspection RedundantTypeArguments
             constructors = Arrays.stream(introspector.getConstructors())
-                    .map(ExecutableInformation::new)
+                    .map(ExecutableInformation<Constructor>::new)
                     .collect(Collectors.toList());
         }
         return constructors;

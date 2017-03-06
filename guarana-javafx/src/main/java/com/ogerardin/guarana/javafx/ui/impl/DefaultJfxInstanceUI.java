@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2015 Olivier Gérardin
+ * Copyright (c) 2017 Olivier Gérardin
  */
 
 package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.config.Configuration;
-import com.ogerardin.guarana.core.metadata.ClassInformation;
 import com.ogerardin.guarana.core.introspection.Introspector;
-import com.ogerardin.guarana.core.metadata.ExecutableInformation;
+import com.ogerardin.guarana.core.metadata.ClassInformation;
 import com.ogerardin.guarana.core.metadata.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
@@ -17,7 +17,6 @@ import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
@@ -76,6 +75,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             String propertyName = propertyInformation.getName();
             final Class<?> propertyType = propertyInformation.getPropertyType();
             final Method readMethod = propertyInformation.getReadMethod();
+            final ClassConfiguration<?> propertyClassConfiguration = getConfiguration().forClass(propertyType);
 
             // ignore hidden properties
             if (! getConfiguration().isShownProperty(classInformation.getTargetClass(), propertyName)) {
@@ -93,6 +93,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             grid.add(field, 1, row);
             label.setLabelFor(field);
 
+
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(propertyType)) {
                 Button zoomButton = new Button("(+)");
@@ -108,8 +109,8 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
                     grid.add(zoomButton, 2, row);
                 }
             }
-            // otherwise if it's not a primitive type, add a button to zoom on property as single instance
-            else if (!propertyType.isPrimitive()) {
+            // otherwise if it's a zoomable type, add a button to zoom on property as single instance
+            else if (propertyClassConfiguration.isZoomable()) {
                 Button zoomButton = new Button("...");
                 zoomButton.setOnAction(e -> zoomProperty(zoomButton, propertyType, readMethod, humanizedName));
                 grid.add(zoomButton, 2, row);

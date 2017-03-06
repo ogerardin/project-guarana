@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Olivier Gérardin
+ * Copyright (c) 2017 Olivier Gérardin
  */
 
 package com.ogerardin.guarana.core.config;
@@ -59,7 +59,7 @@ public class Configuration extends CompositeConfiguration {
         try {
             addConfigurationResource(USER_PROPERTIES);
         } catch (ConfigurationException e) {
-            LOGGER.warn("No user configuration " + USER_PROPERTIES + " found");
+            LOGGER.warn("Failed to load " + USER_PROPERTIES + ": " + e.getMessage());
         }
 
         // priority 3: toolkit-specific properties
@@ -92,11 +92,11 @@ public class Configuration extends CompositeConfiguration {
     }
 
     private void addConfigurationResource(String resource) throws ConfigurationException {
-        LOGGER.debug("Reading configuration resource: " + resource);
         final URL url = getClass().getResource(resource);
         if (url == null) {
             throw new ConfigurationException("Resource not found: " + resource);
         }
+        LOGGER.debug("Reading configuration resource: " + resource);
         addConfiguration(new PropertiesConfiguration(url));
     }
 
@@ -111,7 +111,7 @@ public class Configuration extends CompositeConfiguration {
             }
 
             String guaranaKey = key.substring(PROPERTY_PREFIX.length());
-            final String[] keyParts = guaranaKey.split("\\.");
+            String[] keyParts = guaranaKey.split("\\.");
             String property = keyParts[keyParts.length - 1];
 
             switch (keyParts[0]) {
@@ -152,6 +152,9 @@ public class Configuration extends CompositeConfiguration {
                 break;
             case "displayName":
                 classConfiguration.setDisplayName(getString(key));
+                break;
+            case "zoomable":
+                classConfiguration.setZoomable(getBoolean(key));
                 break;
             case "embeddedUiClass":
                 try {

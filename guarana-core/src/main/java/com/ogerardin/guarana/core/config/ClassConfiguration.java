@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Olivier Gérardin
+ * Copyright (c) 2017 Olivier Gérardin
  */
 
 package com.ogerardin.guarana.core.config;
@@ -34,6 +34,7 @@ public class ClassConfiguration<C> {
     private final Set<String> hiddenProperties = new HashSet<>();
     private final Set<String> shownProperties = new HashSet<>();
     private final Set<Method> hiddenMethods = new HashSet<>();
+    private boolean zoomable;
 
 
     public ClassConfiguration(Class<C> clazz) {
@@ -86,7 +87,7 @@ public class ClassConfiguration<C> {
             if (method.getName().equals(methodName)) {
                 found = true;
                 hiddenMethods.add(method);
-                LOGGER.debug(targetClass + ": hide method: " + method);
+                LOGGER.debug("Hiding: "  + method.getDeclaringClass() + "." + method.getName());
             }
         }
         if (!found) {
@@ -104,13 +105,13 @@ public class ClassConfiguration<C> {
         }
     }
 
-    public void hideMethods(Method... methods) {
+    private void hideMethods(Method... methods) {
         for (Method method : methods) {
             if (method.getDeclaringClass() != this.targetClass) {
                 throw new InvalidParameterException("Method " + method + " is not declared in class " + targetClass);
             }
             hiddenMethods.add(method);
-            LOGGER.debug(targetClass + ": hide method: " + method);
+            LOGGER.debug("Hiding: "  + method.getDeclaringClass() + "." + method.getName());
         }
     }
 
@@ -162,5 +163,13 @@ public class ClassConfiguration<C> {
     public ClassConfiguration<C> showProperties(String... propertyNames) {
         shownProperties.addAll(Arrays.asList(propertyNames));
         return this;
+    }
+
+    public boolean isZoomable() {
+        return zoomable;
+    }
+
+    public void setZoomable(boolean zoomable) {
+        this.zoomable = zoomable;
     }
 }

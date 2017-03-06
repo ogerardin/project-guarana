@@ -45,4 +45,8 @@ public class PropertyInformation {
     public Method getWriteMethod() {
         return propertyDescriptor.getWriteMethod();
     }
+
+    public PropertyDescriptor getDescriptor() {
+        return propertyDescriptor;
+    }
 }

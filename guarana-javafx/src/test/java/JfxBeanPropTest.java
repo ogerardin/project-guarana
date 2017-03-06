@@ -25,12 +25,12 @@ public class JfxBeanPropTest {
                 .name("name")
                 .build();
 
-        jfxProperty.addListener((observable, oldValue, newValue) -> {
-            System.out.println("jfx property changed: " + oldValue + " --> " + newValue);
-        });
+//        jfxProperty.addListener((observable, oldValue, newValue) -> {
+//            System.out.println("jfx property changed: " + oldValue + " --> " + newValue);
+//        });
 
 
-        for (int i=0; i<100000; i++) {
+        for (int i=0; i<10000; i++) {
             final String value = UUID.randomUUID().toString();
             jfxProperty.setValue(value);
             Assert.assertEquals(value, container.getName());

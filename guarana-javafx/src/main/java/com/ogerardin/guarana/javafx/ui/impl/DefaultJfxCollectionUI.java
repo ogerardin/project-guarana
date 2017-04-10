@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2015 Olivier Gérardin
+ * Copyright (c) 2017 Olivier Gérardin
  */
 
 package com.ogerardin.guarana.javafx.ui.impl;
 
-import com.ogerardin.guarana.core.config.Configuration;
+import com.ogerardin.guarana.core.config.Util;
 import com.ogerardin.guarana.core.metadata.ClassInformation;
 import com.ogerardin.guarana.core.metadata.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
@@ -72,7 +72,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
             final String propertyName = propertyInformation.getName();
             String displayName = propertyInformation.getDisplayName();
             if (propertyName.equals(displayName) && getConfiguration().isHumanizePropertyNames(itemClass)) {
-                displayName = Configuration.humanize(propertyName);
+                displayName = Util.humanize(propertyName);
             }
             TableColumn<T, ?> column = new TableColumn<>(displayName);
             column.setCellValueFactory(new PropertyValueFactory<>(propertyName));

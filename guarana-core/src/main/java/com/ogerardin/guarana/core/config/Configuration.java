@@ -14,12 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Configuration reader for Guarana.
@@ -77,18 +75,7 @@ public class Configuration extends CompositeConfiguration {
             throw new RuntimeException("Failed to load " + CORE_PROPERTIES, e);
         }
 
-
-
         applyConfiguration();
-    }
-
-    public static String humanize(String name) {
-        // split "camelCase" to "camel" "Case"
-        final String[] parts = name.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
-        // fix case of each part and join into a space-separated string
-        return Arrays.stream(parts)
-                .map(part -> part.substring(0, 1).toUpperCase() + part.substring(1).toLowerCase())
-                .collect(Collectors.joining(" "));
     }
 
     private void addConfigurationResource(String resource) throws ConfigurationException {
@@ -179,7 +166,7 @@ public class Configuration extends CompositeConfiguration {
         return humanizeClassNames;
     }
 
-    public String getClassDisplayName(Class clazz) {
+    public String getClassDisplayName(Class<?> clazz) {
         // if class display name configured, use it
         final ClassConfiguration classConfiguration = forClass(clazz);
         String displayName = classConfiguration.getDisplayName();
@@ -196,7 +183,7 @@ public class Configuration extends CompositeConfiguration {
         }
 
         // otherwise use class name (humanized if required)
-        return isHumanizeClassNames() ? Configuration.humanize(className) : className;
+        return isHumanizeClassNames() ? Util.humanize(className) : className;
     }
 
 
@@ -222,20 +209,31 @@ public class Configuration extends CompositeConfiguration {
         return isHidden.orElse(false);
     }
 
+    public <C> boolean isZoomable(Class<C> clazz) {
+        if (clazz.isPrimitive()) {
+            return false;
+        }
+        final Optional<Boolean> isZoomable = findClassConfigurationRecursively(clazz, ClassConfiguration::isZoomable);
+        return isZoomable.orElse(true);
+    }
+
     /**
      * Returns true if and only if the specified property is configured as shown for the specified class or any of
      * its superclasses.
      */
     public <C> boolean isShownProperty(Class<C> clazz, String property) {
-        final Optional<Boolean> isShown = findClassConfigurationRecursively(clazz, cc -> {
-            if (cc.isShownProperty(property)) {
-                return true;
-            } else if (cc.isHiddenProperty(property)) {
-                return false;
-            }
-            return null;
-        });
+        final Optional<Boolean> isShown = findClassConfigurationRecursively(clazz, cc -> isShownProperty(cc, property));
         return isShown.orElse(true);
+    }
+
+    private Boolean isShownProperty(ClassConfiguration<?> configuration, String property) {
+        if (configuration.isShownProperty(property)) {
+            return true;
+        }
+        if (configuration.isHiddenProperty(property)) {
+            return false;
+        }
+        return null;
     }
 
     /**
@@ -263,10 +261,7 @@ public class Configuration extends CompositeConfiguration {
             return Optional.of(result);
         }
         Class<?> parent = clazz.getSuperclass();
-        if (parent == null) {
-            return Optional.empty();
-        }
-        return findClassConfigurationRecursively(parent, getter);
+        return (parent == null) ? Optional.empty() : findClassConfigurationRecursively(parent, getter);
     }
 
 }

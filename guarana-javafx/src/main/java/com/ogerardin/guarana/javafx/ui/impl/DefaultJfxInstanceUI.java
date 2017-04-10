@@ -6,8 +6,7 @@ package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.ogerardin.guarana.core.config.ClassConfiguration;
-import com.ogerardin.guarana.core.config.Configuration;
+import com.ogerardin.guarana.core.config.Util;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.core.metadata.ClassInformation;
 import com.ogerardin.guarana.core.metadata.PropertyInformation;
@@ -31,9 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Observer;
+import java.util.*;
 
 /**
  * Default implementation of a InstanceUI for JavaFX.
@@ -75,7 +72,6 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             String propertyName = propertyInformation.getName();
             final Class<?> propertyType = propertyInformation.getPropertyType();
             final Method readMethod = propertyInformation.getReadMethod();
-            final ClassConfiguration<?> propertyClassConfiguration = getConfiguration().forClass(propertyType);
 
             // ignore hidden properties
             if (! getConfiguration().isShownProperty(classInformation.getTargetClass(), propertyName)) {
@@ -83,7 +79,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             }
 
             // label
-            final String humanizedName = Configuration.humanize(propertyInformation.getDisplayName());
+            final String humanizedName = Util.humanize(propertyInformation.getDisplayName());
             Label label = new Label(humanizedName);
             label.setTooltip(new Tooltip(propertyInformation.toString()));
             grid.add(label, 0, row);
@@ -110,7 +106,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
                 }
             }
             // otherwise if it's a zoomable type, add a button to zoom on property as single instance
-            else if (propertyClassConfiguration.isZoomable()) {
+            else if (getConfiguration().isZoomable(propertyType)) {
                 Button zoomButton = new Button("...");
                 zoomButton.setOnAction(e -> zoomProperty(zoomButton, propertyType, readMethod, humanizedName));
                 grid.add(zoomButton, 2, row);
@@ -196,7 +192,8 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
     private void bindProperty(T object, JfxInstanceUI propertyUi, PropertyInformation propertyInformation) {
 
-        final Object value;
+        // Get the property value
+        Object value;
         try {
             Method readMethod = propertyInformation.getReadMethod();
             if (!readMethod.isAccessible()) {
@@ -208,38 +205,50 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             return;
         }
 
+        // if it's null and it's a collection, try to use an empty collection instead
         if (value == null) {
             //ui.boundObjectProperty().unbind();
-            return;
+            if (!propertyInformation.isCollection() || propertyInformation.getWriteMethod() == null) {
+                return;
+            }
+            value = createEmptyCollection(propertyInformation);
+            if (value == null) {
+                return;
+            }
+            try {
+                propertyInformation.getWriteMethod().invoke(object, value);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                LOGGER.error("failed to set value for property " + propertyInformation.getDisplayName(), e);
+            }
         }
+
         final Class<?> valueClass = value.getClass();
 
         // if the property is a JavaFX-style property, bind directly to it
         if (Property.class.isAssignableFrom(valueClass)) {
             Property<?> jfxProperty = (Property) value;
             propertyUi.boundObjectProperty().bindBidirectional(jfxProperty);
-            LOGGER.debug(propertyInformation.getDisplayName() + " bound using javafx.beans.property.Property method");
+            LOGGER.debug("[" + propertyInformation.getName() + "] bound using javafx.beans.property.Property method");
             return;
         }
 
         // otherwise try to bind bidirectionally to a generated JavaBeanObjectProperty
-        //FIXME bidirectional binding is somehow broken
         try {
-            Property<?> jfxProperty = JavaBeanObjectPropertyBuilder.create()
+            Property<?> jfxSyntheticProperty = JavaBeanObjectPropertyBuilder.create()
                     .bean(object)
                     .name(propertyInformation.getName())
                     .build();
 
-            propertyUi.boundObjectProperty().bindBidirectional(jfxProperty);
-            LOGGER.debug(propertyInformation.getDisplayName() + " bound using JavaBeanObjectPropertyBuilder method");
+            propertyUi.boundObjectProperty().bindBidirectional(jfxSyntheticProperty);
+            LOGGER.debug("[" + propertyInformation.getName() + "] bound using JavaBeanObjectPropertyBuilder method");
 
 
-            jfxProperty.addListener((observable, oldValue, newValue) -> {
-                System.out.println("jfx property changed: " + oldValue + " --> " + newValue);
+            jfxSyntheticProperty.addListener((observable, oldValue, newValue) -> {
+                LOGGER.debug("jfx property changed: " + oldValue + " --> " + newValue);
             });
 
             propertyUi.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-                System.out.println("bound object changed: " + oldValue + " --> " + newValue);
+                LOGGER.debug("bound object changed: " + oldValue + " --> " + newValue);
             });
 
 
@@ -257,7 +266,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             final Observer observer = (observable, o) -> propertyUi.boundObjectProperty().setValue(observable);
             observableValue.addObserver(observer);
             observer.update(observableValue, this);
-            LOGGER.debug(propertyInformation.getDisplayName() + " bound using java.util.Observable method");
+            LOGGER.debug("[" + propertyInformation.getName() + "] bound using java.util.Observable method");
             return;
         }
 
@@ -268,17 +277,48 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             observableValue.addListener(listener);
             //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
             listener.invalidated(observableValue);
-            LOGGER.debug(propertyInformation.getDisplayName() + " bound using javafx.beans.Observable method");
+            LOGGER.debug("[" + propertyInformation.getName() + "] bound using javafx.beans.Observable method");
             return;
         }
 
         // otherwise just set the value
-        LOGGER.warn("no binding for property '" + propertyInformation.getDisplayName() + "'");
+        LOGGER.warn("no binding for property [" + propertyInformation.getName() + "]");
 
         //ui.setReadOnly(true);
         propertyUi.bind(value);
     }
 
+    /**
+     * Try to instantiate a collection of the speficied type. Beware: the type may be an interface, in which case
+     * we use a default implementation.
+     */
+    private Collection createEmptyCollection(PropertyInformation propertyInformation) {
+        Class<? extends Collection> propertyType = (Class<? extends Collection>) propertyInformation.getPropertyType();
+
+
+        if (propertyType.isInterface()) {
+            propertyType = getDefaultCollectionImplementation(propertyType);
+        }
+
+        try {
+            return propertyType.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            LOGGER.error("Failed to instantiate " + propertyType + " for null property");
+            return null;
+        }
+    }
+
+    private Class<? extends Collection> getDefaultCollectionImplementation(Class<? extends Collection> propertyType) {
+        if (propertyType == List.class) {
+            return ArrayList.class;
+        }
+        else if (propertyType == Set.class) {
+            return HashSet.class;
+        }
+        else {
+            throw new IllegalArgumentException("No default implementation for " + propertyType);
+        }
+    }
 
     @Override
     public void setReadOnly(boolean readOnly) {

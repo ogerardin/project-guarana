@@ -65,6 +65,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         titleLabel.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         root.getChildren().add(titleLabel);
 
+
         // build table
         tableView = new TableView<>();
         tableView.setEditable(false);
@@ -111,6 +112,10 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         );
 
         root.getChildren().add(tableView);
+
+
+        configureDragSource(titleLabel, tableView::getItems);
+        configureContextMenu(titleLabel, classInformation, null);
 
     }
 

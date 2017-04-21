@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Olivier Gérardin
+ * Copyright (c) 2017 Olivier Gérardin
  */
 
 package com.ogerardin.guarana.javafx.ui.impl;
@@ -60,12 +60,14 @@ abstract class JfxUI implements JfxRenderable {
         ContextMenu contextMenu = new ContextMenu();
         final Class<?> beanClass = targetClassInformation.getTargetClass();
 
-        // add methods
-        targetClassInformation.getMethods().stream()
-                .filter(methodInfo -> !methodInfo.isGetterOrSetter())
-                .filter(methodInfo -> !getConfiguration().isHiddenMethod(beanClass, methodInfo.getExecutable()))
-                .map(methodInfo -> new ActionMenuItem<>(methodInfo, targetSupplier))
-                .forEach(menuItem -> contextMenu.getItems().add(menuItem));
+        // add instance methods
+        if (targetSupplier != null) {
+            targetClassInformation.getMethods().stream()
+                    .filter(methodInfo -> !methodInfo.isGetterOrSetter())
+                    .filter(methodInfo -> !getConfiguration().isHiddenMethod(beanClass, methodInfo.getExecutable()))
+                    .map(methodInfo -> new ActionMenuItem<>(methodInfo, targetSupplier))
+                    .forEach(menuItem -> contextMenu.getItems().add(menuItem));
+        }
 
         // add constructors
         contextMenu.getItems().add(new SeparatorMenuItem());

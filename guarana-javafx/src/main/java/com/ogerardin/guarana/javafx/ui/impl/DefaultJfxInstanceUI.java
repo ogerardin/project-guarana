@@ -117,14 +117,14 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     }
 
 
-    private <T> Node buildPropertyUi(PropertyInformation propertyInformation, Class<T> propertyType) {
+    private <P> Node buildPropertyUi(PropertyInformation propertyInformation, Class<P> propertyType) {
 
-        JfxInstanceUI<T> ui = getBuilder().buildEmbeddedInstanceUI(propertyType);
+        JfxInstanceUI<P> ui = getBuilder().buildEmbeddedInstanceUI(propertyType);
         Node field = ui.getRendering();
 
         // set the field as a target for drag and drop
         configureDropTarget(field,
-                (T value) -> propertyType.isAssignableFrom(value.getClass()),
+                (P value) -> propertyType.isAssignableFrom(value.getClass()),
                 value -> ui.boundObjectProperty().setValue(value));
 
         propertyInformationByUi.put(ui, propertyInformation);
@@ -309,7 +309,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     }
 
     private Class<? extends Collection> getDefaultCollectionImplementation(Class<? extends Collection> propertyType) {
-        if (propertyType == List.class) {
+        if (propertyType ==  List.class) {
             return ArrayList.class;
         }
         else if (propertyType == Set.class) {

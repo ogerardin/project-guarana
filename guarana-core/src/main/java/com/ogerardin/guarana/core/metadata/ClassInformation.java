@@ -63,6 +63,9 @@ public class ClassInformation<C> {
     }
 
     static boolean isSystem(Class targetClass) {
+        if (targetClass.isPrimitive()) {
+            return true;
+        }
         final String targetClassName = targetClass.getName();
         return targetClassName.startsWith("java.")
                 || targetClassName.startsWith("javax.")

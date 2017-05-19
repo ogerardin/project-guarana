@@ -5,6 +5,9 @@
 package com.ogerardin.guarana.core.config;
 
 import com.ogerardin.guarana.core.metadata.ClassInformation;
+import com.ogerardin.guarana.core.persistance.PersistenceService;
+import com.ogerardin.guarana.core.persistance.PersistenceServiceBuilder;
+import com.ogerardin.guarana.core.persistance.basic.DefaultPersistenceServiceBuilder;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -47,6 +50,8 @@ public class Configuration extends CompositeConfiguration {
 
     private final Map<Class, ClassConfiguration> classConfigurationByClass = new HashMap<>();
     private boolean humanizeClassNames = false;
+
+    private Class<? extends PersistenceServiceBuilder> defaultPersistenceServiceBuilder = DefaultPersistenceServiceBuilder.class;
 
     /**
      * Build configuration by using default sources
@@ -112,19 +117,34 @@ public class Configuration extends CompositeConfiguration {
 
             String guaranaKey = key.substring(PROPERTY_PREFIX.length());
             String[] keyParts = guaranaKey.split("\\.");
-            String property = keyParts[keyParts.length - 1];
 
             switch (keyParts[0]) {
                 case "class":
+                    String property = keyParts[keyParts.length - 1];
                     String className = guaranaKey.substring("class.".length(), guaranaKey.length() - property.length() - 1);
                     applyClassProperty(className, property, key);
                     break;
-                case "humanizeClassNames":
-                    this.humanizeClassNames = getBoolean(key);
-                    break;
                 default:
-                    LOGGER.error("Invalid property key: " + key);
+                    applyGlobalProperty(key);
             }
+        }
+    }
+
+    private void applyGlobalProperty(String key) {
+        String[] keyParts = key.split("\\.");
+        switch (keyParts[1]) {
+            case "humanizeClassNames":
+                this.humanizeClassNames = getBoolean(key);
+                break;
+            case "defaultPersistenceProvider":
+                try {
+                    setDefaultPersistenceServiceBuilderClass(getString(key));
+                } catch (ClassNotFoundException e) {
+                    LOGGER.error(e.toString());
+                }
+                break;
+            default:
+                LOGGER.error("Invalid property key: " + key);
         }
     }
 
@@ -269,5 +289,17 @@ public class Configuration extends CompositeConfiguration {
         return findClassConfigurationRecursively(parent, getter);
     }
 
+    public void setDefaultPersistenceServiceBuilderClass(String defaultPersistenceProviderClass) throws ClassNotFoundException {
+
+        Class<?> clazz = Class.forName(defaultPersistenceProviderClass);
+        if (!PersistenceService.class.isAssignableFrom(clazz)) {
+            throw new ClassCastException("Class does not implement PersistenceService: " + defaultPersistenceProviderClass);
+        }
+        setDefaultPersistenceServiceBuilderClass((Class<? extends PersistenceServiceBuilder>) clazz);
+    }
+
+    private void setDefaultPersistenceServiceBuilderClass(Class<? extends PersistenceServiceBuilder> clazz) {
+        this.defaultPersistenceServiceBuilder = clazz;
+    }
 }
 

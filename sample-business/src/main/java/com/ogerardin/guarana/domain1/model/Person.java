@@ -4,11 +4,16 @@
 
 package com.ogerardin.guarana.domain1.model;
 
+import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+
 /**
  * @author oge
  * @since 12/01/2017
  */
-public class Person {
+@EqualsAndHashCode
+public class Person implements Serializable{
 
     private final String name;
 

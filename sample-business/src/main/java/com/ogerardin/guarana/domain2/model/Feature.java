@@ -13,7 +13,8 @@ import lombok.Data;
 @Data
 public class Feature {
 
-    String name;
+    String name = "";
 
-    String description;
+    String description = "";
+
 }

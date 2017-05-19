@@ -25,7 +25,7 @@ public class DemoJfx2 extends Application {
         // instantiate UiManager for JavaFX
         JfxUiManager uiManager = new JfxUiManager();
 
-        // build UI for a DomainManager and bind it to actual instance
+        // build UI for a Category and bind it to actual instance
         JfxInstanceUI<Category> ui = uiManager.buildInstanceUI(Category.class);
         ui.bind(category);
 

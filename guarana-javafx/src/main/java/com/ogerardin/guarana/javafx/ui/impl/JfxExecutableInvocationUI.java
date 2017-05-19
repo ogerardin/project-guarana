@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2015 Olivier Gérardin
+ * Copyright (c) 2017 Olivier Gérardin
  */
 
 package com.ogerardin.guarana.javafx.ui.impl;
 
-import com.ogerardin.guarana.core.config.Configuration;
+import com.ogerardin.guarana.core.config.Util;
 import com.ogerardin.guarana.core.introspection.Introspector;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
@@ -69,7 +69,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
     }
 
     private void buildUi(Executable executable) {
-        final String title = Configuration.humanize(executable.getName());
+        final String title = Util.humanize(executable.getName());
         addTitle(title);
 
         // build params grid
@@ -106,7 +106,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
             final Class<?> paramType = param.getType();
 
             // label
-            final String humanizedName = Configuration.humanize(paramName);
+            final String humanizedName = Util.humanize(paramName);
             Label label = new Label(humanizedName);
             grid.add(label, 0, row);
 

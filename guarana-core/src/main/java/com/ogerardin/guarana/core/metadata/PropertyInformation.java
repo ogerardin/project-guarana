@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 /**
  * @author oge
@@ -20,6 +21,10 @@ public class PropertyInformation {
 
     PropertyInformation(PropertyDescriptor propertyDescriptor) {
         this.propertyDescriptor = propertyDescriptor;
+    }
+
+    public boolean isCollection() {
+        return Collection.class.isAssignableFrom(getPropertyType());
     }
 
     public boolean isReadOnly() {

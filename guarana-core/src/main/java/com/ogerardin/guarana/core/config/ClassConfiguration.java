@@ -34,7 +34,7 @@ public class ClassConfiguration<C> {
     private final Set<String> hiddenProperties = new HashSet<>();
     private final Set<String> shownProperties = new HashSet<>();
     private final Set<Method> hiddenMethods = new HashSet<>();
-    private boolean zoomable;
+    private Boolean zoomable = null;
 
 
     public ClassConfiguration(Class<C> clazz) {
@@ -165,7 +165,7 @@ public class ClassConfiguration<C> {
         return this;
     }
 
-    public boolean isZoomable() {
+    public Boolean isZoomable() {
         return zoomable;
     }
 

@@ -27,9 +27,11 @@ public class ClassInformationTest {
     public void testConstructors() {
         ClassInformation<Person> classInformation = ClassInformation.forClass(Person.class);
 
+        // expected: constructors for Person from native introspection
         final Set<Constructor> expected = Arrays.stream(Person.class.getConstructors())
                 .collect(Collectors.toSet());
 
+        // actual: constructors for Person from ClassInformation
         final Set<Constructor> actual = classInformation.getConstructors().stream()
                 .map(ExecutableInformation::getExecutable)
                 .collect(Collectors.toSet());

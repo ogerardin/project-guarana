@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-import javafx.beans.property.Property;
+package com.ogerardin.guarana.javafx.test;import javafx.beans.property.Property;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import org.junit.Assert;
 import org.junit.Test;

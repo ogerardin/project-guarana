@@ -19,6 +19,7 @@ public class BasicPersistenceService<C> implements PersistenceService<C> {
 
     public BasicPersistenceService(Class<C> clazz) {
         this.path = Paths.get(clazz.getName());
+        this.path.toFile().deleteOnExit();
     }
 
     @Override

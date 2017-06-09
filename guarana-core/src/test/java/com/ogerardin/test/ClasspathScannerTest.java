@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.hasItems;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -36,13 +35,8 @@ public class ClasspathScannerTest {
         final List<String> namesOfClassesWithFieldOfType = new FastClasspathScanner().scan()
                 .getNamesOfClassesWithFieldOfType(Person.class);
 
-        Set<String> expected = new HashSet<String>() {
-            {
-                add(Thing.class.getName());
-            }
-        };
-        final HashSet<String> actual = new HashSet<>(namesOfClassesWithFieldOfType);
+        final Set<String> actual = new HashSet<>(namesOfClassesWithFieldOfType);
 
-        assertEquals(expected, actual);
+        assertThat(namesOfClassesWithFieldOfType, hasItems(Thing.class.getName()));
     }
 }

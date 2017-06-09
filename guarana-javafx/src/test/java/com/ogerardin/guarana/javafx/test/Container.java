@@ -2,7 +2,11 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
+package com.ogerardin.guarana.javafx.test;
+
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @author oge
@@ -11,6 +15,8 @@ import lombok.Data;
 @Data
 public class Container {
     public String name;
+
+    public Date date = new Date();
 
     public void dump() {
         System.out.println(this.toString());

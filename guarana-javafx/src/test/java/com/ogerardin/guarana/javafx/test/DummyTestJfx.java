@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-import com.ogerardin.guarana.javafx.JfxUiManager;
+package com.ogerardin.guarana.javafx.test;import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
 import javafx.stage.Stage;

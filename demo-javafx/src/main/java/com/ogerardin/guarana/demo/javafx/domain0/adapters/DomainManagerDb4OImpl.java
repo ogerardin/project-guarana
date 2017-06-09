@@ -8,10 +8,10 @@ import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
 import com.db4o.config.Configuration;
-import com.ogerardin.guarana.domain0.service.DomainManager;
+import com.ogerardin.guarana.domain0.model.Employee;
 import com.ogerardin.guarana.domain0.model.Event;
 import com.ogerardin.guarana.domain0.model.Leave;
-import com.ogerardin.guarana.domain0.model.Person;
+import com.ogerardin.guarana.domain0.service.DomainManager;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -33,7 +33,7 @@ public class DomainManagerDb4OImpl implements DomainManager {
 
     private final ObjectContainer objectContainer;
 
-    private ObservableList<Person> allPersons;
+    private ObservableList<Employee> allPersons;
     private ObservableList<Event> allEvents;
     private ObservableList<Leave> allLeaves;
 
@@ -45,14 +45,14 @@ public class DomainManagerDb4OImpl implements DomainManager {
 
     @Override
     public void clearAll() {
-        objectContainer.query(Person.class).forEach(objectContainer::delete);
+        objectContainer.query(Employee.class).forEach(objectContainer::delete);
         objectContainer.query(Event.class).forEach(objectContainer::delete);
         objectContainer.commit();
     }
 
-    public Collection<Person> getAllPersons() {
+    public Collection<Employee> getAllPersons() {
         if (allPersons == null) {
-            final ObjectSet<Person> persons = objectContainer.query(Person.class);
+            final ObjectSet<Employee> persons = objectContainer.query(Employee.class);
             allPersons = getReplicatingObservableList(persons, objectContainer);
         }
         return allPersons;
@@ -93,7 +93,7 @@ public class DomainManagerDb4OImpl implements DomainManager {
         return observableList;
     }
 
-    public Person save(Person person) {
+    public Employee save(Employee person) {
         objectContainer.store(person);
         return person;
     }
@@ -108,11 +108,11 @@ public class DomainManagerDb4OImpl implements DomainManager {
     public void resetDemo() {
         clearAll();
 
-        final Person person0 = new Person("GERARDIN", "Olivier");
+        final Employee person0 = new Employee("GERARDIN", "Olivier");
         save(person0);
-        final Person person1 = new Person("MARCEAU", "Marcel");
+        final Employee person1 = new Employee("MARCEAU", "Marcel");
         save(person1);
-        final Person person2 = new Person("OBAMA", "Barack");
+        final Employee person2 = new Employee("OBAMA", "Barack");
         save(person2);
 
         save(new Event(person0, new Date()));
@@ -123,7 +123,7 @@ public class DomainManagerDb4OImpl implements DomainManager {
     }
 
     @Override
-    public List<Leave> getLeavesByPerson(Person person) {
+    public List<Leave> getLeavesByPerson(Employee person) {
         return getAllLeaves().stream()
                 .filter(l -> l.getPerson() == person)
                 .collect(Collectors.toList());

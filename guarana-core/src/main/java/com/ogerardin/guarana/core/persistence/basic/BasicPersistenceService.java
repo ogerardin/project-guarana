@@ -1,6 +1,6 @@
-package com.ogerardin.guarana.core.persistance.basic;
+package com.ogerardin.guarana.core.persistence.basic;
 
-import com.ogerardin.guarana.core.persistance.PersistenceService;
+import com.ogerardin.guarana.core.persistence.PersistenceService;
 
 import java.io.*;
 import java.nio.file.Path;

@@ -1,6 +1,6 @@
 package com.ogerardin.test;
 
-import com.ogerardin.guarana.core.persistance.basic.BasicPersistenceService;
+import com.ogerardin.guarana.core.persistence.basic.BasicPersistenceService;
 import com.ogerardin.guarana.domain1.model.Person;
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by olivier on 18/05/2017.
  */
-public class BasicPersistenceServiceProviderTest {
+public class BasicPersistenceServiceTest {
 
     BasicPersistenceService<Person> persistenceService = new BasicPersistenceService<>(Person.class);
 

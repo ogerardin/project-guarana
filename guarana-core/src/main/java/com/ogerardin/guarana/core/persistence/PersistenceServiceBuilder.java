@@ -1,4 +1,4 @@
-package com.ogerardin.guarana.core.persistance;
+package com.ogerardin.guarana.core.persistence;
 
 /**
  * Created by olivier on 18/05/2017.

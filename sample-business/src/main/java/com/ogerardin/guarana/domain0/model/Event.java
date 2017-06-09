@@ -15,13 +15,13 @@ import java.util.Date;
 @Data
 public class Event {
 
-    private final Person person;
+    private final Employee person;
 
     private Date date;
 
     private String memo;
 
-    public Event(Person person, Date date) {
+    public Event(Employee person, Date date) {
         this.person = person;
         this.date = date;
     }

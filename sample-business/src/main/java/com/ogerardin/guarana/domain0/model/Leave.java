@@ -17,7 +17,7 @@ import java.util.Date;
 @Data
 public class Leave {
 
-    private final Person person;
+    private final Employee person;
 
     private Date start;
 
@@ -27,7 +27,7 @@ public class Leave {
     @Setter
     double duration;
 
-    public Leave(Person person, Date start, Date end) {
+    public Leave(Employee person, Date start, Date end) {
         this.person = person;
         this.start = start;
         this.end = end;

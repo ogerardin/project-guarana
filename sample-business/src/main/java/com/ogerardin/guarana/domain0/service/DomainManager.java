@@ -4,9 +4,9 @@
 
 package com.ogerardin.guarana.domain0.service;
 
+import com.ogerardin.guarana.domain0.model.Employee;
 import com.ogerardin.guarana.domain0.model.Event;
 import com.ogerardin.guarana.domain0.model.Leave;
-import com.ogerardin.guarana.domain0.model.Person;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,15 +19,15 @@ public interface DomainManager {
 
     void clearAll();
 
-    Collection<Person> getAllPersons();
+    Collection<Employee> getAllPersons();
 
     Collection<Event> getAllEvents();
 
-    Person save(Person person);
+    Employee save(Employee person);
 
     Event save(Event event);
 
-    List<Leave> getLeavesByPerson(Person person);
+    List<Leave> getLeavesByPerson(Employee person);
 
     void resetDemo();
 }

@@ -1,7 +1,7 @@
-package com.ogerardin.guarana.core.persistance.basic;
+package com.ogerardin.guarana.core.persistence.basic;
 
-import com.ogerardin.guarana.core.persistance.PersistenceService;
-import com.ogerardin.guarana.core.persistance.PersistenceServiceBuilder;
+import com.ogerardin.guarana.core.persistence.PersistenceService;
+import com.ogerardin.guarana.core.persistence.PersistenceServiceBuilder;
 
 /**
  * Created by olivier on 18/05/2017.

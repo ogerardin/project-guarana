@@ -13,13 +13,13 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Person {
+public class Employee {
 
     private String lastName;
 
     private String firstName;
 
-    public Person(String lastName, String firstName) {
+    public Employee(String lastName, String firstName) {
         this.lastName = lastName;
         this.firstName = firstName;
     }

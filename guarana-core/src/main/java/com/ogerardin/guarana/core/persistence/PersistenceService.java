@@ -1,4 +1,4 @@
-package com.ogerardin.guarana.core.persistance;
+package com.ogerardin.guarana.core.persistence;
 
 import java.io.IOException;
 import java.util.List;

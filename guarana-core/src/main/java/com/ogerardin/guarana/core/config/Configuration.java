@@ -5,7 +5,6 @@
 package com.ogerardin.guarana.core.config;
 
 import com.ogerardin.guarana.core.metadata.ClassInformation;
-import com.ogerardin.guarana.core.persistance.PersistenceService;
 import com.ogerardin.guarana.core.persistance.PersistenceServiceBuilder;
 import com.ogerardin.guarana.core.persistance.basic.DefaultPersistenceServiceBuilder;
 import org.apache.commons.configuration.CompositeConfiguration;
@@ -49,7 +48,7 @@ public class Configuration extends CompositeConfiguration {
     private final Map<Class, ClassConfiguration> classConfigurationByClass = new HashMap<>();
     private boolean humanizeClassNames = false;
 
-    private Class<? extends PersistenceServiceBuilder> defaultPersistenceServiceBuilder = DefaultPersistenceServiceBuilder.class;
+    private Class<? extends PersistenceServiceBuilder> persistenceServiceBuilder = DefaultPersistenceServiceBuilder.class;
 
     /**
      * Build configuration by using default sources
@@ -123,9 +122,9 @@ public class Configuration extends CompositeConfiguration {
             case "humanizeClassNames":
                 this.humanizeClassNames = getBoolean(key);
                 break;
-            case "defaultPersistenceProvider":
+            case "defaultPersistenceServiceProvider":
                 try {
-                    setDefaultPersistenceServiceBuilderClass(getString(key));
+                    this.setPersistenceServiceBuilderClass(getString(key));
                 } catch (ClassNotFoundException e) {
                     LOGGER.error(e.toString());
                 }
@@ -284,17 +283,16 @@ public class Configuration extends CompositeConfiguration {
         return (parent == null) ? Optional.empty() : findClassConfigurationRecursively(parent, getter);
     }
 
-    public void setDefaultPersistenceServiceBuilderClass(String defaultPersistenceProviderClass) throws ClassNotFoundException {
-
-        Class<?> clazz = Class.forName(defaultPersistenceProviderClass);
-        if (!PersistenceService.class.isAssignableFrom(clazz)) {
-            throw new ClassCastException("Class does not implement PersistenceService: " + defaultPersistenceProviderClass);
+    public void setPersistenceServiceBuilderClass(String persistenceServiceBuilderClass) throws ClassNotFoundException {
+        Class<?> clazz = Class.forName(persistenceServiceBuilderClass);
+        if (!PersistenceServiceBuilder.class.isAssignableFrom(clazz)) {
+            throw new ClassCastException("Class does not implement PersistenceService: " + persistenceServiceBuilderClass);
         }
-        setDefaultPersistenceServiceBuilderClass((Class<? extends PersistenceServiceBuilder>) clazz);
+        setPersistenceServiceBuilderClass((Class<? extends PersistenceServiceBuilder>) clazz);
     }
 
-    private void setDefaultPersistenceServiceBuilderClass(Class<? extends PersistenceServiceBuilder> clazz) {
-        this.defaultPersistenceServiceBuilder = clazz;
+    private void setPersistenceServiceBuilderClass(Class<? extends PersistenceServiceBuilder> clazz) {
+        this.persistenceServiceBuilder = clazz;
     }
 }
 

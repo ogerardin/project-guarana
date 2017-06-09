@@ -39,7 +39,7 @@ public class ClassInformation<C> {
     private List<ExecutableInformation<Method>> methods = null;
     private List<ExecutableInformation<Constructor>> constructors = null;
 
-    private List<ExecutableInformation<? extends Executable>> contributedExecutables = null;
+    private List<ExecutableInformation<Executable>> contributedExecutables = null;
 
     private List<PropertyInformation> properties = null;
 
@@ -195,7 +195,7 @@ public class ClassInformation<C> {
         return properties;
     }
 
-    public Collection<ExecutableInformation<? extends Executable>> getContributedExecutables() {
+    public Collection<ExecutableInformation<Executable>> getContributedExecutables() {
         if (contributedExecutables != null) {
             return contributedExecutables;
         }

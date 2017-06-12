@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 Olivier Gérardin
+ */
+
 package com.ogerardin.test;
 
 import com.ogerardin.guarana.core.persistence.basic.BasicPersistenceService;

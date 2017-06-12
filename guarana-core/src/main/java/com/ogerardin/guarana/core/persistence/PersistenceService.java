@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 Olivier Gérardin
+ */
+
 package com.ogerardin.guarana.core.persistence;
 
 import java.io.IOException;

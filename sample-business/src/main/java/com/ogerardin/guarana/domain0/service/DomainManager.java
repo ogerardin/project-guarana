@@ -19,15 +19,15 @@ public interface DomainManager {
 
     void clearAll();
 
-    Collection<Employee> getAllPersons();
+    Collection<Employee> getAllEmployees();
 
     Collection<Event> getAllEvents();
 
-    Employee save(Employee person);
+    Employee save(Employee employee);
 
     Event save(Event event);
 
-    List<Leave> getLeavesByPerson(Employee person);
+    List<Leave> getLeavesByPerson(Employee employee);
 
     void resetDemo();
 }

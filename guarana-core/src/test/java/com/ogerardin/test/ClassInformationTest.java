@@ -27,11 +27,11 @@ public class ClassInformationTest {
     public void testConstructors() {
         ClassInformation<Person> classInformation = ClassInformation.forClass(Person.class);
 
-        // expected: constructors for Person from native introspection
+        // expected: constructors for Employee from native introspection
         final Set<Constructor> expected = Arrays.stream(Person.class.getConstructors())
                 .collect(Collectors.toSet());
 
-        // actual: constructors for Person from ClassInformation
+        // actual: constructors for Employee from ClassInformation
         final Set<Constructor> actual = classInformation.getConstructors().stream()
                 .map(ExecutableInformation::getExecutable)
                 .collect(Collectors.toSet());
@@ -44,12 +44,12 @@ public class ClassInformationTest {
     public void testContributedConstructor() throws Exception {
         ClassInformation<Person> classInformation = ClassInformation.forClass(Person.class);
 
-        // expected: Thing constructors that take a Person as param
+        // expected: Thing constructors that take a Employee as param
         final Set<Constructor<?>> expected = Arrays.stream(Thing.class.getConstructors())
                 .filter(c -> Arrays.asList(c.getParameterTypes()).contains(Person.class))
                 .collect(Collectors.toSet());
 
-        // actual: contributed executables for Person that are Thing constructors
+        // actual: contributed executables for Employee that are Thing constructors
         final Set<Executable> actual = classInformation.getContributedExecutables().stream()
                 .map(ExecutableInformation::getExecutable)
                 .filter(e -> e.getDeclaringClass() == Thing.class)

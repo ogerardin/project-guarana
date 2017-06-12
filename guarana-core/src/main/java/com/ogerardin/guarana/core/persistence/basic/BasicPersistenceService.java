@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 Olivier Gérardin
+ */
+
 package com.ogerardin.guarana.core.persistence.basic;
 
 import com.ogerardin.guarana.core.persistence.PersistenceService;
@@ -39,8 +43,6 @@ public class BasicPersistenceService<C> implements PersistenceService<C> {
                 object = (C) inputStream.readObject();
             } catch (EOFException e) {
                 break;
-            } catch (IOException e) {
-                throw e;
             }
             result.add(object);
         }

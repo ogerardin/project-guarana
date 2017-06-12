@@ -33,7 +33,7 @@ public class DomainManagerDb4OImpl implements DomainManager {
 
     private final ObjectContainer objectContainer;
 
-    private ObservableList<Employee> allPersons;
+    private ObservableList<Employee> allEmployees;
     private ObservableList<Event> allEvents;
     private ObservableList<Leave> allLeaves;
 
@@ -50,12 +50,12 @@ public class DomainManagerDb4OImpl implements DomainManager {
         objectContainer.commit();
     }
 
-    public Collection<Employee> getAllPersons() {
-        if (allPersons == null) {
-            final ObjectSet<Employee> persons = objectContainer.query(Employee.class);
-            allPersons = getReplicatingObservableList(persons, objectContainer);
+    public Collection<Employee> getAllEmployees() {
+        if (allEmployees == null) {
+            final ObjectSet<Employee> employees = objectContainer.query(Employee.class);
+            allEmployees = getReplicatingObservableList(employees, objectContainer);
         }
-        return allPersons;
+        return allEmployees;
     }
 
     @Override
@@ -108,25 +108,29 @@ public class DomainManagerDb4OImpl implements DomainManager {
     public void resetDemo() {
         clearAll();
 
-        final Employee person0 = new Employee("GERARDIN", "Olivier");
-        save(person0);
-        final Employee person1 = new Employee("MARCEAU", "Marcel");
-        save(person1);
-        final Employee person2 = new Employee("OBAMA", "Barack");
-        save(person2);
+        final Employee employee0 = new Employee("GERARDIN", "Olivier");
+        save(employee0);
+        final Employee employee1 = new Employee("MARCEAU", "Marcel");
+        save(employee1);
+        final Employee employee2 = new Employee("OBAMA", "Barack");
+        save(employee2);
 
-        save(new Event(person0, new Date()));
+        save(new Event(employee0, new Date()));
 
-        getAllPersons().forEach(System.out::println);
+        getAllEmployees().forEach(System.out::println);
         getAllEvents().forEach(System.out::println);
         getAllLeaves().forEach(System.out::println);
     }
 
     @Override
-    public List<Leave> getLeavesByPerson(Employee person) {
+    public List<Leave> getLeavesByPerson(Employee employee) {
         return getAllLeaves().stream()
-                .filter(l -> l.getPerson() == person)
+                .filter(l -> l.getEmployee() == employee)
                 .collect(Collectors.toList());
+    }
+
+    public static void main(String[] args) {
+        new DomainManagerDb4OImpl().resetDemo();
     }
 
 }

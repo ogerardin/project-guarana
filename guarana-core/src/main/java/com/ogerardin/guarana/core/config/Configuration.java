@@ -286,7 +286,8 @@ public class Configuration extends CompositeConfiguration {
     public void setPersistenceServiceBuilderClass(String persistenceServiceBuilderClass) throws ClassNotFoundException {
         Class<?> clazz = Class.forName(persistenceServiceBuilderClass);
         if (!PersistenceServiceBuilder.class.isAssignableFrom(clazz)) {
-            throw new ClassCastException("Class does not implement PersistenceService: " + persistenceServiceBuilderClass);
+            throw new ClassCastException("Class does not implement " + PersistenceServiceBuilder.class.getSimpleName() +
+                    ": " + persistenceServiceBuilderClass);
         }
         setPersistenceServiceBuilderClass((Class<? extends PersistenceServiceBuilder>) clazz);
     }

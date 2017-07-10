@@ -2,11 +2,11 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.domain0.service;
+package com.ogerardin.business.sample.hr.service;
 
-import com.ogerardin.guarana.domain0.model.Employee;
-import com.ogerardin.guarana.domain0.model.Event;
-import com.ogerardin.guarana.domain0.model.Leave;
+import com.ogerardin.business.sample.hr.model.Employee;
+import com.ogerardin.business.sample.hr.model.Event;
+import com.ogerardin.business.sample.hr.model.Leave;
 
 import java.util.Collection;
 import java.util.List;

@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.domain2.model;
+package com.ogerardin.business.sample.website.model;
 
 import lombok.Data;
 
@@ -13,11 +13,14 @@ import java.util.List;
  * @since 14/02/2017
  */
 @Data
-public class Item {
-
-    Category category;
+public class Category {
 
     String name;
 
-    List<FeatureValue> features;
+    Category parent;
+
+    List<Feature> features;
+
+    List<Item> highlightedItems;
+
 }

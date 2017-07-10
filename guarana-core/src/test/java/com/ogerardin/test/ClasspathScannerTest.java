@@ -4,8 +4,8 @@
 
 package com.ogerardin.test;
 
-import com.ogerardin.guarana.domain1.model.Person;
-import com.ogerardin.guarana.domain1.model.Thing;
+import com.ogerardin.business.sample.thing.model.Person;
+import com.ogerardin.business.sample.thing.model.Thing;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import org.junit.Test;
 

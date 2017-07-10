@@ -4,10 +4,10 @@
 
 package com.ogerardin.test;
 
+import com.ogerardin.business.sample.thing.model.Person;
+import com.ogerardin.business.sample.thing.model.Thing;
 import com.ogerardin.guarana.core.metadata.ClassInformation;
 import com.ogerardin.guarana.core.metadata.ExecutableInformation;
-import com.ogerardin.guarana.domain1.model.Person;
-import com.ogerardin.guarana.domain1.model.Thing;
 import org.junit.Assert;
 import org.junit.Test;
 

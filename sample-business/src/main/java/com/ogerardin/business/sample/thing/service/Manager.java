@@ -2,10 +2,10 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.domain1.service;
+package com.ogerardin.business.sample.thing.service;
 
-import com.ogerardin.guarana.domain1.model.Person;
-import com.ogerardin.guarana.domain1.model.Thing;
+import com.ogerardin.business.sample.thing.model.Person;
+import com.ogerardin.business.sample.thing.model.Thing;
 
 import java.util.List;
 

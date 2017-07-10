@@ -2,16 +2,16 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.demo.javafx.domain0.adapters;
+package com.ogerardin.guarana.demo.javafx.hr.adapters;
 
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
 import com.db4o.config.Configuration;
-import com.ogerardin.guarana.domain0.model.Employee;
-import com.ogerardin.guarana.domain0.model.Event;
-import com.ogerardin.guarana.domain0.model.Leave;
-import com.ogerardin.guarana.domain0.service.DomainManager;
+import com.ogerardin.business.sample.hr.model.Employee;
+import com.ogerardin.business.sample.hr.model.Event;
+import com.ogerardin.business.sample.hr.model.Leave;
+import com.ogerardin.business.sample.hr.service.DomainManager;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -82,9 +82,9 @@ public class DomainManagerDb4OImpl implements DomainManager {
             LOGGER.debug("change: " + c);
             while (c.next()) {
                 if (c.wasAdded() || c.wasUpdated()) {
-                    c.getAddedSubList().stream().forEach(objectContainer::store);
+                    c.getAddedSubList().forEach(objectContainer::store);
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().stream().forEach(objectContainer::delete);
+                    c.getRemoved().forEach(objectContainer::delete);
                 } else {
                     LOGGER.warn("change not supported: " + c);
                 }

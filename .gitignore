@@ -7,3 +7,5 @@ logs/
 .ivy
 out/
 data.db4o
+/.idea/
+*.ser

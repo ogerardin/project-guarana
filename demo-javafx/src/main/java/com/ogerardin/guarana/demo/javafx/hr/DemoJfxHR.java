@@ -2,21 +2,21 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.demo.javafx.domain0;
+package com.ogerardin.guarana.demo.javafx.hr;
 
 /**
  * @author Olivier
  * @since 28/05/15
  */
 
-import com.ogerardin.guarana.demo.javafx.domain0.adapters.DomainManagerDb4OImpl;
-import com.ogerardin.guarana.domain0.service.DomainManager;
+import com.ogerardin.business.sample.hr.service.DomainManager;
+import com.ogerardin.guarana.demo.javafx.hr.adapters.DomainManagerDb4OImpl;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class DemoJfx0 extends Application {
+public class DemoJfxHR extends Application {
 
     private static DomainManager domainManager;
 

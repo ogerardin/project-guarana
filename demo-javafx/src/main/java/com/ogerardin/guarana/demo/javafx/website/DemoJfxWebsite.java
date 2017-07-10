@@ -2,20 +2,20 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.demo.javafx.domain2;
+package com.ogerardin.guarana.demo.javafx.website;
 
 /**
  * @author Olivier
  * @since 28/05/15
  */
 
-import com.ogerardin.guarana.domain2.model.Category;
+import com.ogerardin.business.sample.website.model.Category;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class DemoJfx2 extends Application {
+public class DemoJfxWebsite extends Application {
 
     private static Category category;
 

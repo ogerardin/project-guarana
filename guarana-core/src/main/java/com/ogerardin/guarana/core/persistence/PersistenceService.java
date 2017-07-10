@@ -5,14 +5,16 @@
 package com.ogerardin.guarana.core.persistence;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by olivier on 18/05/2017.
  */
 public interface PersistenceService<C> {
 
-    void save(C object) throws IOException;
+    void save(C object) throws IOException, ClassNotFoundException;
 
-    List<C> getAll() throws IOException, ClassNotFoundException;
+    Set<C> getAll() throws IOException, ClassNotFoundException;
+
+    void deleteAll() throws IOException;
 }

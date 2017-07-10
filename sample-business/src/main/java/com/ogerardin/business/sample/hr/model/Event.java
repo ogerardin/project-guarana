@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.domain0.model;
+package com.ogerardin.business.sample.hr.model;
 
 import lombok.Data;
 

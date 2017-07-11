@@ -4,7 +4,6 @@
 
 package com.ogerardin.test;
 
-import com.ogerardin.business.sample.thing.model.Person;
 import com.ogerardin.guarana.core.persistence.basic.BasicPersistenceService;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,14 +12,20 @@ import java.io.IOException;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by olivier on 18/05/2017.
  */
 public class BasicPersistenceServiceTest {
 
-    private BasicPersistenceService<Person> persistenceService = new BasicPersistenceService<>(Person.class);
+    private static final Item P_0 = new Item("bla0");
+    private static final Item P_1 = new Item("bla1");
+    private static final Item P_2 = new Item("bla2");
+
+    private BasicPersistenceService<Item> persistenceService = new BasicPersistenceService<>(Item.class);
 
     @Before
     public void setUp() throws IOException {
@@ -29,27 +34,38 @@ public class BasicPersistenceServiceTest {
 
     @Test
     public void testSaveRead() throws IOException, ClassNotFoundException {
-        Person p = new Person("bla");
+        persistenceService.save(P_0);
 
-        persistenceService.save(p);
-
-        Set<Person> all = persistenceService.getAll();
-        assertThat(all, hasItems(p));
+        Set<Item> all = persistenceService.getAll();
+        assertThat(all, hasItems(P_0));
     }
 
     @Test
     public void testSaveReadMulti() throws IOException, ClassNotFoundException {
-        Person p0 = new Person("bla0");
-        Person p1 = new Person("bla1");
-        Person p2 = new Person("bla2");
+        persistenceService.save(P_0, P_1, P_2);
 
-        persistenceService.save(p0);
-        persistenceService.save(p1);
-        persistenceService.save(p2);
-
-        Set<Person> all = persistenceService.getAll();
-        assertThat(all, hasItems(p0, p1, p2));
+        Set<Item> all = persistenceService.getAll();
+        assertThat(all, hasItems(P_0, P_1, P_2));
     }
+
+    @Test
+    public void testDelete() throws IOException, ClassNotFoundException {
+        persistenceService.deleteAll();
+        persistenceService.save(P_0, P_1, P_2);
+
+        persistenceService.delete(P_1);
+
+        Set<Item> all = persistenceService.getAll();
+        assertThat(all, not(hasItems(P_1)));
+    }
+
+    @Test
+    public void testDeleteAll() throws IOException, ClassNotFoundException {
+        persistenceService.deleteAll();
+        Set<Item> all = persistenceService.getAll();
+        assertTrue(all.isEmpty());
+    }
+
 
 }
 

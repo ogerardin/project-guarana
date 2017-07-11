@@ -10,9 +10,12 @@ import java.util.Set;
 /**
  * Created by olivier on 18/05/2017.
  */
+@SuppressWarnings("unchecked")
 public interface PersistenceService<C> {
 
-    void save(C object) throws IOException, ClassNotFoundException;
+    void save(C... objects) throws IOException, ClassNotFoundException;
+
+    void delete(C... objects) throws IOException, ClassNotFoundException;
 
     Set<C> getAll() throws IOException, ClassNotFoundException;
 

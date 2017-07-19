@@ -24,6 +24,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,10 @@ abstract class JfxUI implements JfxRenderable {
     JfxUI(JfxUiManager builder) {
         Validate.notNull(builder);
         this.builder = builder;
+    }
+
+    static Font getTitleLabelFont() {
+        return Font.font("Tahoma", FontWeight.NORMAL, 20);
     }
 
     <T> void configureContextMenu(Control control, ClassInformation<T> targetClassInformation, Supplier<T> targetSupplier) {

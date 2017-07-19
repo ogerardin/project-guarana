@@ -7,6 +7,8 @@ package com.ogerardin.guarana.core.ui;
 import java.util.Map;
 
 /**
+ * A UI for interacting with a {@link Map}
+ *
  * @param <R> type of the rendered UI
  * @param <K> type of the map keys
  * @param <V> type of the map values

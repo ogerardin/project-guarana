@@ -5,7 +5,7 @@
 package com.ogerardin.guarana.core.ui;
 
 /**
- * Parametrized UI builder. Declares factory methods for common UI types: instance UI, collection UI, ...
+ * Parametrized UI builder. Declares factory methods for common UI types: {@link InstanceUI}, {@link CollectionUI}, ...
  *
  * @param <R> actual type that {@link Renderable} objects will render to. This will depend on the target UI library;
  *           as a rule of thumb it should match a class that can be the root of an object hierarchy and can be itself

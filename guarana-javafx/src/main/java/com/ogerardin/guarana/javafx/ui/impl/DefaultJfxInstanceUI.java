@@ -47,7 +47,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     private BiMap<Node, PropertyInformation> propertyInformationByNode = HashBiMap.create();
     private BiMap<JfxInstanceUI, PropertyInformation> propertyInformationByUi = HashBiMap.create();
 
-    private ObjectProperty<T> boundObjectProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<T> boundObjectProperty = new SimpleObjectProperty<T>();
 
     public DefaultJfxInstanceUI(JfxUiManager builder, Class<T> clazz) {
         super(builder);
@@ -163,6 +163,12 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     }
 
 
+    /**
+     * Bind the specified object to this UI. This means:
+     * - unbinding any previous bound object
+     * - binding each property to the corresponding embedded UI
+     * @param object
+     */
     public void bind(T object) {
         LOGGER.debug("Binding " + object + " to " + this);
         if (getBoundObject() != null) {
@@ -172,61 +178,70 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         bindProperties(object);
     }
 
+    /**
+     * Unbind each embedded UI
+     */
     private void unbindProperties() {
-        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : propertyInformationByUi.entrySet()) {
-            final JfxInstanceUI ui = entry.getKey();
-            ui.boundObjectProperty().unbind();
-        }
+        propertyInformationByUi.forEach(
+                this::unbindProperty
+        );
     }
 
+
+    /**
+     * Bind each property of the specified object to its corresponding embedded UI
+     * @param object object providing property values
+     */
     private void bindProperties(T object) {
-
-        for (Map.Entry<JfxInstanceUI, PropertyInformation> entry : propertyInformationByUi.entrySet()) {
-            final JfxInstanceUI propertyUi = entry.getKey();
-            final PropertyInformation propertyInformation = entry.getValue();
-
-            bindProperty(object, propertyUi, propertyInformation);
-        }
+        propertyInformationByUi.forEach(
+                (ui, propertyInformation) -> bindProperty(object, ui, propertyInformation)
+        );
 
     }
 
-    private void bindProperty(T object, JfxInstanceUI propertyUi, PropertyInformation propertyInformation) {
 
+    private void unbindProperty(JfxInstanceUI ui, PropertyInformation propertyInformation) {
+        //FIXME we should unbind bidirectionally
+        ui.boundObjectProperty().unbind();
+    }
+
+    /**
+     * @param object object providing property value
+     * @param propertyUi embedded UI for the property
+     * @param propertyInformation property description
+     */
+    private void bindProperty(T object, JfxInstanceUI propertyUi, PropertyInformation propertyInformation) {
         // Get the property value
-        Object value;
+        Object propertyValue;
         try {
-            Method readMethod = propertyInformation.getReadMethod();
-            if (!readMethod.isAccessible()) {
-                readMethod.setAccessible(true);
-            }
-            value = readMethod.invoke(object);
+            propertyValue = getPropertyValue(object, propertyInformation);
         } catch (IllegalAccessException | InvocationTargetException e) {
             LOGGER.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
             return;
         }
 
         // if it's null and it's a collection, try to use an empty collection instead
-        if (value == null) {
+        if (propertyValue == null) {
             //ui.boundObjectProperty().unbind();
             if (!propertyInformation.isCollection() || propertyInformation.getWriteMethod() == null) {
                 return;
             }
-            value = createEmptyCollection(propertyInformation);
-            if (value == null) {
+            propertyValue = createEmptyCollection(propertyInformation);
+            if (propertyValue == null) {
                 return;
             }
             try {
-                propertyInformation.getWriteMethod().invoke(object, value);
+                propertyInformation.getWriteMethod().invoke(object, propertyValue);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 LOGGER.error("failed to set value for property " + propertyInformation.getDisplayName(), e);
             }
         }
 
-        final Class<?> valueClass = value.getClass();
+        final Class<?> valueClass = propertyValue.getClass();
 
         // if the property is a JavaFX-style property, bind directly to it
         if (Property.class.isAssignableFrom(valueClass)) {
-            Property<?> jfxProperty = (Property) value;
+            Property<?> jfxProperty = (Property) propertyValue;
             propertyUi.boundObjectProperty().bindBidirectional(jfxProperty);
             LOGGER.debug("[" + propertyInformation.getName() + "] bound using javafx.beans.property.Property method");
             return;
@@ -249,6 +264,8 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
             propertyUi.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
                 LOGGER.debug("bound object changed: " + oldValue + " --> " + newValue);
+                this.boundObjectProperty.setValue(this.boundObjectProperty.getValue());
+                //TODO notify change on this.boundobject
             });
 
 
@@ -262,7 +279,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
         // otherwise if the property implements java.util.Observable, register a listener
         if (java.util.Observable.class.isAssignableFrom(valueClass)) {
-            java.util.Observable observableValue = (java.util.Observable) value;
+            java.util.Observable observableValue = (java.util.Observable) propertyValue;
             final Observer observer = (observable, o) -> propertyUi.boundObjectProperty().setValue(observable);
             observableValue.addObserver(observer);
             observer.update(observableValue, this);
@@ -272,7 +289,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
         // otherwise if the property implements javafx.beans.Observable, register a listener
         if (Observable.class.isAssignableFrom(valueClass)) {
-            Observable observableValue = (Observable) value;
+            Observable observableValue = (Observable) propertyValue;
             final InvalidationListener listener = observable -> propertyUi.boundObjectProperty().setValue(observable);
             observableValue.addListener(listener);
             //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
@@ -285,7 +302,15 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         LOGGER.warn("no binding for property [" + propertyInformation.getName() + "]");
 
         //ui.setReadOnly(true);
-        propertyUi.bind(value);
+        propertyUi.bind(propertyValue);
+    }
+
+    private Object getPropertyValue(T object, PropertyInformation propertyInformation) throws IllegalAccessException, InvocationTargetException {
+        Method readMethod = propertyInformation.getReadMethod();
+        if (!readMethod.isAccessible()) {
+            readMethod.setAccessible(true);
+        }
+        return readMethod.invoke(object);
     }
 
     /**

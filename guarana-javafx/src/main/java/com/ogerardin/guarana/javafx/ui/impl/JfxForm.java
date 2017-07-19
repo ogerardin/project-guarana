@@ -13,8 +13,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 /**
  * @author oge
@@ -46,7 +44,7 @@ public abstract class JfxForm extends JfxUI {
 
     protected Label addTitle(String title) {
         final Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        titleLabel.setFont(getTitleLabelFont());
         titleLabel.setGraphic(new ImageView(ICON_DRAG_HANDLE));
         root.getChildren().add(titleLabel);
         return titleLabel;

@@ -9,44 +9,51 @@ import com.ogerardin.guarana.core.metadata.ClassInformation;
 import com.ogerardin.guarana.core.metadata.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
+import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * Default implementation of a CollectionUI for JavaFX.
+ * Default implementation of {@link com.ogerardin.guarana.core.ui.CollectionUI} for JavaFX.
  *
- * @param <T> type of the object being represented
+ * @param <T> common type of collection items
  *
  * @author Olivier
  * @since 29/05/15
  */
-public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<T> {
+public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<T>, ListChangeListener<T> {
 
-    private final Class<T> itemClass;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJfxCollectionUI.class);
+
     private final ClassInformation<T> classInformation;
+
+    SimpleListProperty<T> boundListProperty = new SimpleListProperty<T>();
 
     private final VBox root;
     private final TableView<T> tableView;
 
+    Class<T> getItemClass() {
+        return classInformation.getTargetClass();
+    }
+
     public DefaultJfxCollectionUI(JfxUiManager builder, Class<T> itemClass) {
         super(builder);
 
-        this.itemClass = itemClass;
         this.classInformation = ClassInformation.forClass(itemClass);
 
         // title, icon
@@ -60,10 +67,17 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 //        }
 
         root = new VBox();
+
+        BorderPane titleBox = new BorderPane();
         final String title = getConfiguration().getClassDisplayName(itemClass);
         final Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        root.getChildren().add(titleLabel);
+        titleLabel.setFont(getTitleLabelFont());
+        titleBox.setCenter(titleLabel);
+        Button addButton = new Button("+");
+        addButton.setOnAction(event -> addNewItem());
+        titleBox.setRight(addButton);
+
+        root.getChildren().add(titleBox);
 
 
         // build table
@@ -120,26 +134,32 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
     }
 
     private void handleDoubleClick(TableRow<T> row) {
-        String itemTitle;
-        T item = null;
-        if (!row.isEmpty()) {
-            itemTitle = "Item " + (row.getIndex() + 1);
-            item = row.getItem();
+        if (row.isEmpty()) {
+            addNewItem();
         } else {
-            itemTitle = "New Item";
-            try {
-                // try no-arg constructor.
-                item = itemClass.newInstance();
-                tableView.getItems().add(item);
-            } catch (Exception e) {
-                // no-arg constructor does not exist, is not public, or failed
-                //TODO better message
-                getBuilder().displayException(e);
-            }
-        }
-        if (item != null) {
-            getBuilder().displayInstance(item, itemClass, row, itemTitle);
+            String itemTitle = "Item " + (row.getIndex() + 1);
+            T item = row.getItem();
+            Class<T> itemClass = getItemClass();
             //TODO make sure changes on item are reflected in the list UI
+            getBuilder().displayInstance(item, itemClass, row, itemTitle);
+        }
+    }
+
+    private void addNewItem() {
+        T item;
+        try {
+            // try no-arg constructor.
+            Class<T> itemClass = getItemClass();
+            item = itemClass.newInstance();
+            tableView.getItems().add(item);
+            JfxInstanceUI<T> ui = getBuilder().displayInstance(item, itemClass, "New Item");
+            ui.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
+                LOGGER.debug("List item changed: " + oldValue + " -> " + newValue);
+            });
+        } catch (Exception e) {
+            // no-arg constructor does not exist, is not public, or failed
+            //TODO better message
+            getBuilder().displayException(e);
         }
     }
 
@@ -156,12 +176,38 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 
     @Override
     public void bind(Collection<? extends T> collection) {
-        if (collection instanceof ObservableList) {
-            tableView.setItems((ObservableList<T>) collection);
-        } else if (collection instanceof List) {
-            tableView.setItems(FXCollections.observableList((List<T>) collection));
-        } else {
-            tableView.setItems(FXCollections.observableList(new ArrayList<T>(collection)));
+        LOGGER.debug("Binding collection " + collection.getClass() + " to " + this);
+        // stop listening to existing ObservableList if any
+        if (getBoundList() != null) {
+            getBoundList().removeListener(this);
         }
+
+        // get ObservableList from argument
+        ObservableList<T> observableList;
+        if (collection instanceof ObservableList) {
+            observableList = (ObservableList<T>) collection;
+            LOGGER.debug("Collection bound as native ObservableList");
+        } else if (collection instanceof List) {
+            observableList = FXCollections.observableList((List<T>) collection);
+            LOGGER.debug("Collection wrapped into ObservableList using FXCollections.observableList");
+        } else {
+            ArrayList<T> list = new ArrayList<>(collection);
+            observableList = FXCollections.observableList(list);
+            LOGGER.warn("Collection copied to ObservableList");
+        }
+
+        // start listening and set view
+        boundListProperty.set(observableList);
+        observableList.addListener(this);
+        tableView.setItems(observableList);
+    }
+
+    private ObservableList<T> getBoundList() {
+        return boundListProperty.get();
+    }
+
+    @Override
+    public void onChanged(Change<? extends T> change) {
+        LOGGER.debug("list changed: " + change);
     }
 }

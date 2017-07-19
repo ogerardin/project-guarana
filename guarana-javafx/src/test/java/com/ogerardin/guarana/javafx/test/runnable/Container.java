@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.javafx.test;
+package com.ogerardin.guarana.javafx.test.runnable;
 
 import lombok.Data;
 

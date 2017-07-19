@@ -5,7 +5,7 @@
 package com.ogerardin.guarana.core.ui;
 
 /**
- * An abstract UI object that may be rendered as concrete UI type R
+ * An abstract UI object that may be rendered as concrete UI of type R
  *
  * @param <R> the concrete UI type
  *

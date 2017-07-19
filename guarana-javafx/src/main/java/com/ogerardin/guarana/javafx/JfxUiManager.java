@@ -20,20 +20,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
- * UIBuilder implementation for JavaFX. The chosen renderable type is {@link Parent} as it can be the root of a
- * {@link Node} tree and can be put inside a {@link Stage}
+ * UIBuilder implementation for JavaFX. The chosen renderable type is {@link Parent}
  *
  * @author oge
  * @since 07/09/2015

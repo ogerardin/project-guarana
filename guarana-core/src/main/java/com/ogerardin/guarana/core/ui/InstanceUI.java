@@ -5,6 +5,8 @@
 package com.ogerardin.guarana.core.ui;
 
 /**
+ * A UI for a interacting with a single instance
+ *
  * @param <R> type of the rendered UI object
  * @param <T> type of the object being represented
  *

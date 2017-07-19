@@ -5,10 +5,13 @@
 package com.ogerardin.test;
 
 import com.ogerardin.guarana.core.persistence.basic.BasicPersistenceService;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -45,12 +48,13 @@ public class BasicPersistenceServiceTest {
         persistenceService.save(P_0, P_1, P_2);
 
         Set<Item> all = persistenceService.getAll();
-        assertThat(all, hasItems(P_0, P_1, P_2));
+//        assertThat(all, hasItems(P_0, P_1, P_2));
+        HashSet<Item> expected = new HashSet<>(Arrays.asList(P_0, P_1, P_2));
+        assertThat(all, Matchers.equalTo(expected));
     }
 
     @Test
     public void testDelete() throws IOException, ClassNotFoundException {
-        persistenceService.deleteAll();
         persistenceService.save(P_0, P_1, P_2);
 
         persistenceService.delete(P_1);
@@ -61,7 +65,10 @@ public class BasicPersistenceServiceTest {
 
     @Test
     public void testDeleteAll() throws IOException, ClassNotFoundException {
+        persistenceService.save(P_0, P_1, P_2);
+
         persistenceService.deleteAll();
+
         Set<Item> all = persistenceService.getAll();
         assertTrue(all.isEmpty());
     }

@@ -14,7 +14,7 @@ import org.apache.commons.configuration.SystemConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Executable;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -223,8 +223,8 @@ public class Configuration extends CompositeConfiguration {
      * Returns true if and only if the specified method is configured as hidden for the specified class or any of
      * its superclasses.
      */
-    public <C> boolean isHiddenMethod(Class<C> clazz, Method method) {
-        final Optional<Boolean> isHidden = findClassConfigurationRecursively(clazz, cc -> cc.isHiddenMethod(method) ? true : null);
+    public <C> boolean isHidden(Class<C> clazz, Executable executable) {
+        final Optional<Boolean> isHidden = findClassConfigurationRecursively(clazz, cc -> cc.isHidden(executable) ? true : null);
         return isHidden.orElse(false);
     }
 

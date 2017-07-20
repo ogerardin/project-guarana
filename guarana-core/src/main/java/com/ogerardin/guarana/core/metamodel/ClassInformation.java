@@ -69,7 +69,7 @@ public class ClassInformation<C> {
                 || targetClassName.startsWith("sun.");
     }
 
-    private void scanReferencing() throws ClassNotFoundException {
+    private void scanReferencing() {
         if (isPrimitive() || isSystem()) {
             return;
         }
@@ -114,7 +114,7 @@ public class ClassInformation<C> {
                 .collect(Collectors.toList());
     }
 
-    private static void addContributingExecutable(Class type, ExecutableInformation executable) throws ClassNotFoundException {
+    private static void addContributingExecutable(Class type, ExecutableInformation executable) {
         if (type.isPrimitive() || isSystem(type)) {
             return;
         }
@@ -126,7 +126,7 @@ public class ClassInformation<C> {
         returnTypeClassInfo.addContributingExecutable(executable);
     }
 
-    private void addContributingExecutable(ExecutableInformation executableInformation) throws ClassNotFoundException {
+    private void addContributingExecutable(ExecutableInformation executableInformation) {
         LOGGER.debug("Add contributing " + executableInformation.getClass().getSimpleName()
                 + " for " + this.getTargetClass().getSimpleName() + ": " + executableInformation);
 //        LOGGER.debug("Add contributing executable for " + this.getTargetClass().getSimpleName() + " -> " +
@@ -192,7 +192,7 @@ public class ClassInformation<C> {
         return properties;
     }
 
-    public Collection<ExecutableInformation> getContributedExecutables() throws ClassNotFoundException {
+    public Collection<ExecutableInformation> getContributedExecutables() {
         if (contributedExecutables != null) {
             return contributedExecutables;
         }

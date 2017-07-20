@@ -8,6 +8,7 @@ import com.ogerardin.guarana.core.ui.InstanceUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
@@ -33,7 +34,7 @@ public class ClassConfiguration<C> {
     private Boolean humanizePropertyNames = null;
     private final Set<String> hiddenProperties = new HashSet<>();
     private final Set<String> shownProperties = new HashSet<>();
-    private final Set<Method> hiddenMethods = new HashSet<>();
+    private final Set<Executable> hiddenMethods = new HashSet<>();
     private Boolean zoomable = null;
 
 
@@ -119,7 +120,7 @@ public class ClassConfiguration<C> {
         hideMethods(targetClass.getDeclaredMethods());
     }
 
-    public boolean isHiddenMethod(Method method) {
+    public boolean isHidden(Executable method) {
 //        Validate.isTrue(method.getDeclaringClass() == this.targetClass);
         return hiddenMethods.contains(method);
     }

@@ -9,11 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.MethodDescriptor;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Encapsulates information about an {@link Executable} ({@link Method} or {@link Constructor}) obtained through
@@ -48,21 +49,6 @@ public class ExecutableInformation {
         return list;
     }
 
-    Set<Class<?>> getReferencedClasses() {
-        ClassSet referencedClasses = new ClassSet();
-        // add return type and its parameter types
-//        if (executable instanceof Method) {
-//            final Method method = (Method) this.executable;
-//            referencedClasses.add(method.getReturnType());
-//            referencedClasses.addParameterized(method.getGenericReturnType());
-//        }
-        // add parameters and their parameter types
-        Collections.addAll(referencedClasses, executable.getParameterTypes());
-        for (Type t : executable.getGenericParameterTypes()) {
-            referencedClasses.addParameterized(t);
-        }
-        return referencedClasses;
-    }
 
     public boolean isGetterOrSetter() {
         String methodName = executable.getName();
@@ -79,9 +65,6 @@ public class ExecutableInformation {
         return executable.getName();
     }
 
-    public <C> boolean references(Class<C> targetClass) {
-        return getReferencedClasses().contains(targetClass);
-    }
 
     public boolean isMethod() {
         return executable instanceof Method;

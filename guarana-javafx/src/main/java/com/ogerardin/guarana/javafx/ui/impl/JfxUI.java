@@ -64,7 +64,7 @@ abstract class JfxUI implements JfxRenderable {
 
     <T> void configureContextMenu(Control control, ClassInformation<T> targetClassInformation, Supplier<T> targetSupplier) {
         ContextMenu contextMenu = new ContextMenu();
-        final Class<T> beanClass = targetClassInformation.getTargetClass();
+        final Class<T> beanClass = targetClassInformation.getJavaClass();
 
         // add instance methods
         if (targetSupplier != null) {

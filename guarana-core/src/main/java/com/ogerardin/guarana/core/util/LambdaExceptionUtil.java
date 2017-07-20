@@ -129,7 +129,7 @@ public final class LambdaExceptionUtil {
     }
 
     @SuppressWarnings("unchecked")
-    private static <E extends Throwable> void throwAsUnchecked(Exception exception) throws E {
+    private static <E extends Exception> void throwAsUnchecked(Exception exception) throws E {
         throw (E) exception;
     }
 

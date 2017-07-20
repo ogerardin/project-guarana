@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.core.metamodel;
+package com.ogerardin.guarana.core.introspection;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

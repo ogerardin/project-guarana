@@ -5,6 +5,7 @@
 package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.config.Util;
+import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import com.ogerardin.guarana.core.metamodel.ClassInformation;
 import com.ogerardin.guarana.core.metamodel.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
@@ -48,13 +49,13 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
     private final TableView<T> tableView;
 
     Class<T> getItemClass() {
-        return classInformation.getTargetClass();
+        return classInformation.getJavaClass();
     }
 
     public DefaultJfxCollectionUI(JfxUiManager builder, Class<T> itemClass) {
         super(builder);
 
-        this.classInformation = ClassInformation.forClass(itemClass);
+        this.classInformation = JavaIntrospector.getClassInformation(itemClass);
 
         // title, icon
 //        Image icon = classInformation.getIcon(BeanInfo.ICON_COLOR_32x32);

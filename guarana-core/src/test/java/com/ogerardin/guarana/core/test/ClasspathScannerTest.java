@@ -2,10 +2,10 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.test;
+package com.ogerardin.guarana.core.test;
 
-import com.ogerardin.business.sample.thing.model.Person;
-import com.ogerardin.business.sample.thing.model.Thing;
+import com.ogerardin.guarana.core.test.domain.Person;
+import com.ogerardin.guarana.core.test.domain.Thing;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import org.junit.Test;
 

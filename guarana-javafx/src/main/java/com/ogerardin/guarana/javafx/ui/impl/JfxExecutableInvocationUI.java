@@ -5,7 +5,7 @@
 package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.config.Util;
-import com.ogerardin.guarana.core.introspection.Introspector;
+import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import com.ogerardin.guarana.javafx.ui.JfxRenderable;
@@ -186,7 +186,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
     }
 
     private <T> void zoomCollection(Node parent, Type genericParamtype) {
-        final Class<T> itemType = Introspector.getSingleParameterType(genericParamtype);
+        final Class<T> itemType = JavaIntrospector.getSingleParameterType(genericParamtype);
         final Collection<T> collection = new ArrayList<>();
         getBuilder().displayCollection(collection, itemType, parent, "Collection parameter");
     }

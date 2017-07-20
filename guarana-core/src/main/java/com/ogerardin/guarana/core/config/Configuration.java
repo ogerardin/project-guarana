@@ -4,6 +4,7 @@
 
 package com.ogerardin.guarana.core.config;
 
+import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import com.ogerardin.guarana.core.metamodel.ClassInformation;
 import com.ogerardin.guarana.core.persistence.PersistenceServiceBuilder;
 import com.ogerardin.guarana.core.persistence.basic.DefaultPersistenceServiceBuilder;
@@ -194,7 +195,7 @@ public class Configuration extends CompositeConfiguration {
         }
 
         // otherwise if bean display name is different from class name, use it
-        final ClassInformation classInformation = ClassInformation.forClass(clazz);
+        final ClassInformation classInformation = JavaIntrospector.getClassInformation(clazz);
         final String className = classInformation.getSimpleClassName();
         String beanDisplayName = classInformation.getBeanDisplayName();
         if (!beanDisplayName.equals(className)) {

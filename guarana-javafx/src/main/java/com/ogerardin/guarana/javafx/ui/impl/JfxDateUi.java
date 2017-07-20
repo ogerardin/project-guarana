@@ -20,7 +20,7 @@ import java.util.Date;
  * Simple implementation of JfxInstanceUI<Date> by inheriting directly from DatePicker.
  * Suitable for using as en embedded UI for Date properties as follows:
  * <pre>
- *             config.forClass(Date.class).setEmbeddedUiClass(JfxDateUi.class);
+ *             config.getClassInformation(Date.class).setEmbeddedUiClass(JfxDateUi.class);
  * </pre>
  *
  * @author olivier

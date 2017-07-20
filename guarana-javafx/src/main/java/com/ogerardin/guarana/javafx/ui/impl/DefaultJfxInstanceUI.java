@@ -7,7 +7,7 @@ package com.ogerardin.guarana.javafx.ui.impl;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.ogerardin.guarana.core.config.Util;
-import com.ogerardin.guarana.core.introspection.Introspector;
+import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import com.ogerardin.guarana.core.metamodel.ClassInformation;
 import com.ogerardin.guarana.core.metamodel.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
@@ -56,7 +56,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
 
     private void buildUi(Class<T> clazz) {
 
-        ClassInformation<T> classInformation = ClassInformation.forClass(clazz);
+        ClassInformation<T> classInformation = JavaIntrospector.getClassInformation(clazz);
 
         // title
         final String displayName = getConfiguration().getClassDisplayName(clazz);
@@ -74,7 +74,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             final Method readMethod = propertyInformation.getReadMethod();
 
             // ignore hidden properties
-            if (! getConfiguration().isShownProperty(classInformation.getTargetClass(), propertyName)) {
+            if (! getConfiguration().isShownProperty(classInformation.getJavaClass(), propertyName)) {
                 continue;
             }
 
@@ -136,7 +136,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     private <C> void zoomCollection(Node parent, Method readMethod, String title) {
         try {
             // Try to use generic introspection to determine the type of collection members.
-            final Class<C> itemType = Introspector.getMethodResultSingleParameterType(readMethod);
+            final Class<C> itemType = JavaIntrospector.getMethodResultSingleParameterType(readMethod);
             final Collection<C> collection = (Collection<C>) readMethod.invoke(getBoundObject());
             getBuilder().displayCollection(collection, itemType, parent, title);
         } catch (Exception e) {

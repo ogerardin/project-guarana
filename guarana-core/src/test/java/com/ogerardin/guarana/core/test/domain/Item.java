@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.business.sample.thing.model;
+package com.ogerardin.guarana.core.test.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -15,11 +15,11 @@ import java.io.Serializable;
  */
 @EqualsAndHashCode
 @ToString
-public class Person implements Serializable{
+public class Item implements Serializable {
 
     private final String name;
 
-    public Person(String name) {
+    public Item(String name) {
         this.name = name;
     }
 

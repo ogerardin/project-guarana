@@ -13,8 +13,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 
 /**
@@ -23,7 +21,7 @@ import javafx.util.StringConverter;
  * which uses the {@link Object#toString()} by default, but may be overridden by calling {@link ClassConfiguration#setToString(ToString)}
  * as in the following example:
  * <pre>
- * configuration.forClass(Person.class).setToString(Person::getFullNameLastFirst);
+ * configuration.getClassInformation(Person.class).setToString(Person::getFullNameLastFirst);
  * </pre>
  * Conversion from String to type {@link T} assumes T has a public constructor that takes a String as only argument.
  *

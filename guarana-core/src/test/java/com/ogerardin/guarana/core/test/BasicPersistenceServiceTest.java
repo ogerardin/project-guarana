@@ -2,9 +2,10 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.test;
+package com.ogerardin.guarana.core.test;
 
 import com.ogerardin.guarana.core.persistence.basic.BasicPersistenceService;
+import com.ogerardin.guarana.core.test.domain.Item;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;

@@ -4,6 +4,7 @@
 
 package com.ogerardin.guarana.core.metamodel;
 
+import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +29,10 @@ public class ParameterInformation {
     }
 
     private boolean isInjectable(Class<?> type) {
-        if (ClassInformation.isSystem(type)) {
+        if (JavaIntrospector.isSystem(type)) {
             return false;
         }
-        ClassInformation<?> classInformation = ClassInformation.forClass(type);
+        ClassInformation<?> classInformation = JavaIntrospector.getClassInformation(type);
         return classInformation.isService();
     }
 }

@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.business.sample.thing.model;
+package com.ogerardin.guarana.core.test.domain;
 
 /**
  * @author oge

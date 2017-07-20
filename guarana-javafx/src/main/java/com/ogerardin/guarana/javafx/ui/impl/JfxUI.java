@@ -5,8 +5,8 @@
 package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.config.Configuration;
-import com.ogerardin.guarana.core.metadata.ClassInformation;
-import com.ogerardin.guarana.core.metadata.ExecutableInformation;
+import com.ogerardin.guarana.core.metamodel.ClassInformation;
+import com.ogerardin.guarana.core.metamodel.ExecutableInformation;
 import com.ogerardin.guarana.core.registry.Identifier;
 import com.ogerardin.guarana.core.registry.ObjectRegistry;
 import com.ogerardin.guarana.javafx.JfxUiManager;
@@ -94,7 +94,7 @@ abstract class JfxUI implements JfxRenderable {
         // add other items
         // FIXME disabled for now because it triggers too much introspection
 /*
-        Introspector.getClassInformation(this.getClass()).getMethods().stream()
+        BeanInfoIntrospector.getClassInformation(this.getClass()).getMethods().stream()
                 .filter(m -> m.getName().equals("displayObjectRegistry"))
                 .map(m -> new MethodMenuItem<>(m, () -> this, null))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));

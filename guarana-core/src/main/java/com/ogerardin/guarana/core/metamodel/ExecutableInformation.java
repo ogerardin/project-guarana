@@ -2,12 +2,13 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.core.metadata;
+package com.ogerardin.guarana.core.metamodel;
 
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.MethodDescriptor;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,19 +23,23 @@ import java.util.Set;
  * @since 14/06/2016
  */
 @ToString
-public class ExecutableInformation<E extends Executable> {
+public class ExecutableInformation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExecutableInformation.class);
 
-    private final E executable;
+    private final Executable executable;
     private final List<ParameterInformation> parameters;
 
-    ExecutableInformation(E executable) {
+    public ExecutableInformation(Executable executable) {
         this.executable = executable;
         this.parameters = parseParameters(executable);
     }
 
-    private List<ParameterInformation> parseParameters(E executable) {
+    public ExecutableInformation(MethodDescriptor methodDescriptor) {
+        this(methodDescriptor.getMethod());
+    }
+
+    private List<ParameterInformation> parseParameters(Executable executable) {
 //        LOGGER.debug("parsing parameters of: " + executable);
         List<ParameterInformation> list = new ArrayList<>();
         for (Parameter parameter : executable.getParameters()) {
@@ -66,7 +71,7 @@ public class ExecutableInformation<E extends Executable> {
                 || (methodName.startsWith("set") && paramCount == 1);
     }
 
-    public E getExecutable() {
+    public Executable getExecutable() {
         return executable;
     }
 

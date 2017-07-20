@@ -4,7 +4,7 @@
 
 package com.ogerardin.guarana.core.config;
 
-import com.ogerardin.guarana.core.metadata.ClassInformation;
+import com.ogerardin.guarana.core.metamodel.ClassInformation;
 import com.ogerardin.guarana.core.persistence.PersistenceServiceBuilder;
 import com.ogerardin.guarana.core.persistence.basic.DefaultPersistenceServiceBuilder;
 import org.apache.commons.configuration.CompositeConfiguration;

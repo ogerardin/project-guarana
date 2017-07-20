@@ -4,7 +4,7 @@
 
 package com.ogerardin.guarana.javafx.test.junit;
 
-import com.ogerardin.guarana.javafx.test.runnable.Container;
+import com.ogerardin.guarana.javafx.test.items.ItemPojo;
 import javafx.beans.property.Property;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import org.junit.Assert;
@@ -20,7 +20,7 @@ public class JfxBeanPropTest {
 
     @Test
     public void testJfxBeanProp() throws NoSuchMethodException {
-        Container container = new Container();
+        ItemPojo container = new ItemPojo();
         container.setName("BLA");
 
         Property<String> jfxProperty = JavaBeanObjectPropertyBuilder.create()

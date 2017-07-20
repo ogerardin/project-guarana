@@ -5,8 +5,8 @@
 package com.ogerardin.guarana.javafx.ui.impl;
 
 import com.ogerardin.guarana.core.config.Util;
-import com.ogerardin.guarana.core.metadata.ClassInformation;
-import com.ogerardin.guarana.core.metadata.PropertyInformation;
+import com.ogerardin.guarana.core.metamodel.ClassInformation;
+import com.ogerardin.guarana.core.metamodel.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;

@@ -2,18 +2,15 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.core.metadata;
+package com.ogerardin.guarana.core.metamodel;
 
 import com.ogerardin.guarana.core.annotations.Service;
-import com.ogerardin.guarana.core.introspection.Introspector;
+import com.ogerardin.guarana.core.introspection.BeanInfoIntrospector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,23 +27,23 @@ public class ClassInformation<C> {
     private static final Map<Class, ClassInformation> classInformationByClass = new HashMap<>();
 
     private final Class<C> targetClass;
-    private final Introspector<C> introspector;
+    private final BeanInfoIntrospector<C> introspector;
 
     private final boolean isService;
     private final String simpleClassName;
     private final String displayName;
 
-    private List<ExecutableInformation<Method>> methods = null;
-    private List<ExecutableInformation<Constructor>> constructors = null;
+    private List<ExecutableInformation> methods = null;
+    private List<ExecutableInformation> constructors = null;
 
-    private List<ExecutableInformation<Executable>> contributedExecutables = null;
+    private List<ExecutableInformation> contributedExecutables = null;
 
     private List<PropertyInformation> properties = null;
 
 
     private ClassInformation(Class<C> targetClass) {
         this.targetClass = targetClass;
-        this.introspector = new Introspector<C>(targetClass);
+        this.introspector = new BeanInfoIntrospector<>(targetClass);
         try {
             BeanInfo beanInfo = java.beans.Introspector.getBeanInfo(this.targetClass);
             this.simpleClassName = beanInfo.getBeanDescriptor().getBeanClass().getSimpleName();
@@ -72,7 +69,7 @@ public class ClassInformation<C> {
                 || targetClassName.startsWith("sun.");
     }
 
-    private void scanReferencing() {
+    private void scanReferencing() throws ClassNotFoundException {
         if (isPrimitive() || isSystem()) {
             return;
         }
@@ -112,12 +109,12 @@ public class ClassInformation<C> {
         return targetClass.isPrimitive();
     }
 
-    private List<ExecutableInformation<?>> getMethodsAndConstructors() {
+    private List<ExecutableInformation> getMethodsAndConstructors() {
         return Stream.concat(getMethods().stream(), getConstructors().stream())
                 .collect(Collectors.toList());
     }
 
-    private static void addContributingExecutable(Class type, ExecutableInformation executable) {
+    private static void addContributingExecutable(Class type, ExecutableInformation executable) throws ClassNotFoundException {
         if (type.isPrimitive() || isSystem(type)) {
             return;
         }
@@ -129,7 +126,7 @@ public class ClassInformation<C> {
         returnTypeClassInfo.addContributingExecutable(executable);
     }
 
-    private void addContributingExecutable(ExecutableInformation executableInformation) {
+    private void addContributingExecutable(ExecutableInformation executableInformation) throws ClassNotFoundException {
         LOGGER.debug("Add contributing " + executableInformation.getClass().getSimpleName()
                 + " for " + this.getTargetClass().getSimpleName() + ": " + executableInformation);
 //        LOGGER.debug("Add contributing executable for " + this.getTargetClass().getSimpleName() + " -> " +
@@ -146,7 +143,7 @@ public class ClassInformation<C> {
         }
 
         LOGGER.debug("Getting class information for: " + targetClass);
-        classInformation = new ClassInformation<T>(targetClass);
+        classInformation = new ClassInformation<>(targetClass);
         classInformationByClass.put(targetClass, classInformation);
         return classInformation;
     }
@@ -167,7 +164,7 @@ public class ClassInformation<C> {
         return targetClass;
     }
 
-    public List<ExecutableInformation<Method>> getMethods() {
+    public List<ExecutableInformation> getMethods() {
         if (methods == null) {
             methods = Arrays.stream(introspector.getMethods())
                     .map(ExecutableInformation::new)
@@ -176,11 +173,11 @@ public class ClassInformation<C> {
         return methods;
     }
 
-    public List<ExecutableInformation<Constructor>> getConstructors() {
+    public List<ExecutableInformation> getConstructors() {
         if (constructors == null) {
             //noinspection RedundantTypeArguments
             constructors = Arrays.stream(introspector.getConstructors())
-                    .map(ExecutableInformation<Constructor>::new)
+                    .map(ExecutableInformation::new)
                     .collect(Collectors.toList());
         }
         return constructors;
@@ -195,7 +192,7 @@ public class ClassInformation<C> {
         return properties;
     }
 
-    public Collection<ExecutableInformation<Executable>> getContributedExecutables() {
+    public Collection<ExecutableInformation> getContributedExecutables() throws ClassNotFoundException {
         if (contributedExecutables != null) {
             return contributedExecutables;
         }

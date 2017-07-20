@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.core.metadata;
+package com.ogerardin.guarana.core.metamodel;
 
 import lombok.ToString;
 import org.slf4j.Logger;

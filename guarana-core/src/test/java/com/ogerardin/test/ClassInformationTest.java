@@ -6,8 +6,8 @@ package com.ogerardin.test;
 
 import com.ogerardin.business.sample.thing.model.Person;
 import com.ogerardin.business.sample.thing.model.Thing;
-import com.ogerardin.guarana.core.metadata.ClassInformation;
-import com.ogerardin.guarana.core.metadata.ExecutableInformation;
+import com.ogerardin.guarana.core.metamodel.ClassInformation;
+import com.ogerardin.guarana.core.metamodel.ExecutableInformation;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,12 +27,12 @@ public class ClassInformationTest {
     public void testConstructors() {
         ClassInformation<Person> classInformation = ClassInformation.forClass(Person.class);
 
-        // expected: constructors for Employee from native introspection
+        // expected: constructors from native introspection
         final Set<Constructor> expected = Arrays.stream(Person.class.getConstructors())
                 .collect(Collectors.toSet());
 
-        // actual: constructors for Employee from ClassInformation
-        final Set<Constructor> actual = classInformation.getConstructors().stream()
+        // actual: constructors from ClassInformation
+        final Set<Executable> actual = classInformation.getConstructors().stream()
                 .map(ExecutableInformation::getExecutable)
                 .collect(Collectors.toSet());
 

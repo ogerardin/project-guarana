@@ -8,8 +8,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.ogerardin.guarana.core.config.Util;
 import com.ogerardin.guarana.core.introspection.Introspector;
-import com.ogerardin.guarana.core.metadata.ClassInformation;
-import com.ogerardin.guarana.core.metadata.PropertyInformation;
+import com.ogerardin.guarana.core.metamodel.ClassInformation;
+import com.ogerardin.guarana.core.metamodel.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
@@ -238,12 +238,13 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         }
 
         final Class<?> valueClass = propertyValue.getClass();
+        String propertyName = propertyInformation.getName();
 
         // if the property is a JavaFX-style property, bind directly to it
         if (Property.class.isAssignableFrom(valueClass)) {
             Property<?> jfxProperty = (Property) propertyValue;
             propertyUi.boundObjectProperty().bindBidirectional(jfxProperty);
-            LOGGER.debug("[" + propertyInformation.getName() + "] bound using javafx.beans.property.Property method");
+            LOGGER.debug("[" + propertyName + "] bound using javafx.beans.property.Property method");
             return;
         }
 
@@ -251,21 +252,23 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         try {
             Property<?> jfxSyntheticProperty = JavaBeanObjectPropertyBuilder.create()
                     .bean(object)
-                    .name(propertyInformation.getName())
+                    .name(propertyName)
                     .build();
 
             propertyUi.boundObjectProperty().bindBidirectional(jfxSyntheticProperty);
-            LOGGER.debug("[" + propertyInformation.getName() + "] bound using JavaBeanObjectPropertyBuilder method");
+            LOGGER.debug("[" + propertyName + "] bound using JavaBeanObjectPropertyBuilder method");
 
 
             jfxSyntheticProperty.addListener((observable, oldValue, newValue) -> {
-                LOGGER.debug("jfx property changed: " + oldValue + " --> " + newValue);
+                LOGGER.debug("jfx property [" + propertyName +
+                        "] changed: " + oldValue + " --> " + newValue);
             });
 
             propertyUi.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-                LOGGER.debug("bound object changed: " + oldValue + " --> " + newValue);
-                this.boundObjectProperty.setValue(this.boundObjectProperty.getValue());
+                LOGGER.debug("object bound to property [" + propertyName +
+                        "] changed: " + oldValue + " --> " + newValue);
                 //TODO notify change on this.boundobject
+//                this.boundObjectProperty.setValue(this.boundObjectProperty.getValue());
             });
 
 
@@ -283,7 +286,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             final Observer observer = (observable, o) -> propertyUi.boundObjectProperty().setValue(observable);
             observableValue.addObserver(observer);
             observer.update(observableValue, this);
-            LOGGER.debug("[" + propertyInformation.getName() + "] bound using java.util.Observable method");
+            LOGGER.debug("[" + propertyName + "] bound using java.util.Observable method");
             return;
         }
 
@@ -294,12 +297,12 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             observableValue.addListener(listener);
             //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
             listener.invalidated(observableValue);
-            LOGGER.debug("[" + propertyInformation.getName() + "] bound using javafx.beans.Observable method");
+            LOGGER.debug("[" + propertyName + "] bound using javafx.beans.Observable method");
             return;
         }
 
         // otherwise just set the value
-        LOGGER.warn("no binding for property [" + propertyInformation.getName() + "]");
+        LOGGER.warn("no binding for property [" + propertyName + "]");
 
         //ui.setReadOnly(true);
         propertyUi.bind(propertyValue);

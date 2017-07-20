@@ -5,13 +5,14 @@
 package com.ogerardin.guarana.javafx.test.runnable;
 
 import com.ogerardin.guarana.javafx.JfxUiManager;
+import com.ogerardin.guarana.javafx.test.items.ItemJfx;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class SingleInstanceJfx extends Application {
+public class SingleInstanceWithJfx extends Application {
 
-    private static Container container;
+    private static ItemJfx item;
 
     @Override
     public void start(Stage primaryStage) {
@@ -20,8 +21,8 @@ public class SingleInstanceJfx extends Application {
         JfxUiManager uiManager = new JfxUiManager();
 
         // build UI and bind it to actual instance
-        JfxInstanceUI<Container> ui = uiManager.buildInstanceUI(Container.class);
-        ui.bind(container);
+        JfxInstanceUI<ItemJfx> ui = uiManager.buildInstanceUI(ItemJfx.class);
+        ui.bind(item);
 
         //display UI in JavaFX primary Stage
         uiManager.display(ui, primaryStage, "Hello Guarana!");
@@ -30,8 +31,8 @@ public class SingleInstanceJfx extends Application {
     public static void main(String[] args) {
 
         // instantiate our main business object
-        container = new Container();
-        container.setName("root");
+        item = new ItemJfx();
+        item.setName("root");
 
         // handoff to JavaFX; this will call the start() method
         launch(args);

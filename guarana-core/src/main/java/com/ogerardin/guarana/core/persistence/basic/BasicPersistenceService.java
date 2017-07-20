@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.ogerardin.guarana.core.java.LambdaExceptionUtil.rethrowingConsumer;
+import static com.ogerardin.guarana.core.util.LambdaExceptionUtil.rethrowConsumer;
 
 /**
  * Most basic persistence service, implemented using native serialization.
@@ -72,7 +72,7 @@ public class BasicPersistenceService<C> implements PersistenceService<C> {
 
     private void saveAll(Set<C> items) throws IOException {
         ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(this.dataFilePath.toFile()));
-        items.forEach(rethrowingConsumer(outputStream::writeObject));
+        items.forEach(rethrowConsumer(outputStream::writeObject));
     }
 
     @Override

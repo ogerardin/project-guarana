@@ -7,7 +7,7 @@ package com.ogerardin.guarana.javafx.binding;
 import com.google.common.base.Converter;
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.config.Configuration;
-import com.ogerardin.guarana.core.metadata.PropertyInformation;
+import com.ogerardin.guarana.core.metamodel.PropertyInformation;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;

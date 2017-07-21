@@ -28,6 +28,7 @@ import javafx.scene.layout.GridPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -206,7 +207,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     }
 
     /**
-     * @param object object providing property value
+     * @param object object providing the property
      * @param propertyUi embedded UI for the property
      * @param propertyInformation property description
      */
@@ -214,7 +215,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         // Get the property value
         Object propertyValue;
         try {
-            propertyValue = getPropertyValue(object, propertyInformation);
+            propertyValue = getPropertyValue(object, propertyInformation.getPropertyDescriptor());
         } catch (IllegalAccessException | InvocationTargetException e) {
             LOGGER.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
             return;
@@ -224,27 +225,46 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         if (propertyValue == null) {
             //ui.boundObjectProperty().unbind();
             if (!propertyInformation.isCollection() || propertyInformation.getWriteMethod() == null) {
+                LOGGER.warn("Binding UI " + propertyUi + ": can't bind to null value");
                 return;
             }
             propertyValue = createEmptyCollection(propertyInformation);
             if (propertyValue == null) {
+                LOGGER.warn("Binding UI " + propertyUi + " to null collection: failed to provide empty collection");
                 return;
             }
+            LOGGER.warn("Binding UI " + propertyUi + " to null collection: providing empty collection");
             try {
                 propertyInformation.getWriteMethod().invoke(object, propertyValue);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                LOGGER.error("failed to set value for property " + propertyInformation.getDisplayName(), e);
+                LOGGER.error("failed to set value for property [" + propertyInformation.getName() + "]", e);
             }
         }
 
         final Class<?> valueClass = propertyValue.getClass();
         String propertyName = propertyInformation.getName();
 
-        // if the property is a JavaFX-style property, bind directly to it
-        if (Property.class.isAssignableFrom(valueClass)) {
-            Property<?> jfxProperty = (Property) propertyValue;
+        // if the property has an associated a JavaFX-style property, get its value (which is assumed to be of type
+        // javafx.beans.property.Property) and bind directly to it
+        if (propertyInformation.getJfxProperty() != null) {
+            Property<?> jfxProperty;
+            try {
+                jfxProperty = (Property<?>) getPropertyValue(object, propertyInformation.getJfxProperty());
+            } catch (Exception e) {
+                LOGGER.error("failed to get value for JavaFX property " + propertyInformation.getJfxProperty().getName(), e);
+                return;
+            }
             propertyUi.boundObjectProperty().bindBidirectional(jfxProperty);
             LOGGER.debug("[" + propertyName + "] bound using javafx.beans.property.Property method");
+
+            // DEBUG: trace change events on both UI field and object property
+            jfxProperty.addListener((observable, oldValue, newValue) -> {
+                LOGGER.debug("jfx property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
+            });
+            propertyUi.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
+                LOGGER.debug("object bound to property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
+            });
+
             return;
         }
 
@@ -258,32 +278,24 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
             propertyUi.boundObjectProperty().bindBidirectional(jfxSyntheticProperty);
             LOGGER.debug("[" + propertyName + "] bound using JavaBeanObjectPropertyBuilder method");
 
-
+            // DEBUG: trace change events on both UI field and object property
             jfxSyntheticProperty.addListener((observable, oldValue, newValue) -> {
-                LOGGER.debug("jfx property [" + propertyName +
-                        "] changed: " + oldValue + " --> " + newValue);
+                LOGGER.debug("jfx property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
             });
-
             propertyUi.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-                LOGGER.debug("object bound to property [" + propertyName +
-                        "] changed: " + oldValue + " --> " + newValue);
-                //TODO notify change on this.boundobject
-//                this.boundObjectProperty.setValue(this.boundObjectProperty.getValue());
+                LOGGER.debug("object bound to property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
             });
-
 
             return;
         } catch (NoSuchMethodException e) {
             // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
-            LOGGER.debug("DEBUG: bindBidirectional threw NoSuchMethodException: " + e.toString());
-        } catch (Exception e) {
-            LOGGER.debug("DEBUG: bindBidirectional threw exception", e);
+            LOGGER.warn("DEBUG: bindBidirectional threw NoSuchMethodException (read-only property?): " + e.toString());
         }
 
         // otherwise if the property implements java.util.Observable, register a listener
         if (java.util.Observable.class.isAssignableFrom(valueClass)) {
             java.util.Observable observableValue = (java.util.Observable) propertyValue;
-            final Observer observer = (observable, o) -> propertyUi.boundObjectProperty().setValue(observable);
+            Observer observer = (observable, o) -> propertyUi.boundObjectProperty().setValue(observable);
             observableValue.addObserver(observer);
             observer.update(observableValue, this);
             LOGGER.debug("[" + propertyName + "] bound using java.util.Observable method");
@@ -293,7 +305,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         // otherwise if the property implements javafx.beans.Observable, register a listener
         if (Observable.class.isAssignableFrom(valueClass)) {
             Observable observableValue = (Observable) propertyValue;
-            final InvalidationListener listener = observable -> propertyUi.boundObjectProperty().setValue(observable);
+            InvalidationListener listener = observable -> propertyUi.boundObjectProperty().setValue(observable);
             observableValue.addListener(listener);
             //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
             listener.invalidated(observableValue);
@@ -308,8 +320,8 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         propertyUi.bind(propertyValue);
     }
 
-    private Object getPropertyValue(T object, PropertyInformation propertyInformation) throws IllegalAccessException, InvocationTargetException {
-        Method readMethod = propertyInformation.getReadMethod();
+    private Object getPropertyValue(T object, PropertyDescriptor propertyDescriptor) throws IllegalAccessException, InvocationTargetException {
+        Method readMethod = propertyDescriptor.getReadMethod();
         if (!readMethod.isAccessible()) {
             readMethod.setAccessible(true);
         }

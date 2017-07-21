@@ -8,8 +8,8 @@ import com.ogerardin.guarana.core.introspection.JavaClassIntrospector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -30,7 +30,7 @@ public class ClassInformation<C> {
     private List<ExecutableInformation> methods = null;
     private List<ExecutableInformation> constructors = null;
 
-    private List<PropertyInformation> properties = null;
+    private Set<PropertyInformation> properties = null;
 
 
     public ClassInformation(Class<C> clazz, JavaClassIntrospector<C> introspector) {
@@ -39,8 +39,6 @@ public class ClassInformation<C> {
         this.simpleClassName = introspector.getSimpleName();
         this.displayName = introspector.getDisplayName();
     }
-
-
 
     public String getSimpleClassName() {
         return simpleClassName;
@@ -73,11 +71,12 @@ public class ClassInformation<C> {
         return constructors;
     }
 
-    public List<PropertyInformation> getProperties() {
+    public Set<PropertyInformation> getProperties() {
         if (properties == null) {
-            properties = Arrays.stream(introspector.getPropertyDescriptors())
-                    .map(PropertyInformation::new)
-                    .collect(Collectors.toList());
+//            properties = introspector.getPropertyDescriptors().stream()
+//                    .map(PropertyInformation::new)
+//                    .collect(Collectors.toList());
+            properties = introspector.getProperties();
         }
         return properties;
     }

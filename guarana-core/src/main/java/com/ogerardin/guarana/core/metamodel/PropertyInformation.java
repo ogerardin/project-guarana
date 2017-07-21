@@ -18,9 +18,15 @@ import java.util.Collection;
 public class PropertyInformation {
 
     private final PropertyDescriptor propertyDescriptor;
+    private final PropertyDescriptor jfxProperty;
 
-    PropertyInformation(PropertyDescriptor propertyDescriptor) {
+    public PropertyInformation(PropertyDescriptor propertyDescriptor) {
+        this(propertyDescriptor, null);
+    }
+
+    public PropertyInformation(PropertyDescriptor propertyDescriptor, PropertyDescriptor jfxProperty) {
         this.propertyDescriptor = propertyDescriptor;
+        this.jfxProperty = jfxProperty;
     }
 
     public boolean isCollection() {
@@ -51,7 +57,12 @@ public class PropertyInformation {
         return propertyDescriptor.getWriteMethod();
     }
 
-    public PropertyDescriptor getDescriptor() {
+    public PropertyDescriptor getJfxProperty() {
+        return jfxProperty;
+    }
+
+    public PropertyDescriptor getPropertyDescriptor() {
         return propertyDescriptor;
     }
+
 }

@@ -4,6 +4,8 @@
 
 package com.ogerardin.guarana.javafx.test.items;
 
+import lombok.EqualsAndHashCode;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Date;
@@ -14,6 +16,7 @@ import java.util.Date;
  * @author oge
  * @since 06/03/2017
  */
+@EqualsAndHashCode
 public class ItemBean {
 
     private String name;

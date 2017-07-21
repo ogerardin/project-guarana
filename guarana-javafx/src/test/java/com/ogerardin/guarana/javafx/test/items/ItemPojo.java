@@ -9,7 +9,7 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * POJO style class (with Lombok)
+ * POJO style class (without PropertyChangeSupport)
  *
  * @author oge
  * @since 06/03/2017

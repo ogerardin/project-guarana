@@ -4,22 +4,16 @@
 
 package com.ogerardin.guarana.core.introspection;
 
-import com.ogerardin.guarana.core.metamodel.ClassInformation;
+import com.ogerardin.guarana.core.metamodel.PropertyInformation;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.MethodDescriptor;
-import java.beans.PropertyDescriptor;
+import java.beans.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,6 +24,7 @@ import static com.ogerardin.guarana.core.util.LambdaExceptionUtil.rethrowFunctio
  * @since 07/09/2015
  */
 public class JavaClassIntrospector<C> {
+    public static final String JAVAFX_PROPERTY_SUFFIX = "Property";
     private static Logger LOGGER = LoggerFactory.getLogger(JavaClassIntrospector.class);
 
     private final Class<C> clazz;
@@ -96,7 +91,7 @@ public class JavaClassIntrospector<C> {
         }
     }
 
-    public void addContributingExecutable(Class type, Executable executable) {
+    private void addContributingExecutable(Class type, Executable executable) {
         if (type.isPrimitive() || JavaIntrospector.isSystem(type)) {
             return;
         }
@@ -104,7 +99,6 @@ public class JavaClassIntrospector<C> {
             addContributingExecutable(type.getComponentType(), executable);
             return;
         }
-        ClassInformation returnTypeClassInfo = JavaIntrospector.getClassInformation(type);
         addContributingExecutable(executable);
     }
 
@@ -124,8 +118,8 @@ public class JavaClassIntrospector<C> {
 //    }
 
 
-    public Collection<Class> getReferencingClasses() {
-        // getNamesOfClassesWithFieldOfType also retruns classes that have methods with paraneters of
+    private Collection<Class> getReferencingClasses() {
+        // getNamesOfClassesWithFieldOfType() also retruns classes that have methods with paraneters of
         // the specified type, which fits our needs
         final List<String> referencingClassNames = new FastClasspathScanner().scan()
                 .getNamesOfClassesWithFieldOfType(clazz);
@@ -144,8 +138,38 @@ public class JavaClassIntrospector<C> {
         return Arrays.asList(constructors);
     }
 
-    public PropertyDescriptor[] getPropertyDescriptors() {
-        return beanInfo.getPropertyDescriptors();
+    public Set<PropertyDescriptor> getPropertyDescriptors() {
+
+        Set<PropertyDescriptor> pds = new HashSet(Arrays.asList(beanInfo.getPropertyDescriptors()));
+
+        // remove properties where another property exists with the same name suffixed with "Property"
+        Set<String> propertyNames = pds.stream().map(FeatureDescriptor::getName).collect(Collectors.toSet());
+        pds.removeIf(pd -> propertyNames.contains(pd.getName() + JAVAFX_PROPERTY_SUFFIX));
+
+        return pds;
+    }
+
+    public Set<PropertyInformation> getProperties() {
+        Set<PropertyDescriptor> pds = new HashSet(Arrays.asList(beanInfo.getPropertyDescriptors()));
+
+        // create a map by property name
+        Map<String, PropertyDescriptor> propertyDescriptorByName = new HashMap<>();
+        pds.forEach(propertyDescriptor -> {
+            propertyDescriptorByName.put(propertyDescriptor.getName(), propertyDescriptor);
+        });
+
+        // group basic preperty with corresponding JavaFX Property if any
+        Set<PropertyInformation> properties = propertyDescriptorByName.entrySet().stream()
+                .filter(entry -> !entry.getKey().endsWith(JAVAFX_PROPERTY_SUFFIX))
+                .map(entry -> {
+                    PropertyDescriptor propertyDescriptor = entry.getValue();
+                    String name = propertyDescriptor.getName();
+                    PropertyDescriptor jfxProperty = propertyDescriptorByName.get(name + JAVAFX_PROPERTY_SUFFIX);
+                    return new PropertyInformation(propertyDescriptor, jfxProperty);
+                })
+                .collect(Collectors.toSet());
+
+        return properties;
     }
 
     public Collection<Executable> getContributedExecutables() {

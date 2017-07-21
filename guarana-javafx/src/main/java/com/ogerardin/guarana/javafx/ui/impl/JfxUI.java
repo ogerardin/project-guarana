@@ -62,33 +62,34 @@ abstract class JfxUI implements JfxRenderable {
         return Font.font("Tahoma", FontWeight.NORMAL, 20);
     }
 
-    <T> void configureContextMenu(Control control, ClassInformation<T> targetClassInformation, Supplier<T> targetSupplier) {
+    <T> void configureContextMenu(Control control, ClassInformation<T> classInformation, Supplier<T> targetSupplier) {
         ContextMenu contextMenu = new ContextMenu();
-        final Class<T> beanClass = targetClassInformation.getJavaClass();
+        final Class<T> targetClass = classInformation.getJavaClass();
 
         // add instance methods
         if (targetSupplier != null) {
-            targetClassInformation.getMethods().stream()
+            classInformation.getMethods().stream()
                     .filter(methodInfo -> !methodInfo.isGetterOrSetter())
-                    .filter(methodInfo -> !getConfiguration().isHidden(beanClass, methodInfo.getExecutable()))
+                    .filter(methodInfo -> !getConfiguration().isHidden(targetClass, methodInfo.getExecutable()))
                     .map(methodInfo -> new ActionMenuItem(methodInfo, targetSupplier))
                     .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         }
 
         // add constructors
         contextMenu.getItems().add(new SeparatorMenuItem());
-        targetClassInformation.getConstructors().stream()
+        classInformation.getConstructors().stream()
                 .map(constructor -> new ActionMenuItem(constructor))
                 .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         control.setContextMenu(contextMenu);
 
         // add contributed methods
-        contextMenu.getItems().add(new SeparatorMenuItem());
-        //FIXME targetSupplier cannot be used here since those methods do not belong to the target class !!!
-        targetClassInformation.getContributedExecutables().stream()
+        // FIXME contributed methods do not belong to the beanClass and hence cannot use targetSupplier !
+//        contextMenu.getItems().add(new SeparatorMenuItem());
+//
+//        targetClassInformation.getContributedExecutables().stream()
 //                .filter(ExecutableInformation::isMethod)
-                .map(executable -> new ActionMenuItem(executable, null))
-                .forEach(menuItem -> contextMenu.getItems().add(menuItem));
+//                .map(executable -> new ActionMenuItem(executable, null))
+//                .forEach(menuItem -> contextMenu.getItems().add(menuItem));
 
 
         // add other items
@@ -117,7 +118,7 @@ abstract class JfxUI implements JfxRenderable {
 
     <T> void configureDropTarget(Node control, Predicate<T> valueValidator, Consumer<T> valueConsumer) {
         // Note: it would make sense to accept the transfer in the DragEntered handler (which is called once when the
-        // pointer enters the target), but for some reason it doesn't work, so you have to do it in the DragOver handler
+        // pointer enters the target), but for some reason it doesn't work, you have to do it in the DragOver handler
         // (which is called whenever the pointer moves inside the target)
         control.setOnDragOver(event -> {
             Dragboard db = event.getDragboard();

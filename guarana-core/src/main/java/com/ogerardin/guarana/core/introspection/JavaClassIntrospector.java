@@ -4,12 +4,16 @@
 
 package com.ogerardin.guarana.core.introspection;
 
+import com.ogerardin.guarana.core.metamodel.Introspector;
 import com.ogerardin.guarana.core.metamodel.PropertyInformation;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.*;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.MethodDescriptor;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -23,7 +27,7 @@ import static com.ogerardin.guarana.core.util.LambdaExceptionUtil.rethrowFunctio
  * @author oge
  * @since 07/09/2015
  */
-public class JavaClassIntrospector<C> {
+public class JavaClassIntrospector<C> implements Introspector<C> {
     public static final String JAVAFX_PROPERTY_SUFFIX = "Property";
     private static Logger LOGGER = LoggerFactory.getLogger(JavaClassIntrospector.class);
 
@@ -41,10 +45,6 @@ public class JavaClassIntrospector<C> {
         }
     }
 
-    public boolean isPrimitive() {
-        return clazz.isPrimitive();
-    }
-
     private static List<Executable> getMethodsAndConstructors(Class c) {
         return Stream.concat(
                 Arrays.stream(c.getMethods()),
@@ -54,6 +54,10 @@ public class JavaClassIntrospector<C> {
 
     private boolean isSystem() {
         return JavaIntrospector.isSystem(clazz);
+    }
+
+    public boolean isPrimitive() {
+        return JavaIntrospector.isPrimitive(clazz);
     }
 
     private void scanReferencing() {
@@ -129,28 +133,22 @@ public class JavaClassIntrospector<C> {
                 .collect(Collectors.toSet());
     }
 
+    @Override
     public List<Method> getMethods() {
         return Arrays.stream(beanInfo.getMethodDescriptors()).map(MethodDescriptor::getMethod).collect(Collectors.toList());
     }
 
+    @Override
     public List<Constructor<C>> getConstructors() {
+        @SuppressWarnings("unchecked")
         Constructor<C>[] constructors = (Constructor<C>[]) clazz.getConstructors();
         return Arrays.asList(constructors);
     }
 
-    public Set<PropertyDescriptor> getPropertyDescriptors() {
-
-        Set<PropertyDescriptor> pds = new HashSet(Arrays.asList(beanInfo.getPropertyDescriptors()));
-
-        // remove properties where another property exists with the same name suffixed with "Property"
-        Set<String> propertyNames = pds.stream().map(FeatureDescriptor::getName).collect(Collectors.toSet());
-        pds.removeIf(pd -> propertyNames.contains(pd.getName() + JAVAFX_PROPERTY_SUFFIX));
-
-        return pds;
-    }
-
+    @Override
     public Set<PropertyInformation> getProperties() {
-        Set<PropertyDescriptor> pds = new HashSet(Arrays.asList(beanInfo.getPropertyDescriptors()));
+        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        Set<PropertyDescriptor> pds = new HashSet<>(Arrays.asList(propertyDescriptors));
 
         // create a map by property name
         Map<String, PropertyDescriptor> propertyDescriptorByName = new HashMap<>();
@@ -172,6 +170,7 @@ public class JavaClassIntrospector<C> {
         return properties;
     }
 
+    @Override
     public Collection<Executable> getContributedExecutables() {
         if (contributedExecutables != null) {
             return contributedExecutables;
@@ -181,14 +180,17 @@ public class JavaClassIntrospector<C> {
         return contributedExecutables;
     }
 
+    @Override
     public boolean isService() {
         return JavaIntrospector.isService(clazz);
     }
 
+    @Override
     public String getSimpleName() {
         return beanInfo.getBeanDescriptor().getBeanClass().getSimpleName();
     }
 
+    @Override
     public String getDisplayName() {
         return beanInfo.getBeanDescriptor().getDisplayName();
     }

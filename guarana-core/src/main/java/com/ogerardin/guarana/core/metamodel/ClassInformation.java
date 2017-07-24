@@ -4,7 +4,6 @@
 
 package com.ogerardin.guarana.core.metamodel;
 
-import com.ogerardin.guarana.core.introspection.JavaClassIntrospector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +21,7 @@ public class ClassInformation<C> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassInformation.class);
 
     private final Class<C> javaClass;
-    private final JavaClassIntrospector<C> introspector;
+    private final Introspector<C> introspector;
 
     private final String simpleClassName;
     private final String displayName;
@@ -33,7 +32,7 @@ public class ClassInformation<C> {
     private Set<PropertyInformation> properties = null;
 
 
-    public ClassInformation(Class<C> clazz, JavaClassIntrospector<C> introspector) {
+    public ClassInformation(Class<C> clazz, Introspector<C> introspector) {
         this.javaClass = clazz;
         this.introspector = introspector;
         this.simpleClassName = introspector.getSimpleName();

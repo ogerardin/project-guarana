@@ -83,17 +83,13 @@ public class ClassConfiguration<C> {
     }
 
     public void hideMethod(String methodName) {
-        boolean found = false;
         for (Method method : targetClass.getDeclaredMethods()) {
             if (method.getName().equals(methodName)) {
-                found = true;
-                hiddenMethods.add(method);
-                LOGGER.debug("Hiding: "  + method.getDeclaringClass() + "." + method.getName());
+                hideMethods(method);
+                return;
             }
         }
-        if (!found) {
-            LOGGER.warn("no method found matching " + methodName);
-        }
+        LOGGER.warn("No method found matching " + methodName);
     }
 
     public void hideMethods(String... methods) {
@@ -111,8 +107,8 @@ public class ClassConfiguration<C> {
             if (method.getDeclaringClass() != this.targetClass) {
                 throw new InvalidParameterException("Method " + method + " is not declared in class " + targetClass);
             }
+//            LOGGER.debug("Hiding: "  + method.getDeclaringClass() + "." + method.getName());
             hiddenMethods.add(method);
-            LOGGER.debug("Hiding: "  + method.getDeclaringClass() + "." + method.getName());
         }
     }
 

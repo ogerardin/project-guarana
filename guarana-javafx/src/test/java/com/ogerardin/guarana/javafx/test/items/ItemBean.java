@@ -19,33 +19,35 @@ import java.util.Date;
 @EqualsAndHashCode
 public class ItemBean {
 
-    private String name;
-    private Date date;
+    private String name = "";
+    private Date date = new Date();
 
     private final PropertyChangeSupport propertySupport ;
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        Date oldDate = this.date;
-        this.date = date;
-        propertySupport.firePropertyChange("date", oldDate, date);
+    {
+        this.propertySupport = new PropertyChangeSupport(this);
     }
 
     public ItemBean() {
-        this.propertySupport = new PropertyChangeSupport(this);
+        setName("default");
+        setDate(new Date());
     }
 
     public String getName() {
         return name ;
     }
-
     public void setName(String name) {
         String oldName = this.name ;
         this.name = name ;
         propertySupport.firePropertyChange("name", oldName, name);
+    }
+
+    public Date getDate() {
+        return date;
+    }
+    public void setDate(Date date) {
+        Date oldDate = this.date;
+        this.date = date;
+        propertySupport.firePropertyChange("date", oldDate, date);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

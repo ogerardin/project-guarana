@@ -10,8 +10,6 @@ import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.util.Date;
-
 public class SingleInstanceWithJfx extends Application {
 
     private static ItemJfx item;
@@ -34,8 +32,6 @@ public class SingleInstanceWithJfx extends Application {
 
         // instantiate our main business object
         item = new ItemJfx();
-        item.setName("root");
-        item.setDate(new Date());
 
         // handoff to JavaFX; this will call the start() method
         launch(args);

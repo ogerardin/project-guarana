@@ -13,7 +13,7 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * JavaFX style class with JavaFX properties
+ * JavaFX style class with {@link javafx.beans.property.Property} properties
  *
  * @author oge
  * @since 06/03/2017
@@ -24,14 +24,21 @@ public class ItemJfx {
     private StringProperty nameProperty = new SimpleStringProperty();
     private ObjectProperty<Date> dateProperty = new SimpleObjectProperty<Date>();
 
-    public String getName() {
-        return nameProperty.get();
+    public ItemJfx() {
+        setName("default");
+        setDate(new Date());
     }
 
     public StringProperty nameProperty() {
         return nameProperty;
     }
+    public ObjectProperty<Date> dateProperty() {
+        return dateProperty;
+    }
 
+    public String getName() {
+        return nameProperty.get();
+    }
     public void setName(String name) {
         this.nameProperty.set(name);
     }
@@ -39,11 +46,6 @@ public class ItemJfx {
     public Date getDate() {
         return dateProperty.get();
     }
-
-    public ObjectProperty<Date> dateProperty() {
-        return dateProperty;
-    }
-
     public void setDate(Date date) {
         this.dateProperty.set(date);
     }

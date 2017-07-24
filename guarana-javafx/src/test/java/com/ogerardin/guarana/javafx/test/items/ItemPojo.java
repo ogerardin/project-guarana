@@ -18,6 +18,10 @@ import java.util.Date;
 public class ItemPojo {
 
     public String name;
-    public Date date = new Date();
+    public Date date;
 
+    public ItemPojo() {
+        setName("default");
+        setDate(new Date());
+    }
 }

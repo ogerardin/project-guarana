@@ -4,7 +4,6 @@
 
 package com.ogerardin.guarana.javafx.ui.impl;
 
-import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
@@ -13,13 +12,15 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of JfxInstanceUI by extending TextField, intended for use as an embedded field.
+ * This is the UI implementation that is used by default {@link DefaultJfxInstanceUI} for each of
+ * the target class properties (unless it is overridden)
  *
- * Conversion from type {@link P} to String for display is handled by {@link ClassConfiguration#toString(Object)},
- * which uses the {@link Object#toString()} by default, but may be overridden by calling {@link ClassConfiguration#setToString(ToString)}
- * as in the following example:
+ * Conversion from type {@link P} to String for display is handled by
  * <pre>
  * configuration.getClassInformation(Person.class).setToString(Person::getFullNameLastFirst);
  * </pre>
@@ -27,8 +28,11 @@ import javafx.util.StringConverter;
  * @param <P> the type of object that will be bound to this UI
  * @author olivier
  * @since 11/02/2016.
+ * @see DefaultJfxInstanceUI
  */
 public class DefaultJfxEmbeddedInstanceUI<P> extends TextField implements JfxInstanceUI<P> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJfxEmbeddedInstanceUI.class);
 
     private final JfxUiManager jfxUiManager;
     private final Class<P> clazz;
@@ -49,11 +53,11 @@ public class DefaultJfxEmbeddedInstanceUI<P> extends TextField implements JfxIns
         }
 
         textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("DefaultJfxEmbeddedInstanceUI: text changed: " + oldValue + " --> " + newValue);
+            LOGGER.debug("DefaultJfxEmbeddedInstanceUI: text changed: " + oldValue + " --> " + newValue);
         });
 
         boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("DefaultJfxEmbeddedInstanceUI: bound object changed: " + oldValue + " --> " + newValue);
+            LOGGER.debug("DefaultJfxEmbeddedInstanceUI: bound object changed: " + oldValue + " --> " + newValue);
         });
 
     }

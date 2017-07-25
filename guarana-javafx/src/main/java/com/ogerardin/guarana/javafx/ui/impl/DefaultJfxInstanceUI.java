@@ -34,7 +34,15 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * Default implementation of a InstanceUI for JavaFX.
+ * Default implementation of a InstanceUI for JavaFX. The UI is rendered by stacking vertically
+ * an InstanceUI for each exposed property of the target class. By default, the InstanceUI used
+ * to render a property is {@link DefaultJfxEmbeddedInstanceUI}, but this may be overridden in the
+ * configuration by specifying the property guarana.class.targetClass.embeddedUiClass=uiClass, where
+ * targetClass is the fully-qualified class name of the class to represent and uiClass is the
+ * fully-qualified class name of the InstanceUI implementation to use. For example, the following
+ * line instructs to use {@link JfxDateUi} as en embedded UI for properties of type {@link Date}:
+ *
+ * guarana.class.java.util.Date.embeddedUiClass=com.ogerardin.guarana.javafx.ui.impl.JfxDateUi
  *
  * @param <C> type of the object being represented
  *

@@ -36,28 +36,28 @@ import java.util.*;
 /**
  * Default implementation of a InstanceUI for JavaFX.
  *
- * @param <T> type of the object being represented
+ * @param <C> type of the object being represented
  *
  * @author Olivier
  * @since 29/05/15
  */
-public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T> {
+public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJfxInstanceUI.class);
 
     private BiMap<Node, PropertyInformation> propertyInformationByNode = HashBiMap.create();
     private BiMap<JfxInstanceUI, PropertyInformation> propertyInformationByUi = HashBiMap.create();
 
-    private ObjectProperty<T> boundObjectProperty = new SimpleObjectProperty<T>();
+    private ObjectProperty<C> boundObjectProperty = new SimpleObjectProperty<C>();
 
-    public DefaultJfxInstanceUI(JfxUiManager builder, Class<T> clazz) {
+    public DefaultJfxInstanceUI(JfxUiManager builder, Class<C> clazz) {
         super(builder);
         buildUi(clazz);
     }
 
-    private void buildUi(Class<T> clazz) {
+    private void buildUi(Class<C> clazz) {
 
-        ClassInformation<T> classInformation = JavaIntrospector.getClassInformation(clazz);
+        ClassInformation<C> classInformation = JavaIntrospector.getClassInformation(clazz);
 
         // title
         final String displayName = getConfiguration().getClassDisplayName(clazz);
@@ -121,12 +121,12 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
     private <P> Node buildPropertyUi(PropertyInformation propertyInformation, Class<P> propertyType) {
 
         JfxInstanceUI<P> ui = getBuilder().buildEmbeddedInstanceUI(propertyType);
-        Node field = ui.getRendering();
+        Node field = ui.getRendered();
 
         // set the field as a target for drag and drop
         configureDropTarget(field,
                 (P value) -> propertyType.isAssignableFrom(value.getClass()),
-                value -> ui.boundObjectProperty().setValue(value));
+                (P value) -> ui.boundObjectProperty().setValue(value));
 
         propertyInformationByUi.put(ui, propertyInformation);
         propertyInformationByNode.put(field, propertyInformation);
@@ -170,7 +170,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
      * - binding each property to the corresponding embedded UI
      * @param object
      */
-    public void bind(T object) {
+    public void bind(C object) {
         LOGGER.debug("Binding " + object + " to " + this);
         if (getBoundObject() != null) {
             unbindProperties();
@@ -193,7 +193,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
      * Bind each property of the specified object to its corresponding embedded UI
      * @param object object providing property values
      */
-    private void bindProperties(T object) {
+    private void bindProperties(C object) {
         propertyInformationByUi.forEach(
                 (ui, propertyInformation) -> bindProperty(object, ui, propertyInformation)
         );
@@ -211,7 +211,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
      * @param propertyUi embedded UI for the property
      * @param propertyInformation property description
      */
-    private void bindProperty(T object, JfxInstanceUI propertyUi, PropertyInformation propertyInformation) {
+    private void bindProperty(C object, JfxInstanceUI propertyUi, PropertyInformation propertyInformation) {
         // Get the property value
         Object propertyValue;
         try {
@@ -320,7 +320,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         propertyUi.bind(propertyValue);
     }
 
-    private Object getPropertyValue(T object, PropertyDescriptor propertyDescriptor) throws IllegalAccessException, InvocationTargetException {
+    private Object getPropertyValue(C object, PropertyDescriptor propertyDescriptor) throws IllegalAccessException, InvocationTargetException {
         Method readMethod = propertyDescriptor.getReadMethod();
         if (!readMethod.isAccessible()) {
             readMethod.setAccessible(true);
@@ -365,6 +365,7 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         //TODO
     }
 
+    @Deprecated
     protected void propertyUpdated(PropertyInformation propertyInformation, Object value) {
         Node node = propertyInformationByNode.inverse().get(propertyInformation);
         if (node instanceof TextField) {
@@ -372,12 +373,12 @@ public class DefaultJfxInstanceUI<T> extends JfxForm implements JfxInstanceUI<T>
         }
     }
 
-    protected T getBoundObject() {
+    protected C getBoundObject() {
         return boundObjectProperty.get();
     }
 
     @Override
-    public ObjectProperty<T> boundObjectProperty() {
+    public ObjectProperty<C> boundObjectProperty() {
         return boundObjectProperty;
     }
 }

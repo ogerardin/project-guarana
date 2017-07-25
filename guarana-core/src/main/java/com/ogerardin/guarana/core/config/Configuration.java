@@ -8,6 +8,8 @@ import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import com.ogerardin.guarana.core.metamodel.ClassInformation;
 import com.ogerardin.guarana.core.persistence.PersistenceServiceBuilder;
 import com.ogerardin.guarana.core.persistence.basic.DefaultPersistenceServiceBuilder;
+import com.ogerardin.guarana.core.ui.InstanceUI;
+import javafx.util.StringConverter;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -46,7 +48,7 @@ public class Configuration extends CompositeConfiguration {
     private static final String TOOLKIT_PROPERTIES = "/.guarana-ui.properties";
     private static final String USER_PROPERTIES = "/guarana.properties";
 
-    private final Map<Class, ClassConfiguration> classConfigurationByClass = new HashMap<>();
+    private final Map<Class<?>, ClassConfiguration<?>> classConfigurationByClass = new HashMap<>();
     private boolean humanizeClassNames = false;
 
     private Class<? extends PersistenceServiceBuilder> persistenceServiceBuilder = DefaultPersistenceServiceBuilder.class;
@@ -96,23 +98,23 @@ public class Configuration extends CompositeConfiguration {
      * Parse the relevant properties and set up the configuration
      */
     private void applyConfiguration() {
-        for (String key : (Iterable<String>) this::getKeys) {
-            if (!key.startsWith(PROPERTY_PREFIX)) {
+        for (String configurationKey : (Iterable<String>) this::getKeys) {
+            if (!configurationKey.startsWith(PROPERTY_PREFIX)) {
                 //ignore other keys, since we also have system properties that we don't care about
                 continue;
             }
 
-            String guaranaKey = key.substring(PROPERTY_PREFIX.length());
-            String[] keyParts = guaranaKey.split("\\.");
+            String guaranaSubkey = configurationKey.substring(PROPERTY_PREFIX.length());
+            String[] keyParts = guaranaSubkey.split("\\.");
 
             switch (keyParts[0]) {
                 case "class":
-                    String property = keyParts[keyParts.length - 1];
-                    String className = guaranaKey.substring("class.".length(), guaranaKey.length() - property.length() - 1);
-                    applyClassProperty(className, property, key);
+                    String propertyName = keyParts[keyParts.length - 1];
+                    String className = guaranaSubkey.substring("class.".length(), guaranaSubkey.length() - propertyName.length() - 1);
+                    applyClassProperty(className, propertyName, configurationKey);
                     break;
                 default:
-                    applyGlobalProperty(key);
+                    applyGlobalProperty(configurationKey);
             }
         }
     }
@@ -135,13 +137,20 @@ public class Configuration extends CompositeConfiguration {
         }
     }
 
+    /**
+     * Update the class configuration with the specified property
+     *
+     * @param className fully-qualified class name
+     * @param property simple property name
+     * @param key full property name
+     */
     private void applyClassProperty(String className, String property, String key) {
         final ClassConfiguration<?> classConfiguration;
         try {
             Class<?> clazz = Class.forName(className);
             classConfiguration = this.forClass(clazz);
         } catch (ClassNotFoundException e) {
-            LOGGER.error("Class not found: " + className);
+            LOGGER.error("Property [" + key + "]: class not found: " + className);
             return;
         }
         switch (property) {
@@ -164,38 +173,47 @@ public class Configuration extends CompositeConfiguration {
                 classConfiguration.setZoomable(getBoolean(key));
                 break;
             case "embeddedUiClass":
-                try {
-                    classConfiguration.setEmbeddedUiClass(getString(key));
-                } catch (ClassNotFoundException e) {
-                    LOGGER.error(e.toString());
-                }
+                classConfiguration.setEmbeddedUiClass(getClass(key, InstanceUI.class));
                 break;
             case "uiClass":
-                try {
-                    classConfiguration.setUiClass(getString(key));
-                } catch (ClassNotFoundException e) {
-                    LOGGER.error(e.toString());
-                }
+                classConfiguration.setUiClass(getClass(key, InstanceUI.class));
                 break;
+            case "stringConverterClass":
+                classConfiguration.setStringConverterClass(getClass(key, StringConverter.class));
             default:
                 LOGGER.error("Invalid class property: " + property + " in " + key);
         }
+    }
+
+    private <C extends S, S> Class<C> getClass(String key, Class<S> superType) {
+        String className = getString(key);
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (superType != null && !superType.isAssignableFrom(clazz)) {
+            throw new ClassCastException("Class does not implement " + superType + ": " + className);
+        }
+        return (Class<C>) clazz;
     }
 
     public boolean isHumanizeClassNames() {
         return humanizeClassNames;
     }
 
-    public String getClassDisplayName(Class<?> clazz) {
+    public <C> String getClassDisplayName(Class<C> clazz) {
         // if class display name configured, use it
-        final ClassConfiguration classConfiguration = forClass(clazz);
+        final ClassConfiguration<C> classConfiguration = forClass(clazz);
         String displayName = classConfiguration.getDisplayName();
         if (displayName != null) {
             return displayName;
         }
 
         // otherwise if bean display name is different from class name, use it
-        final ClassInformation classInformation = JavaIntrospector.getClassInformation(clazz);
+        final ClassInformation<C> classInformation = JavaIntrospector.getClassInformation(clazz);
         final String className = classInformation.getSimpleClassName();
         String beanDisplayName = classInformation.getBeanDisplayName();
         if (!beanDisplayName.equals(className)) {
@@ -212,7 +230,7 @@ public class Configuration extends CompositeConfiguration {
      * and return a default ClassConfiguration
      */
     public <C> ClassConfiguration<C> forClass(Class<C> clazz) {
-        ClassConfiguration<C> classConfig = classConfigurationByClass.get(clazz);
+        ClassConfiguration<C> classConfig = (ClassConfiguration<C>) classConfigurationByClass.get(clazz);
         if (classConfig == null) {
             classConfig = new ClassConfiguration<>(clazz);
             classConfigurationByClass.put(clazz, classConfig);

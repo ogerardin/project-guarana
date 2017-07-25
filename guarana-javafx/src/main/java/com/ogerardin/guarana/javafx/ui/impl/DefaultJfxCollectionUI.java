@@ -166,7 +166,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 
 
     @Override
-    public Parent getRendering() {
+    public Parent getRendered() {
         return root;
     }
 

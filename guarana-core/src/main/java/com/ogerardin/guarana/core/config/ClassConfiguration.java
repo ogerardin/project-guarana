@@ -5,6 +5,8 @@
 package com.ogerardin.guarana.core.config;
 
 import com.ogerardin.guarana.core.ui.InstanceUI;
+import com.ogerardin.guarana.core.util.DefaultStringConverter;
+import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,11 +26,10 @@ import java.util.Set;
 public class ClassConfiguration<C> {
     private static Logger LOGGER = LoggerFactory.getLogger(ClassConfiguration.class);
 
-    private final Class<C> targetClass;
+    private final Class<C> clazz;
 
-    private ToString<C> toString;
-    private Class<? extends InstanceUI<C, ?>> uiClass;
-    private Class<? extends InstanceUI<C, ?>> embeddedUiClass;
+    private Class<? extends InstanceUI<?, C>> uiClass;
+    private Class<? extends InstanceUI<?, C>> embeddedUiClass;
 
     private String displayName = null;
     private Boolean humanizePropertyNames = null;
@@ -37,9 +38,12 @@ public class ClassConfiguration<C> {
     private final Set<Executable> hiddenMethods = new HashSet<>();
     private Boolean zoomable = null;
 
+    private Class<? extends StringConverter<C>> stringConverterClass;
+    private StringConverter<C> stringConverter;
+
 
     public ClassConfiguration(Class<C> clazz) {
-        targetClass = clazz;
+        this.clazz = clazz;
     }
 
     public ClassConfiguration<C> hideProperties(String... propertyNames) {
@@ -51,39 +55,34 @@ public class ClassConfiguration<C> {
         return hiddenProperties.contains(propertyName);
     }
 
-    public ClassConfiguration<C> setToString(ToString<C> toString) {
-        this.toString = toString;
-        return this;
-    }
-
     public String toString(C value) {
         if (value == null) {
-            return "null";
+            return "";
         } else {
-            return (toString != null) ? toString.toString(value) : value.toString();
+            return value.toString();
         }
     }
 
-    public Class<? extends InstanceUI<C, ?>> getUiClass() {
+    public Class<? extends InstanceUI<?, C>> getUiClass() {
         return uiClass;
     }
 
-    public Class<? extends InstanceUI<C, ?>> getEmbeddedUiClass() {
-        return embeddedUiClass;
-    }
-
-    public <U extends InstanceUI<C, ?>> ClassConfiguration<C> setEmbeddedUiClass(Class<U> embeddedUiClass) {
-        this.embeddedUiClass = embeddedUiClass;
-        return this;
-    }
-
-    public <U extends InstanceUI<C, ?>> ClassConfiguration<C> setUiClass(Class<U> uiClass) {
+    public ClassConfiguration<C> setUiClass(Class<? extends InstanceUI<?, C>> uiClass) {
         this.uiClass = uiClass;
         return this;
     }
 
+    public Class<? extends InstanceUI<?, C>> getEmbeddedUiClass() {
+        return embeddedUiClass;
+    }
+
+    public ClassConfiguration<C> setEmbeddedUiClass(Class<? extends InstanceUI<?, C>> embeddedUiClass) {
+        this.embeddedUiClass = embeddedUiClass;
+        return this;
+    }
+
     public void hideMethod(String methodName) {
-        for (Method method : targetClass.getDeclaredMethods()) {
+        for (Method method : clazz.getDeclaredMethods()) {
             if (method.getName().equals(methodName)) {
                 hideMethods(method);
                 return;
@@ -104,8 +103,8 @@ public class ClassConfiguration<C> {
 
     private void hideMethods(Method... methods) {
         for (Method method : methods) {
-            if (method.getDeclaringClass() != this.targetClass) {
-                throw new InvalidParameterException("Method " + method + " is not declared in class " + targetClass);
+            if (method.getDeclaringClass() != this.clazz) {
+                throw new InvalidParameterException("Method " + method + " is not declared in class " + clazz);
             }
 //            LOGGER.debug("Hiding: "  + method.getDeclaringClass() + "." + method.getName());
             hiddenMethods.add(method);
@@ -113,11 +112,11 @@ public class ClassConfiguration<C> {
     }
 
     public void hideAllMethods() {
-        hideMethods(targetClass.getDeclaredMethods());
+        hideMethods(clazz.getDeclaredMethods());
     }
 
     public boolean isHidden(Executable method) {
-//        Validate.isTrue(method.getDeclaringClass() == this.targetClass);
+//        Validate.isTrue(method.getDeclaringClass() == this.clazz);
         return hiddenMethods.contains(method);
     }
 
@@ -127,22 +126,6 @@ public class ClassConfiguration<C> {
 
     public Boolean isHumanizePropertyNames() {
         return humanizePropertyNames;
-    }
-
-    public void setEmbeddedUiClass(String className) throws ClassNotFoundException {
-        Class<?> clazz = Class.forName(className);
-        if (!InstanceUI.class.isAssignableFrom(clazz)) {
-            throw new ClassCastException("Class does not implement InstanceUI: " + className);
-        }
-        setEmbeddedUiClass((Class<? extends InstanceUI>) clazz);
-    }
-
-    public void setUiClass(String className) throws ClassNotFoundException {
-        Class<?> clazz = Class.forName(className);
-        if (!InstanceUI.class.isAssignableFrom(clazz)) {
-            throw new ClassCastException("Class does not implement InstanceUI: " + className);
-        }
-        setUiClass((Class<? extends InstanceUI>) clazz);
     }
 
     public void setDisplayName(String displayName) {
@@ -168,5 +151,28 @@ public class ClassConfiguration<C> {
 
     public void setZoomable(boolean zoomable) {
         this.zoomable = zoomable;
+    }
+
+    public StringConverter<C> getStringConverter() {
+        if (stringConverter == null) {
+            if (stringConverterClass != null) {
+                try {
+                    stringConverter = stringConverterClass.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                stringConverter = new DefaultStringConverter<>(clazz);
+            }
+        }
+        return stringConverter;
+    }
+
+    public void setStringConverter(StringConverter<C> stringConverter) {
+        this.stringConverter = stringConverter;
+    }
+
+    public void setStringConverterClass(Class<? extends StringConverter<C>> stringConverterClass) {
+        this.stringConverterClass = stringConverterClass;
     }
 }

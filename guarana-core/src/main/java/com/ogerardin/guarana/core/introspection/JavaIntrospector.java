@@ -54,8 +54,8 @@ public class JavaIntrospector {
                 || targetClassName.startsWith("sun.");
     }
 
-    static boolean isPrimitive(Class targetClass) {
-        return targetClass.isPrimitive();
+    static boolean isPrimitive(Class clazz) {
+        return clazz.isPrimitive();
     }
 
     public static <T> ClassInformation<T> getClassInformation(Class<T> clazz) {

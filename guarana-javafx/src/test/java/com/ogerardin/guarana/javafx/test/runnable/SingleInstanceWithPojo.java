@@ -32,7 +32,6 @@ public class SingleInstanceWithPojo extends Application {
 
         // instantiate our main business object
         item = new ItemPojo();
-        item.setName("root");
 
         // handoff to JavaFX; this will call the start() method
         launch(args);

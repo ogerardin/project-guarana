@@ -12,10 +12,10 @@ import javafx.scene.Parent;
  * @author oge
  * @since 10/02/2016
  */
-public interface JfxInstanceUI<T> extends InstanceUI<Parent, T>, JfxRenderable {
+public interface JfxInstanceUI<C> extends InstanceUI<Parent, C>, JfxRenderable {
 
     /**
      * The JavaFX-style property that encapsulates the target object for this UI
      */
-    ObjectProperty<T> boundObjectProperty();
+    ObjectProperty<C> boundObjectProperty();
 }

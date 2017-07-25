@@ -167,7 +167,6 @@ abstract class JfxUI implements JfxRenderable {
         return getBuilder().getConfiguration();
     }
 
-
     private class ActionMenuItem<T> extends MenuItem {
         public ActionMenuItem(ExecutableInformation executableInformation) {
             this(executableInformation, null);
@@ -193,9 +192,6 @@ abstract class JfxUI implements JfxRenderable {
         }
 
     }
-
-
-
 
     /**
      * Called when the user requests the Instanciation of a class through a specific constructor.
@@ -230,7 +226,7 @@ abstract class JfxUI implements JfxRenderable {
     /**
      * Called when the user requests the execution of a method. If the method doesn't take any arguments,
      * it is executed immediately; otherwise a dialog is displayed to let the user provide the arguments.
-     *  @param <T>            the target type
+     * @param <T>            the target type
      * @param <R>            the return type of the method
      * @param method             the descriptor of the method to execute
      * @param targetSupplier a Supplier used to obtain the target object (or null if method is static)

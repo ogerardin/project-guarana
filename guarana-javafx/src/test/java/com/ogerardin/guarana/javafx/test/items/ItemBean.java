@@ -11,46 +11,61 @@ import java.beans.PropertyChangeSupport;
 import java.util.Date;
 
 /**
- * Javabean style class with PropertyChangeSupport
+ * Javabean style class with bound properties
  *
  * @author oge
  * @since 06/03/2017
  */
 @EqualsAndHashCode
-public class ItemBean {
+public class ItemBean extends AbstractItem {
 
-    private String name = "";
-    private Date date = new Date();
+    private String name;
+    private Date date;
+    private long longInteger;
 
-    private final PropertyChangeSupport propertySupport ;
+    private final PropertyChangeSupport propertyChangeSupport;
     {
-        this.propertySupport = new PropertyChangeSupport(this);
+        this.propertyChangeSupport = new PropertyChangeSupport(this);
     }
 
     public ItemBean() {
-        setName("default");
-        setDate(new Date());
+        init();
     }
 
+    @Override
     public String getName() {
         return name ;
     }
+    @Override
     public void setName(String name) {
         String oldName = this.name ;
         this.name = name ;
-        propertySupport.firePropertyChange("name", oldName, name);
+        propertyChangeSupport.firePropertyChange("name", oldName, name);
     }
 
+    @Override
     public Date getDate() {
         return date;
     }
+    @Override
     public void setDate(Date date) {
         Date oldDate = this.date;
         this.date = date;
-        propertySupport.firePropertyChange("date", oldDate, date);
+        propertyChangeSupport.firePropertyChange("date", oldDate, date);
+    }
+
+    @Override
+    public long getLongInteger() {
+        return longInteger;
+    }
+    @Override
+    public void setLongInteger(long longInteger) {
+        long oldValue = this.longInteger;
+        this.longInteger = longInteger;
+        propertyChangeSupport.firePropertyChange("longInteger", oldValue, longInteger);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-        propertySupport.addPropertyChangeListener(listener);
+        propertyChangeSupport.addPropertyChangeListener(listener);
     }
 }

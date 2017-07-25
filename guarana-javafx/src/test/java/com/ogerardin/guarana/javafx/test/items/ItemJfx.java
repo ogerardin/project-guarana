@@ -4,10 +4,7 @@
 
 package com.ogerardin.guarana.javafx.test.items;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -19,34 +16,47 @@ import java.util.Date;
  * @since 06/03/2017
  */
 @Data
-public class ItemJfx {
+public class ItemJfx extends AbstractItem {
 
-    private StringProperty nameProperty = new SimpleStringProperty();
-    private ObjectProperty<Date> dateProperty = new SimpleObjectProperty<Date>();
+    // JavaFX property wrappers
+    private StringProperty name = new SimpleStringProperty();
+    private ObjectProperty<Date> date = new SimpleObjectProperty<Date>();
+    private LongProperty longInteger = new SimpleLongProperty();
 
     public ItemJfx() {
-        setName("default");
-        setDate(new Date());
+        init();
     }
 
     public StringProperty nameProperty() {
-        return nameProperty;
+        return name;
     }
     public ObjectProperty<Date> dateProperty() {
-        return dateProperty;
+        return date;
+    }
+    public LongProperty longIntegerProperty() {
+        return longInteger;
+    }
+
+    public long getLongInteger() {
+        return longInteger.get();
+    }
+    public void setLongInteger(long longInteger) {
+        this.longInteger.set(longInteger);
     }
 
     public String getName() {
-        return nameProperty.get();
+        return name.get();
     }
     public void setName(String name) {
-        this.nameProperty.set(name);
+        this.name.set(name);
     }
 
     public Date getDate() {
-        return dateProperty.get();
+        return date.get();
     }
     public void setDate(Date date) {
-        this.dateProperty.set(date);
+        this.date.set(date);
     }
+
+
 }

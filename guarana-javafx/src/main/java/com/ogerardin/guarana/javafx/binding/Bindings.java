@@ -8,6 +8,7 @@ import com.google.common.base.Converter;
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.config.Configuration;
 import com.ogerardin.guarana.core.metamodel.PropertyInformation;
+import com.ogerardin.guarana.core.util.DefaultStringConverter;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
@@ -21,6 +22,8 @@ public enum Bindings {
 
     ;
 
+
+    @Deprecated
     public static <T> void bindTextField(Configuration configuration, TextField textField, PropertyInformation propertyInformation, T target) {
         if (textField.isEditable()) {
             BeanPathAdapter<T> beanPathAdapter = new BeanPathAdapter<>(target);
@@ -37,6 +40,7 @@ public enum Bindings {
         }
     }
 
+    @Deprecated
     public static void fieldSetValue(Configuration configuration, TextField textField, PropertyInformation propertyInformation, Object value) {
         ClassConfiguration classConfig = configuration.forClass(propertyInformation.getPropertyType());
         textField.setText(classConfig.toString(value));
@@ -54,18 +58,19 @@ public enum Bindings {
         });
     }
 
-    public static <T> StringConverter<T> getStringConverter(Class<T> paramType, Configuration configuration) {
-        return new StringConverter<T>() {
-            @Override
-            public String toString(T object) {
-                ClassConfiguration<T> classConfig = configuration.forClass(paramType);
-                return classConfig.toString(object);
-            }
-
-            @Override
-            public T fromString(String string) {
-                return null;
-            }
-        };
+    public static <T> StringConverter<T> getStringConverter(Class<T> clazz, Configuration configuration) {
+        ClassConfiguration<T> classConfig = configuration.forClass(clazz);
+        StringConverter<T> stringConverter = classConfig.getStringConverter();
+        if (stringConverter != null) {
+            return stringConverter;
+        }
+        else {
+            return getDefaultStringConverter(clazz);
+        }
     }
+
+    public static <T> StringConverter<T> getDefaultStringConverter(Class<T> clazz) {
+        return new DefaultStringConverter<>(clazz);
+    }
+
 }

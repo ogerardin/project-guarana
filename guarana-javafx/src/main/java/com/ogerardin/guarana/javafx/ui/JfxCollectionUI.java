@@ -11,5 +11,5 @@ import javafx.scene.Parent;
  * @author oge
  * @since 10/02/2016
  */
-public interface JfxCollectionUI<T> extends CollectionUI<Parent, T>, JfxRenderable {
+public interface JfxCollectionUI<C> extends CollectionUI<Parent, C>, JfxRenderable {
 }

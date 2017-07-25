@@ -8,6 +8,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.ogerardin.guarana.core.config.ClassConfiguration;
 import com.ogerardin.guarana.core.config.Configuration;
+import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.core.ui.Renderable;
 import com.ogerardin.guarana.javafx.ui.*;
 import com.ogerardin.guarana.javafx.ui.impl.DefaultJfxCollectionUI;
@@ -70,7 +71,9 @@ public class JfxUiManager implements JfxUIBuilder {
     @Override
     public <C> JfxInstanceUI<C> buildInstanceUI(Class<C> clazz) {
         ClassConfiguration<C> classConfiguration = configuration.forClass(clazz);
-        Class<?> uiClass = classConfiguration.getUiClass();
+        // if the configuration specifies a custom UI class for this class, use it, otherwise use
+        // DefaultJfxInstanceUI
+        Class<? extends InstanceUI<?, C>> uiClass = classConfiguration.getUiClass();
         if (uiClass == null) {
             return new DefaultJfxInstanceUI<>(this, clazz);
         }
@@ -85,16 +88,18 @@ public class JfxUiManager implements JfxUIBuilder {
 
 
     @Override
-    public <T> JfxInstanceUI<T> buildEmbeddedInstanceUI(Class<T> clazz) {
-        ClassConfiguration<T> classConfiguration = configuration.forClass(clazz);
-        Class<?> uiClass = classConfiguration.getEmbeddedUiClass();
+    public <C> JfxInstanceUI<C> buildEmbeddedInstanceUI(Class<C> clazz) {
+        ClassConfiguration<C> classConfiguration = configuration.forClass(clazz);
+        // if the configuration specifies a custom embedded UI class for this class, use it, otherwise use
+        // DefaultJfxEmbeddedInstanceUI
+        Class<? extends InstanceUI<?, C>> uiClass = classConfiguration.getEmbeddedUiClass();
         if (uiClass == null) {
-            return new DefaultJfxEmbeddedInstanceUI<T>(this, clazz);
+            return new DefaultJfxEmbeddedInstanceUI<C>(this, clazz);
         }
         try {
             // might throw ClassCastException if the specified class doesn't implement JfxInstanceUI
             //noinspection unchecked
-            return (JfxInstanceUI<T>) uiClass.newInstance();
+            return (JfxInstanceUI<C>) uiClass.newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -151,7 +156,7 @@ public class JfxUiManager implements JfxUIBuilder {
         if (title != null) {
             stage.setTitle(title);
         }
-        Parent root = renderable.getRendering();
+        Parent root = renderable.getRendered();
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getDefaultStylesheet());
         stage.setScene(scene);

@@ -15,13 +15,13 @@ import java.util.Date;
  * @since 06/03/2017
  */
 @Data
-public class ItemPojo {
+public class ItemPojo extends AbstractItem {
 
     public String name;
     public Date date;
+    private long longInteger;
 
     public ItemPojo() {
-        setName("default");
-        setDate(new Date());
+        init();
     }
 }

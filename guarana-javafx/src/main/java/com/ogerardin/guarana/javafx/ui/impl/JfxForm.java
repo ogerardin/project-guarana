@@ -51,7 +51,7 @@ public abstract class JfxForm extends JfxUI {
     }
 
     @Override
-    public Parent getRendering() {
+    public Parent getRendered() {
         return root;
     }
 

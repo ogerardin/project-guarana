@@ -83,7 +83,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
             grid.add(label, 0, row);
 
             targetUi = getBuilder().buildEmbeddedInstanceUI(declaringClass);
-            targetField = targetUi.getRendering();
+            targetField = targetUi.getRendered();
             label.setLabelFor(targetField);
 
             configureDropTarget(targetField,
@@ -174,7 +174,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
         final JfxInstanceUI<T> ui = getBuilder().buildEmbeddedInstanceUI(paramType);
         fieldUiList.add(ui);
 
-        final Node field = ui.getRendering();
+        final Node field = ui.getRendered();
 
         // configure the field as a target for drag and drop
         configureDropTarget(field,

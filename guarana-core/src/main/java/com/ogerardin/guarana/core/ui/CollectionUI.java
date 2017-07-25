@@ -10,13 +10,13 @@ import java.util.Collection;
  * A UI for interacting with a collection of items.
  *
  * @param <R> type of the rendered UI
- * @param <T> common type of collection items
+ * @param <C> common type of collection items
 
  * @author oge
  * @since 08/09/2015
  */
-public interface CollectionUI<R, T> extends Renderable<R> {
+public interface CollectionUI<R, C> extends Renderable<R> {
 
-    void bind(Collection<? extends T> collection);
+    void bind(Collection<? extends C> collection);
 
 }

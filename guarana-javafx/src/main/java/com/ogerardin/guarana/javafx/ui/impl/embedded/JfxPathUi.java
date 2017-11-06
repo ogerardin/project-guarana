@@ -5,11 +5,21 @@
 package com.ogerardin.guarana.javafx.ui.impl.embedded;
 
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Parent;
-import javafx.scene.control.ComboBoxBase;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 
+import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Suitable for using as en embedded UI for Path properties as follows:
@@ -20,9 +30,29 @@ import java.nio.file.Path;
  * @author olivier
  * @since 12/01/2016.
  */
-public class JfxPathUi extends ComboBoxBase<Path> implements JfxInstanceUI<Path> {
+public class JfxPathUi extends HBox implements JfxInstanceUI<Path> {
+
+    private ObjectProperty<Path> boundPathProperty = new SimpleObjectProperty<>();
+
+    private final Button button;
+    private final TextField text;
 
     public JfxPathUi() {
+        this.text = new TextField();
+        getChildren().add(this.text);
+
+        button = FontAwesomeIconFactory.get().createIconButton(FontAwesomeIcon.FOLDER);
+        button.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            File file = fileChooser.showOpenDialog(null);
+            if (file != null) {
+                boundPathProperty.setValue(file.toPath());
+            }
+        });
+        getChildren().add(button);
+        setHgrow(text, Priority.ALWAYS);
+
+        text.textProperty().bindBidirectional(boundObjectProperty(), new PathConverter());
     }
 
     @Override
@@ -32,17 +62,29 @@ public class JfxPathUi extends ComboBoxBase<Path> implements JfxInstanceUI<Path>
 
     @Override
     public void setReadOnly(boolean readOnly) {
-        setEditable(!readOnly);
+        text.setEditable(!readOnly);
+        button.disableProperty().set(readOnly);
     }
 
     @Override
     public ObjectProperty<Path> boundObjectProperty() {
-        return valueProperty();
+        return boundPathProperty;
     }
 
     @Override
-    public void bind(Path object) {
-        setValue(object);
+    public void bind(Path path) {
+        boundPathProperty.setValue(path);
     }
 
+    private class PathConverter extends StringConverter<Path> {
+        @Override
+        public String toString(Path path) {
+            return (path == null) ? "" : path.toString();
+        }
+
+        @Override
+        public Path fromString(String string) {
+            return Paths.get(string);
+        }
+    }
 }

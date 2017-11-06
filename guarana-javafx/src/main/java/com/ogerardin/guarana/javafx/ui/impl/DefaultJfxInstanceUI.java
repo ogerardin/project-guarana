@@ -13,6 +13,7 @@ import com.ogerardin.guarana.core.metamodel.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
+import com.ogerardin.guarana.javafx.ui.impl.embedded.DefaultJfxEmbeddedInstanceUI;
 import com.ogerardin.guarana.javafx.ui.impl.embedded.JfxDateUi;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;

@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Executable;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -109,8 +110,10 @@ public class Configuration extends CompositeConfiguration {
 
             switch (keyParts[0]) {
                 case "class":
-                    String propertyName = keyParts[keyParts.length - 1];
-                    String className = guaranaSubkey.substring("class.".length(), guaranaSubkey.length() - propertyName.length() - 1);
+                    int length = keyParts.length;
+                    String propertyName = keyParts[length - 1];
+                    String className = String.join(".", Arrays.copyOfRange(keyParts, 1, length - 1));
+                    //String className = guaranaSubkey.substring("class.".length(), guaranaSubkey.length() -  propertyName.length() - 1);
                     applyClassProperty(className, propertyName, configurationKey);
                     break;
                 default:

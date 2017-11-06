@@ -1,12 +1,13 @@
 /*
- * Copyright (c) 2016 Olivier Gérardin
+ * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.javafx.ui.impl;
+package com.ogerardin.guarana.javafx.ui.impl.embedded;
 
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
+import com.ogerardin.guarana.javafx.ui.impl.DefaultJfxInstanceUI;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;

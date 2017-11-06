@@ -107,17 +107,17 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
             }
             // if it's an array, add a button to open as a list only if element type is not primitive
             else if (propertyType.isArray()) {
-                final Class<?> componentType = propertyType.getComponentType();
-                if (!componentType.isPrimitive()) {
+                final Class<?> itemType = propertyType.getComponentType();
+                if (!itemType.isPrimitive()) {
                     Button zoomButton = new Button("[+]");
-                    zoomButton.setOnAction(e -> zoomArray(zoomButton, readMethod, componentType, humanizedName));
+                    zoomButton.setOnAction(e -> zoomArray(zoomButton, readMethod, itemType, humanizedName));
                     grid.add(zoomButton, 2, row);
                 }
             }
             // otherwise if it's a zoomable type, add a button to zoom on property as single instance
             else if (getConfiguration().isZoomable(propertyType)) {
                 Button zoomButton = new Button("...");
-                zoomButton.setOnAction(e -> zoomProperty(zoomButton, propertyType, readMethod, humanizedName));
+                zoomButton.setOnAction(e -> zoomProperty(zoomButton, readMethod, humanizedName));
                 grid.add(zoomButton, 2, row);
             }
 
@@ -162,10 +162,11 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         }
     }
 
-    private <P> void zoomProperty(Node parent, Class<P> propertyType, Method readMethod, String title) {
+    private void zoomProperty(Node parent, Method readMethod, String title) {
         try {
-            final P value = (P) readMethod.invoke(getBoundObject());
-            getBuilder().displayInstance(value, propertyType, parent, title);
+            final Object value = readMethod.invoke(getBoundObject());
+            Class runtimeClass = value.getClass();
+            getBuilder().displayInstance(value, runtimeClass, parent, title);
         } catch (Exception ex) {
             getBuilder().displayException(ex);
         }

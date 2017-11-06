@@ -16,7 +16,7 @@ import java.util.Date;
  * @author oge
  * @since 06/03/2017
  */
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class ItemBean extends AbstractItem {
 
     private String name;

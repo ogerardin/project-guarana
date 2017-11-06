@@ -2,7 +2,7 @@
  * Copyright (c) 2016 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.javafx.ui.impl;
+package com.ogerardin.guarana.javafx.ui.impl.embedded;
 
 import com.google.common.base.Converter;
 import com.ogerardin.guarana.javafx.binding.Bindings;

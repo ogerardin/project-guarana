@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of JfxInstanceUI by extending TextField, intended for use as an embedded field.
- * This is the UI implementation that is used by default {@link DefaultJfxInstanceUI} for each of
+ * This is the UI implementation that is used by default by {@link DefaultJfxInstanceUI} for each of
  * the target class properties (unless it is overridden)
  *
  * Conversion from type {@link P} to String for display is handled by

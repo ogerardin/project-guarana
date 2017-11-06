@@ -13,6 +13,7 @@ import com.ogerardin.guarana.core.metamodel.PropertyInformation;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
+import com.ogerardin.guarana.javafx.ui.impl.embedded.JfxDateUi;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
@@ -42,7 +43,7 @@ import java.util.*;
  * fully-qualified class name of the InstanceUI implementation to use. For example, the following
  * line instructs to use {@link JfxDateUi} as en embedded UI for properties of type {@link Date}:
  *
- * guarana.class.java.util.Date.embeddedUiClass=com.ogerardin.guarana.javafx.ui.impl.JfxDateUi
+ * guarana.class.java.util.Date.embeddedUiClass=com.ogerardin.guarana.javafx.ui.impl.embedded.JfxDateUi
  *
  * @param <C> type of the object being represented
  *

@@ -6,6 +6,7 @@ package com.ogerardin.guarana.javafx.test.items;
 
 import javafx.beans.property.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ import java.util.Date;
  * @author oge
  * @since 06/03/2017
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class ItemJfx extends AbstractItem {
 

@@ -5,7 +5,9 @@
 package com.ogerardin.guarana.javafx.test.items;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import java.nio.file.Path;
 import java.util.Date;
 
 /**
@@ -14,12 +16,14 @@ import java.util.Date;
  * @author oge
  * @since 06/03/2017
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class ItemPojo extends AbstractItem {
 
     public String name;
     public Date date;
     private long longInteger;
+    public Path path;
 
     public ItemPojo() {
         init();

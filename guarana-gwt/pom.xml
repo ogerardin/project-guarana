@@ -8,14 +8,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ogerardin.guarana</groupId>
-    <artifactId>guarana-gwt</artifactId>
-    <version>0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
     <prerequisites>
         <maven>3.0</maven>
     </prerequisites>
+
+    <parent>
+        <groupId>com.ogerardin.guarana</groupId>
+        <artifactId>project-guarana</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>guarana-gwt</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

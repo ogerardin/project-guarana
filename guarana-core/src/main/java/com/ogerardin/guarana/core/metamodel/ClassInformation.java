@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +28,7 @@ public class ClassInformation<C> {
     private List<ExecutableInformation> methods = null;
     private List<ExecutableInformation> constructors = null;
 
-    private Set<PropertyInformation> properties = null;
+    private List<PropertyInformation> properties = null;
 
 
     public ClassInformation(Class<C> clazz, Introspector<C> introspector) {
@@ -70,7 +69,7 @@ public class ClassInformation<C> {
         return constructors;
     }
 
-    public Set<PropertyInformation> getProperties() {
+    public List<PropertyInformation> getProperties() {
         if (properties == null) {
 //            properties = introspector.getPropertyDescriptors().stream()
 //                    .map(PropertyInformation::new)

@@ -59,6 +59,7 @@ public class JavaIntrospector {
     }
 
     public static <T> ClassInformation<T> getClassInformation(Class<T> clazz) {
+        //noinspection unchecked
         ClassInformation<T> classInformation = classInformationByClass.get(clazz);
         if (classInformation != null) {
             return classInformation;

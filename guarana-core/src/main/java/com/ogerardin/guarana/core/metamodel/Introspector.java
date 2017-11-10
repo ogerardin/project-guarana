@@ -9,7 +9,6 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public interface Introspector<C> {
 
@@ -17,7 +16,7 @@ public interface Introspector<C> {
 
     List<Constructor<C>> getConstructors();
 
-    Set<PropertyInformation> getProperties();
+    List<PropertyInformation> getProperties();
 
     Collection<Executable> getContributedExecutables();
 

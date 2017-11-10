@@ -18,6 +18,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,7 +29,9 @@ import static com.ogerardin.guarana.core.util.LambdaExceptionUtil.rethrowFunctio
  * @since 07/09/2015
  */
 public class JavaClassIntrospector<C> implements Introspector<C> {
-    public static final String JAVAFX_PROPERTY_SUFFIX = "Property";
+
+    private static final String JAVAFX_PROPERTY_SUFFIX = "Property";
+
     private static Logger LOGGER = LoggerFactory.getLogger(JavaClassIntrospector.class);
 
     private final Class<C> clazz;
@@ -123,7 +126,7 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
 
 
     private Collection<Class> getReferencingClasses() {
-        // getNamesOfClassesWithFieldOfType() also retruns classes that have methods with paraneters of
+        // getNamesOfClassesWithFieldOfType() also returns classes that have methods with paraneters of
         // the specified type, which fits our needs
         final List<String> referencingClassNames = new FastClasspathScanner().scan()
                 .getNamesOfClassesWithFieldOfType(clazz);
@@ -146,27 +149,30 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
     }
 
     @Override
-    public Set<PropertyInformation> getProperties() {
-        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-        Set<PropertyDescriptor> pds = new HashSet<>(Arrays.asList(propertyDescriptors));
+    public List<PropertyInformation> getProperties() {
+
+        List<PropertyDescriptor> propertyDescriptors = Arrays.asList(beanInfo.getPropertyDescriptors());
 
         // create a map by property name
-        Map<String, PropertyDescriptor> propertyDescriptorByName = new HashMap<>();
-        pds.forEach(propertyDescriptor -> {
-            propertyDescriptorByName.put(propertyDescriptor.getName(), propertyDescriptor);
-        });
+        Map<String, PropertyDescriptor> propertyDescriptorByName =
+                propertyDescriptors.stream()
+                        .collect(Collectors.toMap(
+                                PropertyDescriptor::getName,
+                                Function.identity(),
+                                (a, b) -> b));
 
-        // group basic preperty with corresponding JavaFX Property if any
-        Set<PropertyInformation> properties = propertyDescriptorByName.entrySet().stream()
-                .filter(entry -> !entry.getKey().endsWith(JAVAFX_PROPERTY_SUFFIX))
-                .map(entry -> {
-                    PropertyDescriptor propertyDescriptor = entry.getValue();
-                    String name = propertyDescriptor.getName();
+        // group basic property with corresponding JavaFX Property if any
+        List<PropertyInformation> properties =
+                propertyDescriptors.stream()
+                .filter(pd -> !pd.getName().endsWith(JAVAFX_PROPERTY_SUFFIX))
+                .map(pd -> {
+                    String name = pd.getName();
                     PropertyDescriptor jfxProperty = propertyDescriptorByName.get(name + JAVAFX_PROPERTY_SUFFIX);
-                    return new PropertyInformation(propertyDescriptor, jfxProperty);
+                    return new PropertyInformation(pd, jfxProperty);
                 })
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
+        //TODO order properties using declared fields order
         return properties;
     }
 

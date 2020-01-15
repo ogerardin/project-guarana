@@ -236,15 +236,15 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         if (propertyValue == null) {
             //ui.boundObjectProperty().unbind();
             if (!propertyInformation.isCollection() || propertyInformation.getWriteMethod() == null) {
-                LOGGER.warn("Binding UI " + propertyUi + ": can't bind to null value");
+                LOGGER.warn("Attempted to bind UI " + propertyUi + ": can't bind to null value");
                 return;
             }
             propertyValue = createEmptyCollection(propertyInformation);
             if (propertyValue == null) {
-                LOGGER.warn("Binding UI " + propertyUi + " to null collection: failed to provide empty collection");
+                LOGGER.warn("Attempted to bind UI " + propertyUi + " to null collection: failed to create empty collection");
                 return;
             }
-            LOGGER.warn("Binding UI " + propertyUi + " to null collection: providing empty collection");
+            LOGGER.warn("Attempted to bind UI " + propertyUi + " to null collection: providing empty collection");
             try {
                 propertyInformation.getWriteMethod().invoke(object, propertyValue);
             } catch (IllegalAccessException | InvocationTargetException e) {

@@ -153,7 +153,7 @@ public class Configuration extends CompositeConfiguration {
             Class<?> clazz = Class.forName(className);
             classConfiguration = this.forClass(clazz);
         } catch (ClassNotFoundException e) {
-            LOGGER.error("Property [" + key + "]: class not found: " + className);
+            LOGGER.warn("Property [" + key + "]: class not found: " + className + " - ignoring");
             return;
         }
         switch (property) {

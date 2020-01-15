@@ -16,6 +16,7 @@ import java.beans.MethodDescriptor;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
@@ -128,7 +129,9 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
     private Collection<Class> getReferencingClasses() {
         // getNamesOfClassesWithFieldOfType() also returns classes that have methods with paraneters of
         // the specified type, which fits our needs
-        final List<String> referencingClassNames = new FastClasspathScanner().scan()
+        FastClasspathScanner fastClasspathScanner = new FastClasspathScanner();
+        fastClasspathScanner.enableFieldTypeIndexing();
+        final List<String> referencingClassNames = fastClasspathScanner.scan()
                 .getNamesOfClassesWithFieldOfType(clazz);
 
         return referencingClassNames.stream()
@@ -173,6 +176,9 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
                 .collect(Collectors.toList());
 
         //TODO order properties using declared fields order
+        Field[] fields = clazz.getFields();
+
+
         return properties;
     }
 

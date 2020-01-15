@@ -9,9 +9,7 @@ import com.ogerardin.guarana.core.test.domain.Thing;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import org.junit.Test;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
@@ -24,7 +22,9 @@ public class ClasspathScannerTest {
 
     @Test
     public void testClasspathScanning() {
-        final List<String> namesOfAllStandardClasses = new FastClasspathScanner().scan()
+
+        FastClasspathScanner fastClasspathScanner = new FastClasspathScanner();
+        final List<String> namesOfAllStandardClasses = fastClasspathScanner.scan()
                 .getNamesOfAllStandardClasses();
 
         assertThat(namesOfAllStandardClasses, hasItems(Person.class.getName(), Thing.class.getName()));
@@ -32,10 +32,10 @@ public class ClasspathScannerTest {
 
     @Test
     public void testFindFieldWithType() throws Exception {
-        final List<String> namesOfClassesWithFieldOfType = new FastClasspathScanner().scan()
+        FastClasspathScanner fastClasspathScanner = new FastClasspathScanner();
+        fastClasspathScanner.enableFieldTypeIndexing();
+        final List<String> namesOfClassesWithFieldOfType = fastClasspathScanner.scan()
                 .getNamesOfClassesWithFieldOfType(Person.class);
-
-        final Set<String> actual = new HashSet<>(namesOfClassesWithFieldOfType);
 
         assertThat(namesOfClassesWithFieldOfType, hasItems(Thing.class.getName()));
     }

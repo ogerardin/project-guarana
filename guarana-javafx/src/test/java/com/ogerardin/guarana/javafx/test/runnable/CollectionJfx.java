@@ -5,7 +5,7 @@
 package com.ogerardin.guarana.javafx.test.runnable;
 
 import com.ogerardin.guarana.javafx.JfxUiManager;
-import com.ogerardin.guarana.javafx.test.items.ItemBean;
+import com.ogerardin.guarana.javafx.test.items.ItemJfx;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -13,9 +13,9 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UnpersistedCollectionBean extends Application {
+public class CollectionJfx extends Application {
 
-    private static List<ItemBean> items;
+    private static List<ItemJfx> items;
 
     @Override
     public void start(Stage primaryStage) {
@@ -24,7 +24,7 @@ public class UnpersistedCollectionBean extends Application {
         JfxUiManager uiManager = new JfxUiManager();
 
         // build UI and bind it to actual instance
-        JfxCollectionUI<ItemBean> ui = uiManager.buildCollectionUi(ItemBean.class);
+        JfxCollectionUI<ItemJfx> ui = uiManager.buildCollectionUi(ItemJfx.class);
         ui.bind(items);
 
         //display UI in JavaFX primary Stage

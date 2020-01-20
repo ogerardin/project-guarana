@@ -5,17 +5,20 @@
 package com.ogerardin.guarana.javafx.test.runnable;
 
 import com.ogerardin.guarana.javafx.JfxUiManager;
-import com.ogerardin.guarana.javafx.test.items.ItemJfx;
-import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
+import com.ogerardin.guarana.javafx.test.items.ItemPojo;
+import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class UnpersistedCollectionJfx extends Application {
+public class CollectionFieldPojo extends Application {
 
-    private static List<ItemJfx> items;
+    @Data
+    public static class MyClass {
+        public List<ItemPojo> items;
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -24,18 +27,14 @@ public class UnpersistedCollectionJfx extends Application {
         JfxUiManager uiManager = new JfxUiManager();
 
         // build UI and bind it to actual instance
-        JfxCollectionUI<ItemJfx> ui = uiManager.buildCollectionUi(ItemJfx.class);
-        ui.bind(items);
+        JfxInstanceUI<MyClass> ui = uiManager.buildInstanceUI(MyClass.class);
+        ui.bind(new MyClass());
 
         //display UI in JavaFX primary Stage
         uiManager.display(ui, primaryStage, "Hello Guarana!");
     }
 
     public static void main(String[] args) {
-
-        // instantiate our main business object
-        items = new ArrayList<>();
-
         // handoff to JavaFX; this will call the start() method
         launch(args);
     }

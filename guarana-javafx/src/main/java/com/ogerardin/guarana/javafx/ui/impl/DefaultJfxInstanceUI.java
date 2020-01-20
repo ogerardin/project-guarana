@@ -144,20 +144,20 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         return field;
     }
 
-    private <C> void zoomCollection(Node parent, Method readMethod, String title) {
+    private <I> void zoomCollection(Node parent, Method readMethod, String title) {
         try {
             // Try to use generic introspection to determine the type of collection members.
-            final Class<C> itemType = JavaIntrospector.getMethodResultSingleParameterType(readMethod);
-            final Collection<C> collection = (Collection<C>) readMethod.invoke(getBoundObject());
+            final Class<I> itemType = JavaIntrospector.getMethodResultSingleParameterType(readMethod);
+            final Collection<I> collection = (Collection<I>) readMethod.invoke(getBoundObject());
             getBuilder().displayCollection(collection, itemType, parent, title);
         } catch (Exception e) {
             getBuilder().displayException(e);
         }
     }
 
-    private <C> void zoomArray(Node parent, Method readMethod, Class<C> itemType, String title) {
+    private <I> void zoomArray(Node parent, Method readMethod, Class<I> itemType, String title) {
         try {
-            final C[] array = (C[]) readMethod.invoke(getBoundObject());
+            final I[] array = (I[]) readMethod.invoke(getBoundObject());
             getBuilder().displayArray(array, itemType, parent, title);
         } catch (Exception e) {
             getBuilder().displayException(e);

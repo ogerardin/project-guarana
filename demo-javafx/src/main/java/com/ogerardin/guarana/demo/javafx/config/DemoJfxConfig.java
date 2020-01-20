@@ -48,7 +48,7 @@ public class DemoJfxConfig extends Application {
     }
 
     @Data
-    private static class World {
+    public static class World {
         public Set<Host> hosts;
         public Set<TomcatInstance> tomcatInstances;
         public Set<DeployedWebapp> deployedWebapps;

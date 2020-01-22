@@ -21,6 +21,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,17 +69,35 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 //        }
 
         root = new VBox();
+        Label titleLabel;
+        {
+            BorderPane titleBox = new BorderPane();
+            final String title = getConfiguration().getClassDisplayName(itemClass);
+            titleLabel = new Label(title);
+            titleLabel.setFont(getTitleLabelFont());
+            titleBox.setCenter(titleLabel);
+            {
+                HBox buttonBox = new HBox();
+                {
+                    Button button = new Button("-");
+                    button.setOnAction(event -> removeItem());
+                    buttonBox.getChildren().add(button);
+                }
+                {
+                    Button button = new Button("+");
+                    button.setOnAction(event -> addNewItem());
+                    buttonBox.getChildren().add(button);
+                }
+                titleBox.setLeft(buttonBox);
+            }
+            {
+                Button button = new Button("↻");
+                button.setOnAction(event -> refresh());
+                titleBox.setRight(button);
+            }
 
-        BorderPane titleBox = new BorderPane();
-        final String title = getConfiguration().getClassDisplayName(itemClass);
-        final Label titleLabel = new Label(title);
-        titleLabel.setFont(getTitleLabelFont());
-        titleBox.setCenter(titleLabel);
-        Button addButton = new Button("+");
-        addButton.setOnAction(event -> addNewItem());
-        titleBox.setRight(addButton);
-
-        root.getChildren().add(titleBox);
+            root.getChildren().add(titleBox);
+        }
 
 
         // build table
@@ -132,6 +151,14 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         configureDragSource(titleLabel, tableView::getItems);
         configureContextMenu(titleLabel, classInformation, null);
 
+    }
+
+    private void refresh() {
+        tableView.refresh();
+    }
+
+    private void removeItem() {
+        //TODO
     }
 
     private void handleDoubleClick(TableRow<T> row) {

@@ -4,10 +4,13 @@
 
 package com.ogerardin.guarana.core.metamodel;
 
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -77,6 +80,12 @@ public class ClassInformation<C> {
             properties = introspector.getProperties();
         }
         return properties;
+    }
+
+    public Optional<PropertyInformation> isSetterForProperty(@NonNull Method method) {
+        return getProperties().stream()
+                .filter(pi -> method.equals(pi.getWriteMethod()))
+                .findAny();
     }
 
 

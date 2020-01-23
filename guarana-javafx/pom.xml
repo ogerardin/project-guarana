@@ -69,11 +69,6 @@
             <artifactId>fontawesomefx-icons525</artifactId>
             <version>3.0.0-4</version>
         </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>3.3.0</version>
-        </dependency>
     </dependencies>
 
     <repositories>

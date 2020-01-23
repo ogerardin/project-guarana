@@ -8,6 +8,7 @@ import com.ogerardin.guarana.core.config.Util;
 import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import com.ogerardin.guarana.core.metamodel.ClassInformation;
 import com.ogerardin.guarana.core.metamodel.PropertyInformation;
+import com.ogerardin.guarana.core.observability.ObservableDecorator;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
@@ -23,8 +24,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.InvocationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -183,15 +182,8 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
             item = itemClass.newInstance();
             tableView.getItems().add(item);
 
-            //FIXME testing: substitute item with CGLIB proxy
-            Enhancer enhancer = new Enhancer();
-            enhancer.setSuperclass(itemClass);
-            enhancer.setCallback((InvocationHandler) (o, method, objects) -> {
-                LOGGER.debug("invoked on proxy: " + method);
-                return method.invoke(o, objects);
-            });
-            item = (T) enhancer.create();
-
+            //substitute item with observable proxy
+            item = ObservableDecorator.of(item, itemClass);
 
             JfxInstanceUI<T> ui = getBuilder().displayInstance(item, itemClass, "New Item");
             ui.boundObjectProperty().addListener((observable, oldValue, newValue) -> {

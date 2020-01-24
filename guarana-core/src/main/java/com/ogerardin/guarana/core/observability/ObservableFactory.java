@@ -6,14 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.cglib.proxy.Enhancer;
 
 @Slf4j
-public enum ObservableDecorator {
+public enum ObservableFactory {
     ;
 
-    public static <T> T of(T object, Class<T> objectClass) {
+    public static <T> T createObservable(T object, Class<T> objectClass) {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(objectClass);
+        enhancer.setInterfaces(new Class[] {Observable.class});
         ClassInformation<T> classInformation = JavaIntrospector.getClassInformation(objectClass);
-        enhancer.setCallback(new SetterInterceptor<>(object, classInformation));
+        enhancer.setCallback(new PropertyChangeInterceptor<>(object, classInformation));
         //noinspection unchecked
         return (T) enhancer.create();
     }

@@ -8,7 +8,7 @@ import com.ogerardin.guarana.core.config.Util;
 import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import com.ogerardin.guarana.core.metamodel.ClassInformation;
 import com.ogerardin.guarana.core.metamodel.PropertyInformation;
-import com.ogerardin.guarana.core.observability.ObservableDecorator;
+import com.ogerardin.guarana.core.observability.ObservableFactory;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
@@ -183,7 +183,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
             tableView.getItems().add(item);
 
             //substitute item with observable proxy
-            item = ObservableDecorator.of(item, itemClass);
+            item = ObservableFactory.createObservable(item, itemClass);
 
             JfxInstanceUI<T> ui = getBuilder().displayInstance(item, itemClass, "New Item");
             ui.boundObjectProperty().addListener((observable, oldValue, newValue) -> {

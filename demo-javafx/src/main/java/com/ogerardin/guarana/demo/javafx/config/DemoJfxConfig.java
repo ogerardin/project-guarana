@@ -4,11 +4,6 @@
 
 package com.ogerardin.guarana.demo.javafx.config;
 
-/**
- * @author Olivier
- * @since 28/05/15
- */
-
 import com.ogerardin.business.sample.config.model.DeployedWebapp;
 import com.ogerardin.business.sample.config.model.Host;
 import com.ogerardin.business.sample.config.model.TomcatInstance;
@@ -20,6 +15,10 @@ import lombok.Data;
 
 import java.util.Set;
 
+/**
+ * @author Olivier
+ * @since 28/05/15
+ */
 public class DemoJfxConfig extends Application {
 
     private static World world;

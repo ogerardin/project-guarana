@@ -2,13 +2,13 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.core.test.domain;
+package com.ogerardin.guarana.javafx.test.items;
 
 import java.util.Date;
 
 public abstract class AbstractItem {
 
-    protected void init() {
+    void init() {
         setName("default");
         setDate(new Date());
         setLongInteger(10);

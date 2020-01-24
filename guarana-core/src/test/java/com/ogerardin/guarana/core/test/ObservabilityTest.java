@@ -2,7 +2,7 @@ package com.ogerardin.guarana.core.test;
 
 import com.ogerardin.guarana.core.observability.Observable;
 import com.ogerardin.guarana.core.observability.ObservableFactory;
-import com.ogerardin.guarana.core.test.domain.ItemPojo;
+import lombok.Data;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -32,5 +32,14 @@ public class ObservabilityTest {
         assertEquals("name", argument.getValue().getPropertyName());
         assertEquals("value0", argument.getValue().getOldValue());
         assertEquals("value1", argument.getValue().getNewValue());
+    }
+
+    @Data
+    public static class ItemPojo {
+        String name;
+
+        public ItemPojo() {
+            setName("default");
+        }
     }
 }

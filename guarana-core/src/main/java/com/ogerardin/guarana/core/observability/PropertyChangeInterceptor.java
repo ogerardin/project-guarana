@@ -12,18 +12,25 @@ import java.beans.PropertyChangeSupport;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+/**
+ * A {@link MethodInterceptor} that implements {@link Observable}, intercepts calls to setters to notify listeners,
+ * and delegates all other method calls to the target object.
+ * This was strongly inspired by https://dzone.com/articles/dynamic-class-enhancement-with-cglib and
+ * http://markbramnik.blogspot.com/2010/04/cglib-introduction.html
+ */
 @Slf4j
-public class PropertyChangeInterceptor<T> implements MethodInterceptor {
+class PropertyChangeInterceptor<T> implements MethodInterceptor {
 
     private final Object target;
     private final ClassInformation<T> classInformation;
     private final PropertyChangeSupport propertyChangeSupport;
 
+    // Static Method instances created from method references using https://github.com/Hervian/safety-mirror
     private static final Method addPropertyChangeListenerMethod = Types.createMethod(Observable::addPropertyChangeListener);
     private static final Method removePropertyChangeListenerMethod = Types.createMethod(Observable::removePropertyChangeListener);
 
 
-    public PropertyChangeInterceptor(T target, ClassInformation<T> classInformation) {
+    PropertyChangeInterceptor(T target, ClassInformation<T> classInformation) {
         this.target = target;
         this.classInformation = classInformation;
         this.propertyChangeSupport = new PropertyChangeSupport(target);
@@ -40,27 +47,24 @@ public class PropertyChangeInterceptor<T> implements MethodInterceptor {
             return null;
         }
 
-//        method.setAccessible(true);
-//                log.debug("invoked on proxy: " + method);
-        Optional<PropertyInformation> maybePropertyInformation = classInformation.isSetterForProperty(method);
-
         //Handle case where method is a setter
-        if (maybePropertyInformation.isPresent()) {
-            PropertyInformation propertyInformation = maybePropertyInformation.get();
-            log.debug("setter invoked for property: " + propertyInformation);
-            // see https://dzone.com/articles/dynamic-class-enhancement-with-cglib
+        Optional<PropertyInformation> maybeSetterTargetProperty = classInformation.propertyForSetter(method);
+        if (maybeSetterTargetProperty.isPresent()) {
+            PropertyInformation propertyInformation = maybeSetterTargetProperty.get();
+            log.debug("setter invoked: " + method);
 
-            //invoke getter to fetch previous
+            //invoke getter to fetch previous value
             Method readMethod = propertyInformation.getReadMethod();
             Object oldValue = readMethod.invoke(target);
-            //now invoke setter
+            //now invoke actual setter
             method.invoke(target, args);
             //fire property change
             propertyChangeSupport.firePropertyChange(propertyInformation.getName(), oldValue, args[0]);
             return null;
         };
 
-        //Handle general case
+        //General case: call method on wrapped object
+        method.setAccessible(true);
         return method.invoke(target, args);
     }
 }

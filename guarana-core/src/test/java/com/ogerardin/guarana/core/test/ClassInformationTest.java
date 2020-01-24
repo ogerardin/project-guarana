@@ -28,7 +28,7 @@ public class ClassInformationTest {
         ClassInformation<Person> classInformation = JavaIntrospector.getClassInformation(Person.class);
 
         // expected: constructors from native introspection
-        final Set<Constructor> expected = Arrays.stream(Person.class.getConstructors())
+        final Set<Constructor<?>> expected = Arrays.stream(Person.class.getConstructors())
                 .collect(Collectors.toSet());
 
         // actual: constructors from ClassInformation

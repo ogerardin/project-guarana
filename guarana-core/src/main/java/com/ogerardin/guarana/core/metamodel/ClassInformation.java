@@ -82,7 +82,7 @@ public class ClassInformation<C> {
         return properties;
     }
 
-    public Optional<PropertyInformation> isSetterForProperty(@NonNull Method method) {
+    public Optional<PropertyInformation> propertyForSetter(@NonNull Method method) {
         return getProperties().stream()
                 .filter(pi -> method.equals(pi.getWriteMethod()))
                 .findAny();

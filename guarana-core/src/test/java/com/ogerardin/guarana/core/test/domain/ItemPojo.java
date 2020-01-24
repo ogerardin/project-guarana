@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Olivier Gérardin
  */
 
-package com.ogerardin.guarana.javafx.test.items;
+package com.ogerardin.guarana.core.test.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

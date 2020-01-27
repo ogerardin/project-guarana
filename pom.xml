@@ -26,10 +26,10 @@
     <modules>
         <module>guarana-core</module>
         <module>guarana-javafx</module>
-        <module>guarana-gwt</module>
+<!--        <module>guarana-gwt</module>-->
         <module>sample-business</module>
         <module>demo-javafx</module>
-        <module>demo-gwt</module>
+<!--        <module>demo-gwt</module>-->
     </modules>
 
     <build>

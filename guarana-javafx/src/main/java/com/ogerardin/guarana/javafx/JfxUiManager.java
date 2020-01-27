@@ -21,9 +21,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,13 +35,13 @@ import java.util.function.Consumer;
  * @since 07/09/2015
  */
 //TODO split Builder from Manager
+@Slf4j
 public class JfxUiManager implements JfxUIBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JfxUiManager.class);
 
     private static final String GUARANA_DEFAULT_CSS = "/guarana-default.css";
 
-    private BiMap<Object, Renderable> objectRenderableMap = HashBiMap.create();
-    private BiMap<Renderable, Stage> renderableStageMap = HashBiMap.create();
+    private final BiMap<Object, Renderable> objectRenderableMap = HashBiMap.create();
+    private final BiMap<Renderable, Stage> renderableStageMap = HashBiMap.create();
 
     private final Configuration configuration;
     private String defaultStylesheet;
@@ -123,7 +122,7 @@ public class JfxUiManager implements JfxUIBuilder {
 
     public void displayException(Throwable e) {
         //TODO improve this
-        LOGGER.error("Displaying exception", e);
+        log.error("Displaying exception", e);
         JfxInstanceUI<Throwable> exceptionInstanceUI = buildInstanceUI(Throwable.class);
         exceptionInstanceUI.bind(e);
         display(exceptionInstanceUI, "Caught Exception");
@@ -245,7 +244,7 @@ public class JfxUiManager implements JfxUIBuilder {
     private void stageAction(Renderable renderable, Consumer<Stage> stageAction) {
         Stage stage = renderableStageMap.get(renderable);
         if (stage == null) {
-            LOGGER.warn("Can't find stage for the specified renderable; maybe it was never displayed?");
+            log.warn("Can't find stage for the specified renderable; maybe it was never displayed?");
             return;
         }
         stageAction.accept(stage);

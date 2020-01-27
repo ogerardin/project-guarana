@@ -7,8 +7,7 @@ package com.ogerardin.guarana.core.config;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import com.ogerardin.guarana.core.util.DefaultStringConverter;
 import javafx.util.StringConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -23,8 +22,8 @@ import java.util.Set;
  * @author olivier
  * @since 07/11/2015.
  */
+@Slf4j
 public class ClassConfiguration<C> {
-    private static Logger LOGGER = LoggerFactory.getLogger(ClassConfiguration.class);
 
     private final Class<C> clazz;
 
@@ -88,7 +87,7 @@ public class ClassConfiguration<C> {
                 return;
             }
         }
-        LOGGER.warn("No method found matching " + methodName);
+        log.warn("No method found matching " + methodName);
     }
 
     public void hideMethods(String... methods) {
@@ -106,7 +105,7 @@ public class ClassConfiguration<C> {
             if (method.getDeclaringClass() != this.clazz) {
                 throw new InvalidParameterException("Method " + method + " is not declared in class " + clazz);
             }
-//            LOGGER.debug("Hiding: "  + method.getDeclaringClass() + "." + method.getName());
+//            log.debug("Hiding: "  + method.getDeclaringClass() + "." + method.getName());
             hiddenMethods.add(method);
         }
     }

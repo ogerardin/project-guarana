@@ -6,8 +6,7 @@ package com.ogerardin.guarana.core.introspection;
 
 import com.ogerardin.guarana.core.annotations.Service;
 import com.ogerardin.guarana.core.metamodel.ClassInformation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -15,8 +14,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
+@Slf4j
 public class JavaIntrospector {
-    private static Logger LOGGER = LoggerFactory.getLogger(JavaIntrospector.class);
 
     private static final Map<Class, ClassInformation> classInformationByClass = new HashMap<>();
 
@@ -65,7 +64,7 @@ public class JavaIntrospector {
             return classInformation;
         }
 
-        LOGGER.debug("Instantiating ClassInformation for: " + clazz);
+        log.debug("Instantiating ClassInformation for: " + clazz);
         JavaClassIntrospector<T> introspector = new JavaClassIntrospector<>(clazz);
         classInformation = new ClassInformation<T>(clazz, introspector);
         classInformationByClass.put(clazz, classInformation);

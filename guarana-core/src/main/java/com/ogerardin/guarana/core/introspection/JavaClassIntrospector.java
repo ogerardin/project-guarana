@@ -7,8 +7,7 @@ package com.ogerardin.guarana.core.introspection;
 import com.ogerardin.guarana.core.metamodel.Introspector;
 import com.ogerardin.guarana.core.metamodel.PropertyInformation;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -29,11 +28,10 @@ import static com.ogerardin.guarana.core.util.LambdaExceptionUtil.rethrowFunctio
  * @author oge
  * @since 07/09/2015
  */
+@Slf4j
 public class JavaClassIntrospector<C> implements Introspector<C> {
 
     private static final String JAVAFX_PROPERTY_SUFFIX = "Property";
-
-    private static Logger LOGGER = LoggerFactory.getLogger(JavaClassIntrospector.class);
 
     private final Class<C> clazz;
     private final BeanInfo beanInfo;
@@ -70,10 +68,10 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
         }
 
         // examine classes referenced by this class
-//        LOGGER.debug("Scanning methods/constructors of " + this.getJavaClass());
+//        log.debug("Scanning methods/constructors of " + this.getJavaClass());
 //        for (ExecutableInformation ei : getMethodsAndConstructors()) {
 //            final Executable executable = ei.getExecutable();
-//            LOGGER.debug("scanning: " + executable);
+//            log.debug("scanning: " + executable);
 //
 //            // collect all types referenced in this method's declaration
 //            Set<Class<?>> classes = ei.getReferencedClasses();
@@ -84,15 +82,15 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
 //        }
 
         // examine classes that reference this class
-        LOGGER.debug("Scanning referencing classes for " + clazz);
+        log.debug("Scanning referencing classes for " + clazz);
         final Collection<Class> referencingClasses = getReferencingClasses();
 
         for (Class c : referencingClasses) {
-            LOGGER.debug("" + c + " references " + clazz);
+            log.debug("" + c + " references " + clazz);
             final List<Executable> methodsAndConstructors = getMethodsAndConstructors(c);
             for (Executable executable : methodsAndConstructors) {
                 if (JavaIntrospector.executableReferences(executable, clazz)) {
-                    LOGGER.debug("" + executable + " references " + clazz);
+                    log.debug("" + executable + " references " + clazz);
                     addContributingExecutable(clazz, executable);
                 }
             }
@@ -111,9 +109,9 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
     }
 
     private void addContributingExecutable(Executable executable) {
-        LOGGER.debug("Add contributing " + executable.getClass().getSimpleName()
+        log.debug("Add contributing " + executable.getClass().getSimpleName()
                 + " for " + clazz.getSimpleName() + ": " + executable);
-//        LOGGER.debug("Add contributing executable for " + this.getJavaClass().getSimpleName() + " -> " +
+//        log.debug("Add contributing executable for " + this.getJavaClass().getSimpleName() + " -> " +
 //                method.getReturnType().getSimpleName() + " " +
 //                method.getDeclaringClass().getSimpleName() + "." +
 //                method.getName());

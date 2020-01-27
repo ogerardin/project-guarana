@@ -5,8 +5,7 @@
 package com.ogerardin.guarana.core.metamodel;
 
 import lombok.ToString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.beans.MethodDescriptor;
 import java.lang.reflect.Constructor;
@@ -24,9 +23,8 @@ import java.util.List;
  * @since 14/06/2016
  */
 @ToString
+@Slf4j
 public class ExecutableInformation {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutableInformation.class);
 
     private final Executable executable;
     private final List<ParameterInformation> parameters;
@@ -41,7 +39,7 @@ public class ExecutableInformation {
     }
 
     private List<ParameterInformation> parseParameters(Executable executable) {
-//        LOGGER.debug("parsing parameters of: " + executable);
+//        log.debug("parsing parameters of: " + executable);
         List<ParameterInformation> list = new ArrayList<>();
         for (Parameter parameter : executable.getParameters()) {
             list.add(new ParameterInformation(parameter));

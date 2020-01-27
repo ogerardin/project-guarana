@@ -10,12 +10,11 @@ import com.ogerardin.guarana.core.persistence.PersistenceServiceBuilder;
 import com.ogerardin.guarana.core.persistence.basic.DefaultPersistenceServiceBuilder;
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import javafx.util.StringConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Executable;
 import java.net.URL;
@@ -40,8 +39,8 @@ import java.util.function.Function;
  * @author oge
  * @since 24/09/2015
  */
+@Slf4j
 public class Configuration extends CompositeConfiguration {
-    private static Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 
     private static final String PROPERTY_PREFIX = "guarana.";
 
@@ -65,7 +64,7 @@ public class Configuration extends CompositeConfiguration {
         try {
             addConfigurationResource(USER_PROPERTIES);
         } catch (ConfigurationException e) {
-            LOGGER.warn("Failed to load " + USER_PROPERTIES + ": " + e.getMessage());
+            log.warn("Failed to load " + USER_PROPERTIES + ": " + e.getMessage());
         }
 
         // priority 3: toolkit-specific properties
@@ -91,7 +90,7 @@ public class Configuration extends CompositeConfiguration {
         if (url == null) {
             throw new ConfigurationException("Resource not found: " + resource);
         }
-        LOGGER.debug("Reading configuration resource: " + resource);
+        log.debug("Reading configuration resource: " + resource);
         addConfiguration(new PropertiesConfiguration(url));
     }
 
@@ -132,11 +131,11 @@ public class Configuration extends CompositeConfiguration {
                 try {
                     this.setPersistenceServiceBuilderClass(getString(key));
                 } catch (ClassNotFoundException e) {
-                    LOGGER.error(e.toString());
+                    log.error(e.toString());
                 }
                 break;
             default:
-                LOGGER.error("Invalid property key: " + key);
+                log.error("Invalid property key: " + key);
         }
     }
 
@@ -153,7 +152,7 @@ public class Configuration extends CompositeConfiguration {
             Class<?> clazz = Class.forName(className);
             classConfiguration = this.forClass(clazz);
         } catch (ClassNotFoundException e) {
-            LOGGER.warn("Property [" + key + "]: class not found: " + className + " - ignoring");
+            log.warn("Property [" + key + "]: class not found: " + className + " - ignoring");
             return;
         }
         switch (property) {
@@ -184,7 +183,7 @@ public class Configuration extends CompositeConfiguration {
             case "stringConverterClass":
                 classConfiguration.setStringConverterClass(getClass(key, StringConverter.class));
             default:
-                LOGGER.error("Invalid class property: " + property + " in " + key);
+                log.error("Invalid class property: " + property + " in " + key);
         }
     }
 

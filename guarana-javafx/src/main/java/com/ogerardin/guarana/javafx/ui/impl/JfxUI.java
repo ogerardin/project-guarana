@@ -26,9 +26,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
@@ -43,9 +42,8 @@ import java.util.function.Supplier;
  * @author oge
  * @since 24/09/2015
  */
+@Slf4j
 abstract class JfxUI implements JfxRenderable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(JfxUI.class);
 
     Image ICON_CONSTRUCTOR = new Image("icons/call_class_16.png");
     Image ICON_METHOD = new Image("icons/call_method_16.png");
@@ -71,7 +69,7 @@ abstract class JfxUI implements JfxRenderable {
             classInformation.getMethods().stream()
                     .filter(methodInfo -> !methodInfo.isGetterOrSetter())
                     .filter(methodInfo -> !getConfiguration().isHidden(targetClass, methodInfo.getExecutable()))
-                    .map(methodInfo -> new ActionMenuItem(methodInfo, targetSupplier))
+                    .map(methodInfo -> new ActionMenuItem<>(methodInfo, targetSupplier))
                     .forEach(menuItem -> contextMenu.getItems().add(menuItem));
         }
 
@@ -127,7 +125,7 @@ abstract class JfxUI implements JfxRenderable {
                 Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
                 T value = (T) ObjectRegistry.INSTANCE.get(identifier);
                 if (value == null) {
-                    LOGGER.error("Key not found in object registry: " + identifier);
+                    log.error("Key not found in object registry: " + identifier);
                     return;
                 }
                 if (valueValidator.test(value)) {
@@ -143,7 +141,7 @@ abstract class JfxUI implements JfxRenderable {
                 Identifier identifier = (Identifier) db.getContent(Const.DATA_FORMAT_OBJECT_IDENTIFIER);
                 T value = (T) ObjectRegistry.INSTANCE.get(identifier);
                 if (value == null) {
-                    LOGGER.error("Key not found in object registry: " + identifier);
+                    log.error("Key not found in object registry: " + identifier);
                     return;
                 }
                 boolean completed = false;

@@ -5,8 +5,6 @@
 package com.ogerardin.guarana.core.metamodel;
 
 import lombok.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
  * @since 14/06/2016
  */
 public class ClassInformation<C> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassInformation.class);
 
     private final Class<C> javaClass;
     private final Introspector<C> introspector;

@@ -15,8 +15,7 @@ import com.ogerardin.business.sample.hr.service.DomainManager;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.Date;
@@ -27,9 +26,8 @@ import java.util.stream.Collectors;
  * @author Olivier
  * @since 26/05/15
  */
+@Slf4j
 public class DomainManagerDb4OImpl implements DomainManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DomainManagerDb4OImpl.class);
 
     private final ObjectContainer objectContainer;
 
@@ -79,14 +77,14 @@ public class DomainManagerDb4OImpl implements DomainManager {
     private static <T> ObservableList<T> getReplicatingObservableList(List<T> list, ObjectContainer objectContainer) {
         ObservableListWrapper<T> observableList = new ObservableListWrapper<>(list);
         observableList.addListener((ListChangeListener<T>) c -> {
-            LOGGER.debug("change: " + c);
+            log.debug("change: " + c);
             while (c.next()) {
                 if (c.wasAdded() || c.wasUpdated()) {
                     c.getAddedSubList().forEach(objectContainer::store);
                 } else if (c.wasRemoved()) {
                     c.getRemoved().forEach(objectContainer::delete);
                 } else {
-                    LOGGER.warn("change not supported: " + c);
+                    log.warn("change not supported: " + c);
                 }
             }
         });

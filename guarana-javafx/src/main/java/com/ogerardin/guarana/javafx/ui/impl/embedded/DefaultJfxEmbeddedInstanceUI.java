@@ -13,8 +13,7 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * An implementation of JfxInstanceUI by extending TextField, intended for use as an embedded field.
@@ -31,9 +30,8 @@ import org.slf4j.LoggerFactory;
  * @since 11/02/2016.
  * @see DefaultJfxInstanceUI
  */
+@Slf4j
 public class DefaultJfxEmbeddedInstanceUI<P> extends TextField implements JfxInstanceUI<P> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJfxEmbeddedInstanceUI.class);
 
     private final JfxUiManager jfxUiManager;
     private final Class<P> clazz;
@@ -54,11 +52,11 @@ public class DefaultJfxEmbeddedInstanceUI<P> extends TextField implements JfxIns
         }
 
         textProperty().addListener((observable, oldValue, newValue) -> {
-            LOGGER.debug("DefaultJfxEmbeddedInstanceUI: text changed: " + oldValue + " --> " + newValue);
+            log.debug("DefaultJfxEmbeddedInstanceUI: text changed: " + oldValue + " --> " + newValue);
         });
 
         boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-            LOGGER.debug("DefaultJfxEmbeddedInstanceUI: bound object changed: " + oldValue + " --> " + newValue);
+            log.debug("DefaultJfxEmbeddedInstanceUI: bound object changed: " + oldValue + " --> " + newValue);
         });
 
     }

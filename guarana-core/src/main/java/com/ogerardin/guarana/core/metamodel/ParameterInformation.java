@@ -6,8 +6,6 @@ package com.ogerardin.guarana.core.metamodel;
 
 import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import lombok.ToString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Parameter;
 
@@ -17,8 +15,6 @@ import java.lang.reflect.Parameter;
  */
 @ToString
 public class ParameterInformation {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(ParameterInformation.class);
 
     private final Parameter parameter;
     private final boolean injected;

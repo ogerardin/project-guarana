@@ -8,6 +8,7 @@ import com.ogerardin.guarana.core.config.Util;
 import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import com.ogerardin.guarana.core.metamodel.ClassInformation;
 import com.ogerardin.guarana.core.metamodel.PropertyInformation;
+import com.ogerardin.guarana.core.observability.Observable;
 import com.ogerardin.guarana.core.observability.ObservableFactory;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
@@ -24,8 +25,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,9 +39,8 @@ import java.util.List;
  * @author Olivier
  * @since 29/05/15
  */
+@Slf4j
 public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<T>, ListChangeListener<T> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJfxCollectionUI.class);
 
     private final ClassInformation<T> classInformation;
 
@@ -175,25 +174,28 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
     }
 
     private void addNewItem() {
+        Class<T> itemClass = getItemClass();
         T item;
         try {
-            // try no-arg constructor.
-            Class<T> itemClass = getItemClass();
             item = itemClass.newInstance();
-            tableView.getItems().add(item);
-
-            //substitute item with observable proxy
-            item = ObservableFactory.createObservable(item, itemClass);
-
-            JfxInstanceUI<T> ui = getBuilder().displayInstance(item, itemClass, "New Item");
-            ui.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-                LOGGER.debug("List item changed: " + oldValue + " -> " + newValue);
-            });
         } catch (Exception e) {
             // no-arg constructor does not exist, is not public, or failed
             //TODO better message
             getBuilder().displayException(e);
+            return;
         }
+        tableView.getItems().add(item);
+
+        //substitute item with observable proxy
+        item = ObservableFactory.createObservable(item, itemClass);
+        ((Observable) item).addPropertyChangeListener(propertyChangeEvent -> {
+            log.debug("PropertyChangeListener notified!");
+        });
+
+        JfxInstanceUI<T> ui = getBuilder().displayInstance(item, itemClass, "New Item");
+        ui.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
+            log.debug("List item changed: " + oldValue + " -> " + newValue);
+        });
     }
 
 
@@ -209,7 +211,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 
     @Override
     public void bind(Collection<? extends T> collection) {
-        LOGGER.debug("Binding collection " + collection.getClass() + " to " + this);
+        log.debug("Binding collection " + collection.getClass() + " to " + this);
         // stop listening to existing ObservableList if any
         if (getBoundList() != null) {
             getBoundList().removeListener(this);
@@ -219,14 +221,14 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         ObservableList<T> observableList;
         if (collection instanceof ObservableList) {
             observableList = (ObservableList<T>) collection;
-            LOGGER.debug("Collection bound as native ObservableList");
+            log.debug("Collection bound as native ObservableList");
         } else if (collection instanceof List) {
             observableList = FXCollections.observableList((List<T>) collection);
-            LOGGER.debug("Collection wrapped into ObservableList using FXCollections.observableList");
+            log.debug("Collection wrapped into ObservableList using FXCollections.observableList");
         } else {
             ArrayList<T> list = new ArrayList<>(collection);
             observableList = FXCollections.observableList(list);
-            LOGGER.warn("Collection copied to ObservableList");
+            log.warn("Collection copied to ObservableList");
         }
 
         // start listening and set view
@@ -241,6 +243,6 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 
     @Override
     public void onChanged(Change<? extends T> change) {
-        LOGGER.debug("list changed: " + change);
+        log.debug("list changed: " + change);
     }
 }

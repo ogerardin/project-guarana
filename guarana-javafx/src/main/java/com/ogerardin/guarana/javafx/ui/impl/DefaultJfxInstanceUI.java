@@ -27,8 +27,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -51,9 +50,8 @@ import java.util.*;
  * @author Olivier
  * @since 29/05/15
  */
+@Slf4j
 public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultJfxInstanceUI.class);
 
     private BiMap<Node, PropertyInformation> propertyInformationByNode = HashBiMap.create();
     private BiMap<JfxInstanceUI, PropertyInformation> propertyInformationByUi = HashBiMap.create();
@@ -179,10 +177,9 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
      * Bind the specified object to this UI. This means:
      * - unbinding any previous bound object
      * - binding each property to the corresponding embedded UI
-     * @param object
      */
     public void bind(C object) {
-        LOGGER.debug("Binding " + object + " to " + this);
+        log.debug("Binding " + object + " to " + this);
         if (getBoundObject() != null) {
             unbindProperties();
         }
@@ -228,7 +225,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         try {
             propertyValue = getPropertyValue(object, propertyInformation.getPropertyDescriptor());
         } catch (IllegalAccessException | InvocationTargetException e) {
-            LOGGER.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
+            log.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
             return;
         }
 
@@ -236,19 +233,19 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         if (propertyValue == null) {
             //ui.boundObjectProperty().unbind();
             if (!propertyInformation.isCollection() || propertyInformation.getWriteMethod() == null) {
-                LOGGER.warn("Attempted to bind UI " + propertyUi + ": can't bind to null value");
+                log.warn("Attempted to bind UI " + propertyUi + ": can't bind to null value");
                 return;
             }
             propertyValue = createEmptyCollection(propertyInformation);
             if (propertyValue == null) {
-                LOGGER.warn("Attempted to bind UI " + propertyUi + " to null collection: failed to create empty collection");
+                log.warn("Attempted to bind UI " + propertyUi + " to null collection: failed to create empty collection");
                 return;
             }
-            LOGGER.warn("Attempted to bind UI " + propertyUi + " to null collection: providing empty collection");
+            log.warn("Attempted to bind UI " + propertyUi + " to null collection: providing empty collection");
             try {
                 propertyInformation.getWriteMethod().invoke(object, propertyValue);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                LOGGER.error("failed to set value for property [" + propertyInformation.getName() + "]", e);
+                log.error("failed to set value for property [" + propertyInformation.getName() + "]", e);
             }
         }
 
@@ -262,18 +259,18 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
             try {
                 jfxProperty = (Property<?>) getPropertyValue(object, propertyInformation.getJfxProperty());
             } catch (Exception e) {
-                LOGGER.error("failed to get value for JavaFX property " + propertyInformation.getJfxProperty().getName(), e);
+                log.error("failed to get value for JavaFX property " + propertyInformation.getJfxProperty().getName(), e);
                 return;
             }
             propertyUi.boundObjectProperty().bindBidirectional(jfxProperty);
-            LOGGER.debug("[" + propertyName + "] bound using javafx.beans.property.Property method");
+            log.debug("[" + propertyName + "] bound using javafx.beans.property.Property method");
 
             // DEBUG: trace change events on both UI field and object property
             jfxProperty.addListener((observable, oldValue, newValue) -> {
-                LOGGER.debug("jfx property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
+                log.debug("jfx property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
             });
             propertyUi.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-                LOGGER.debug("object bound to property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
+                log.debug("object bound to property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
             });
 
             return;
@@ -287,20 +284,20 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
                     .build();
 
             propertyUi.boundObjectProperty().bindBidirectional(jfxSyntheticProperty);
-            LOGGER.debug("[" + propertyName + "] bound using JavaBeanObjectPropertyBuilder method");
+            log.debug("[" + propertyName + "] bound using JavaBeanObjectPropertyBuilder method");
 
             // DEBUG: trace change events on both UI field and object property
             jfxSyntheticProperty.addListener((observable, oldValue, newValue) -> {
-                LOGGER.debug("jfx property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
+                log.debug("jfx property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
             });
             propertyUi.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-                LOGGER.debug("object bound to property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
+                log.debug("object bound to property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
             });
 
             return;
         } catch (NoSuchMethodException e) {
             // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
-            LOGGER.warn("DEBUG: bindBidirectional threw NoSuchMethodException (read-only property?): " + e.toString());
+            log.warn("DEBUG: bindBidirectional threw NoSuchMethodException (read-only property?): " + e.toString());
         }
 
         // otherwise if the property implements java.util.Observable, register a listener
@@ -309,7 +306,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
             Observer observer = (observable, o) -> propertyUi.boundObjectProperty().setValue(observable);
             observableValue.addObserver(observer);
             observer.update(observableValue, this);
-            LOGGER.debug("[" + propertyName + "] bound using java.util.Observable method");
+            log.debug("[" + propertyName + "] bound using java.util.Observable method");
             return;
         }
 
@@ -320,12 +317,12 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
             observableValue.addListener(listener);
             //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
             listener.invalidated(observableValue);
-            LOGGER.debug("[" + propertyName + "] bound using javafx.beans.Observable method");
+            log.debug("[" + propertyName + "] bound using javafx.beans.Observable method");
             return;
         }
 
         // otherwise just set the value
-        LOGGER.warn("no binding for property [" + propertyName + "]");
+        log.warn("no binding for property [" + propertyName + "]");
 
         //ui.setReadOnly(true);
         propertyUi.bind(propertyValue);
@@ -354,7 +351,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         try {
             return propertyType.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            LOGGER.error("Failed to instantiate " + propertyType + " for null property");
+            log.error("Failed to instantiate " + propertyType + " for null property");
             return null;
         }
     }

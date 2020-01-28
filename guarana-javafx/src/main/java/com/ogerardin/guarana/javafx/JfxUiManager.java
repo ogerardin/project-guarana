@@ -182,8 +182,10 @@ public class JfxUiManager implements JfxUIBuilder {
         Object key = getUiKey(target);
         JfxInstanceUI<T> ui = (JfxInstanceUI<T>) objectRenderableMap.get(key);
         if (ui != null) {
+            log.debug("Showing existing UI for key {}", key);
             show(ui);
         } else {
+            log.debug("Key {} not found, building UI", key);
             // build instanceUI for the target class and display it in stage
             ui = buildInstanceUI(targetClass);
             ui.bind(target);

@@ -123,6 +123,13 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
 
             row++;
         }
+
+        Button goButton = new Button("OK");
+        goButton.setOnAction(event -> {
+            fireFormSubmitted();
+        });
+        root.getChildren().add(goButton);
+
     }
 
 

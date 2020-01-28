@@ -18,4 +18,5 @@ public interface JfxInstanceUI<C> extends InstanceUI<Parent, C>, JfxRenderable {
      * The JavaFX-style property that encapsulates the target object for this UI
      */
     ObjectProperty<C> boundObjectProperty();
+
 }

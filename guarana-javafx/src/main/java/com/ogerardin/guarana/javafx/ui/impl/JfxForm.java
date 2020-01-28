@@ -13,12 +13,15 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.event.EventListenerSupport;
 
 /**
  * @author oge
  * @since 21/06/2016
  */
 public abstract class JfxForm extends JfxUI {
+
+    private EventListenerSupport<FormListener> listeners = EventListenerSupport.create(FormListener.class);
 
     protected final VBox root;
 
@@ -53,6 +56,14 @@ public abstract class JfxForm extends JfxUI {
     @Override
     public Parent getRendered() {
         return root;
+    }
+
+    public void addListener(FormListener listener) {
+        listeners.addListener(listener);
+    }
+
+    protected void fireFormSubmitted() {
+        listeners.fire().formSubmitted();
     }
 
 }

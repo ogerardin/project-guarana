@@ -193,6 +193,9 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         });
 
         JfxInstanceUI<T> ui = getBuilder().displayInstance(item, itemClass, "New Item");
+//        ui.addListener(() -> {
+//            log.debug("Form submitted");
+//        });
         ui.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("List item changed: " + oldValue + " -> " + newValue);
         });

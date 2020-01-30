@@ -117,7 +117,7 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
 
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(paramType)) {
-                Button zoomButton = new Button("(+)");
+                Button zoomButton = new Button("...");
                 zoomButton.setOnAction(e -> zoomCollection(zoomButton, genericParamType));
                 grid.add(zoomButton, 2, row);
             }
@@ -125,7 +125,9 @@ public class JfxExecutableInvocationUI<C, R> extends JfxForm implements JfxRende
             row++;
         }
 
+        //TODO replace this with a native JavaFX Dialog
         Button goButton = new Button(executable instanceof Constructor ? "Create" : "Go");
+        //TODO invocation is not this class' responsibility, move it out
         goButton.setOnAction(event -> {
             doInvoke(executable);
         });

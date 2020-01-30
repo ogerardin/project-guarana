@@ -25,6 +25,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -165,12 +166,16 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         if (row.isEmpty()) {
             addNewItem();
         } else {
-            String itemTitle = "Item " + (row.getIndex() + 1);
-            T item = row.getItem();
-            Class<T> itemClass = getItemClass();
-            //TODO make sure changes on item are reflected in the list UI
-            getBuilder().displayInstance(item, itemClass, row, itemTitle);
+            editItem(row);
         }
+    }
+
+    private void editItem(TableRow<T> row) {
+        T item = row.getItem();
+        Class<T> itemClass = getItemClass();
+        String itemTitle = "Item " + (row.getIndex() + 1);
+        getBuilder().displayInstance(item, itemClass, row, itemTitle);
+        //TODO make sure changes on item are reflected in the list UI
     }
 
     private void addNewItem() {
@@ -184,7 +189,6 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
             getBuilder().displayException(e);
             return;
         }
-        tableView.getItems().add(item);
 
         //substitute item with observable proxy
         item = ObservableFactory.createObservable(item, itemClass);
@@ -192,13 +196,26 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
             log.debug("PropertyChangeListener notified!");
         });
 
-        JfxInstanceUI<T> ui = getBuilder().displayInstance(item, itemClass, "New Item");
-//        ui.addListener(() -> {
-//            log.debug("Form submitted");
-//        });
+//        JfxInstanceUI<T> ui = getBuilder().displayInstance(item, itemClass, "New Item");
+        JfxInstanceUI<T> ui = getBuilder().buildInstanceUI(itemClass);
+        ui.bind(item);
         ui.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("List item changed: " + oldValue + " -> " + newValue);
         });
+
+        // using native JavaFX Dialog
+        //TODO move this to JfxUiManager
+        Dialog<T> dialog = new Dialog<>();
+        dialog.initModality(Modality.NONE);
+        dialog.getDialogPane().setContent(ui.getRendered());
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
+        T finalItem = item;
+        dialog.setResultConverter(dialogButton -> finalItem);
+        dialog.showAndWait()
+                .ifPresent(i -> {
+                    log.debug("Form submitted");
+                    tableView.getItems().add(i);
+                });
     }
 
 

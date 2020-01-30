@@ -101,7 +101,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
 
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(propertyType)) {
-                Button zoomButton = new Button("(+)");
+                Button zoomButton = new Button("...");
                 zoomButton.setOnAction(e -> zoomCollection(zoomButton, readMethod, humanizedName));
                 grid.add(zoomButton, 2, row);
             }
@@ -109,7 +109,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
             else if (propertyType.isArray()) {
                 final Class<?> itemType = propertyType.getComponentType();
                 if (!itemType.isPrimitive()) {
-                    Button zoomButton = new Button("[+]");
+                    Button zoomButton = new Button("...");
                     zoomButton.setOnAction(e -> zoomArray(zoomButton, readMethod, itemType, humanizedName));
                     grid.add(zoomButton, 2, row);
                 }
@@ -123,12 +123,6 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
 
             row++;
         }
-
-        Button goButton = new Button("OK");
-        goButton.setOnAction(event -> {
-            fireFormSubmitted();
-        });
-        root.getChildren().add(goButton);
 
     }
 
@@ -237,12 +231,12 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         }
 
         // if it's null and it's a collection, try to use an empty collection instead
-        if (propertyValue == null) {
+        if (propertyValue == null && propertyInformation.isCollection()) {
             //ui.boundObjectProperty().unbind();
-            if (!propertyInformation.isCollection() || propertyInformation.getWriteMethod() == null) {
-                log.warn("Attempted to bind UI " + propertyUi + ": can't bind to null value");
-                return;
-            }
+//            if (!propertyInformation.isCollection() || propertyInformation.getWriteMethod() == null) {
+//                log.warn("Attempted to bind UI " + propertyUi + ": can't bind to null value");
+//                return;
+//            }
             propertyValue = createEmptyCollection(propertyInformation);
             if (propertyValue == null) {
                 log.warn("Attempted to bind UI " + propertyUi + " to null collection: failed to create empty collection");
@@ -256,7 +250,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
             }
         }
 
-        final Class<?> valueClass = propertyValue.getClass();
+        final Class<?> valueClass = propertyValue != null ? propertyValue.getClass() : propertyInformation.getPropertyType();
         String propertyName = propertyInformation.getName();
 
         // if the property has an associated a JavaFX-style property, get its value (which is assumed to be of type

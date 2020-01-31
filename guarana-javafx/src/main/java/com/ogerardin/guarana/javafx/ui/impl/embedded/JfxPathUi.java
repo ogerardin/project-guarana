@@ -22,10 +22,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Suitable for using as en embedded UI for Path properties as follows:
- * <pre>
- *             config.getClassInformation(Path.class).setEmbeddedUiClass(JfxPathUi.class);
- * </pre>
+ * Suitable for using as en embedded UI for Path properties as follows: {@code
+ *      config.getClassInformation(Path.class).setEmbeddedUiClass(JfxPathUi.class);
+ * }
+ * or in configuration: {@code
+ *     guarana.class.java.nio.file.Path.embeddedUiClass=com.ogerardin.guarana.javafx.ui.impl.embedded.JfxPathUi
+ * }
  *
  * @author olivier
  * @since 12/01/2016.
@@ -79,6 +81,11 @@ public class JfxPathUi extends HBox implements JfxInstanceUI<Path> {
     @Override
     public void display(Path object) {
         boundObjectProperty().set(object);
+    }
+
+    @Override
+    public void populate(Path object) {
+        // can't populate a Path object
     }
 
     private class PathConverter extends StringConverter<Path> {

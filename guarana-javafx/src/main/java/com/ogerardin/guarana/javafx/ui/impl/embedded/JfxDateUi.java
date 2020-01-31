@@ -31,17 +31,22 @@ public class JfxDateUi extends DatePicker implements JfxInstanceUI<Date> {
     private final ObjectProperty<Date> boundDateProperty = new SimpleObjectProperty<>();
 
     public JfxDateUi() {
-        Bindings.bindBidirectional(valueProperty(), boundObjectProperty(), new LocalDateDateConverter());
+        Bindings.bindBidirectional(valueProperty(), boundDateProperty, new LocalDateDateConverter());
     }
 
     @Override
     public void bind(Date target) {
-        boundObjectProperty().setValue(target);
+        boundDateProperty.setValue(target);
     }
 
     @Override
     public void display(Date object) {
-        boundObjectProperty().set(object);
+        boundDateProperty.set(object);
+    }
+
+    @Override
+    public void populate(Date object) {
+        object.setTime(boundDateProperty.get().getTime());
     }
 
     @Override

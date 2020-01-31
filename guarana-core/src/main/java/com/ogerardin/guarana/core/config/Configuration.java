@@ -225,10 +225,10 @@ public class Configuration extends CompositeConfiguration {
         // otherwise if bean display name is different from class name, use it
         final ClassInformation<C> classInformation = JavaIntrospector.getClassInformation(clazz);
         final String className = classInformation.getSimpleClassName();
-        String beanDisplayName = classInformation.getBeanDisplayName();
-        if (!beanDisplayName.equals(className)) {
-            return beanDisplayName;
-        }
+//        String beanDisplayName = classInformation.getBeanDisplayName();
+//        if (!beanDisplayName.equals(className)) {
+//            return beanDisplayName;
+//        }
 
         // otherwise use class name (humanized if required)
         return isHumanizeClassNames() ? Util.humanize(className) : className;

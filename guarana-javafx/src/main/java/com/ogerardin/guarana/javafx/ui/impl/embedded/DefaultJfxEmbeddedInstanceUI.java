@@ -33,14 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DefaultJfxEmbeddedInstanceUI<P> extends TextField implements JfxInstanceUI<P> {
 
-    private final JfxUiManager jfxUiManager;
-    private final Class<P> clazz;
-
-    private ObjectProperty<P> boundObjectProperty = new SimpleObjectProperty<>(this, "boundObject");
+    private final ObjectProperty<P> boundObjectProperty = new SimpleObjectProperty<>(this, "boundObject");
 
     public DefaultJfxEmbeddedInstanceUI(JfxUiManager jfxUiManager, Class<P> clazz) {
-        this.jfxUiManager = jfxUiManager;
-        this.clazz = clazz;
 
         if (clazz == String.class) {
             // this UI is for a String property: no converter required
@@ -75,6 +70,12 @@ public class DefaultJfxEmbeddedInstanceUI<P> extends TextField implements JfxIns
     @Override
     public void display(P object) {
         boundObjectProperty.set(object);
+    }
+
+    @Override
+    public void populate(P object) {
+        // In the general case, we can't populate any object from a String value...
+        // Maybe if P implements some interface?
     }
 
     @Override

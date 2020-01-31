@@ -126,7 +126,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
 
     }
 
-    private <P> void setProperty(C object, JfxInstanceUI<P> ui, PropertyInformation propertyInformation) {
+    private <P> void displayProperty(C object, JfxInstanceUI<P> ui, PropertyInformation propertyInformation) {
         // Get the property value
         P propertyValue;
         try {
@@ -138,6 +138,18 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         }
 
         ui.display(propertyValue);
+    }
+
+    private <P> void populateProperty(C object, JfxInstanceUI<P> ui, PropertyInformation propertyInformation) {
+        final P uiValue = ui.boundObjectProperty().get();
+        final Method writeMethod = propertyInformation.getWriteMethod();
+        if (writeMethod != null) {
+            try {
+                writeMethod.invoke(object, uiValue);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -215,7 +227,18 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
             unbindProperties();
         }
         boundObjectProperty.set(null);
-        setProperties(object);
+        displayProperties(object);
+    }
+
+    @Override
+    public void populate(C object) {
+        populateProperties(object);
+    }
+
+    private void populateProperties(C object) {
+        propertyInformationByUi.forEach(
+                (ui, propertyInformation) -> populateProperty(object, ui, propertyInformation)
+        );
     }
 
     /**
@@ -238,9 +261,9 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         );
     }
 
-    private void setProperties(C object) {
+    private void displayProperties(C object) {
         propertyInformationByUi.forEach(
-                (ui, propertyInformation) -> setProperty(object, ui, propertyInformation)
+                (ui, propertyInformation) -> displayProperty(object, ui, propertyInformation)
         );
     }
 

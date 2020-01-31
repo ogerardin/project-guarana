@@ -8,8 +8,6 @@ import com.ogerardin.guarana.core.config.Util;
 import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import com.ogerardin.guarana.core.metamodel.ClassInformation;
 import com.ogerardin.guarana.core.metamodel.PropertyInformation;
-import com.ogerardin.guarana.core.observability.Observable;
-import com.ogerardin.guarana.core.observability.ObservableFactory;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxCollectionUI;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
@@ -186,8 +184,9 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         dialog.showAndWait()
                 .ifPresent(i -> {
                     log.debug("Form submitted, updating item");
-                    //TODO make sure changes on item are reflected in the list UI
-                    //tableView.getItems().set(rowIndex, i);
+                    ui.populate(i);
+                    //make sure changes on item are reflected in the list UI
+                    tableView.refresh();
                 });
 
     }
@@ -205,10 +204,10 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         }
 
         //substitute item with observable proxy
-        item = ObservableFactory.createObservable(item, itemClass);
-        ((Observable) item).addPropertyChangeListener(propertyChangeEvent -> {
-            log.debug("PropertyChangeListener notified!");
-        });
+//        item = ObservableFactory.createObservable(item, itemClass);
+//        ((Observable) item).addPropertyChangeListener(propertyChangeEvent -> {
+//            log.debug("PropertyChangeListener notified!");
+//        });
 
 //        JfxInstanceUI<T> ui = getBuilder().displayInstance(item, itemClass, "New Item");
         JfxInstanceUI<T> ui = getBuilder().buildInstanceUI(itemClass);

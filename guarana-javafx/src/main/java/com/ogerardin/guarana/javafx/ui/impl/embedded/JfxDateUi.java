@@ -28,7 +28,7 @@ import java.util.Date;
  */
 public class JfxDateUi extends DatePicker implements JfxInstanceUI<Date> {
 
-    private ObjectProperty<Date> boundDateProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Date> boundDateProperty = new SimpleObjectProperty<>();
 
     public JfxDateUi() {
         Bindings.bindBidirectional(valueProperty(), boundObjectProperty(), new LocalDateDateConverter());
@@ -37,6 +37,11 @@ public class JfxDateUi extends DatePicker implements JfxInstanceUI<Date> {
     @Override
     public void bind(Date target) {
         boundObjectProperty().setValue(target);
+    }
+
+    @Override
+    public void display(Date object) {
+        boundObjectProperty().set(object);
     }
 
     @Override

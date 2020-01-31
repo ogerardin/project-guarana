@@ -27,7 +27,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;

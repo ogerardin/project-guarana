@@ -173,9 +173,23 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
     private void editItem(TableRow<T> row) {
         T item = row.getItem();
         Class<T> itemClass = getItemClass();
-        String itemTitle = "Item " + (row.getIndex() + 1);
-        getBuilder().displayInstance(item, itemClass, row, itemTitle);
-        //TODO make sure changes on item are reflected in the list UI
+        final int rowIndex = row.getIndex();
+
+        String itemTitle = "Item " + (rowIndex + 1);
+        JfxInstanceUI<T> ui = getBuilder().buildInstanceUI(itemClass);
+        ui.display(item);
+        ui.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
+            log.debug("List item changed: " + oldValue + " -> " + newValue);
+        });
+
+        final Dialog<T> dialog = getDialog(item, ui);
+        dialog.showAndWait()
+                .ifPresent(i -> {
+                    log.debug("Form submitted, updating item");
+                    //TODO make sure changes on item are reflected in the list UI
+                    //tableView.getItems().set(rowIndex, i);
+                });
+
     }
 
     private void addNewItem() {
@@ -202,7 +216,16 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         ui.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("List item changed: " + oldValue + " -> " + newValue);
         });
+        Dialog<T> dialog = getDialog(item, ui);
 
+        dialog.showAndWait()
+                .ifPresent(i -> {
+                    log.debug("Form submitted, adding item");
+                    tableView.getItems().add(i);
+                });
+    }
+
+    private Dialog<T> getDialog(T item, JfxInstanceUI<T> ui) {
         // using native JavaFX Dialog
         //TODO move this to JfxUiManager
         Dialog<T> dialog = new Dialog<>();
@@ -210,12 +233,8 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         dialog.getDialogPane().setContent(ui.getRendered());
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
         T finalItem = item;
-        dialog.setResultConverter(dialogButton -> finalItem);
-        dialog.showAndWait()
-                .ifPresent(i -> {
-                    log.debug("Form submitted");
-                    tableView.getItems().add(i);
-                });
+        dialog.setResultConverter(buttonType -> finalItem);
+        return dialog;
     }
 
 

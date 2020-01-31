@@ -22,7 +22,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 import java.util.Arrays;
 import java.util.Collection;

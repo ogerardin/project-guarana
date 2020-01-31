@@ -73,6 +73,11 @@ public class DefaultJfxEmbeddedInstanceUI<P> extends TextField implements JfxIns
     }
 
     @Override
+    public void display(P object) {
+        boundObjectProperty.set(object);
+    }
+
+    @Override
     public TextField getRendered() {
         return this;
     }

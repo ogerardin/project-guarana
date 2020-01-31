@@ -17,4 +17,6 @@ public interface InstanceUI<R, C> extends Renderable<R> {
 
     void bind(C object);
 
+    void display(C object);
+
 }

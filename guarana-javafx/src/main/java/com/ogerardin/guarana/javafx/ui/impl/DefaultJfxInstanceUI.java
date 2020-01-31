@@ -53,10 +53,10 @@ import java.util.*;
 @Slf4j
 public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C> {
 
-    private BiMap<Node, PropertyInformation> propertyInformationByNode = HashBiMap.create();
-    private BiMap<JfxInstanceUI, PropertyInformation> propertyInformationByUi = HashBiMap.create();
+    private final BiMap<Node, PropertyInformation> propertyInformationByNode = HashBiMap.create();
+    private final BiMap<JfxInstanceUI<?>, PropertyInformation> propertyInformationByUi = HashBiMap.create();
 
-    private ObjectProperty<C> boundObjectProperty = new SimpleObjectProperty<C>();
+    private final ObjectProperty<C> boundObjectProperty = new SimpleObjectProperty<C>();
 
     public DefaultJfxInstanceUI(JfxUiManager builder, Class<C> clazz) {
         super(builder);
@@ -126,6 +126,20 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
 
     }
 
+    private <P> void setProperty(C object, JfxInstanceUI<P> ui, PropertyInformation propertyInformation) {
+        // Get the property value
+        P propertyValue;
+        try {
+            //noinspection unchecked
+            propertyValue = (P) getPropertyValue(object, propertyInformation.getPropertyDescriptor());
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            log.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
+            return;
+        }
+
+        ui.display(propertyValue);
+    }
+
 
     private <P> Node buildPropertyUi(PropertyInformation propertyInformation, Class<P> propertyType) {
 
@@ -189,6 +203,22 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
     }
 
     /**
+     * Display the specified object in this UI. This means:
+     * - unbinding any previous bound object
+     * - setting the value of each embedded UI to the corresponding property value
+     * No binding is performed, i.e. changes are not immediately propagated to the specified object.
+     */
+    @Override
+    public void display(C object) {
+        log.debug("Displaying {}", object);
+        if (getBoundObject() != null) {
+            unbindProperties();
+        }
+        boundObjectProperty.set(null);
+        setProperties(object);
+    }
+
+    /**
      * Unbind each embedded UI
      */
     private void unbindProperties() {
@@ -206,11 +236,16 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         propertyInformationByUi.forEach(
                 (ui, propertyInformation) -> bindProperty(object, ui, propertyInformation)
         );
+    }
 
+    private void setProperties(C object) {
+        propertyInformationByUi.forEach(
+                (ui, propertyInformation) -> setProperty(object, ui, propertyInformation)
+        );
     }
 
 
-    private void unbindProperty(JfxInstanceUI ui, PropertyInformation propertyInformation) {
+    private <P> void unbindProperty(JfxInstanceUI<P> ui, PropertyInformation propertyInformation) {
         //FIXME we should unbind bidirectionally
         ui.boundObjectProperty().unbind();
     }
@@ -220,11 +255,12 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
      * @param propertyUi embedded UI for the property
      * @param propertyInformation property description
      */
-    private void bindProperty(C object, JfxInstanceUI propertyUi, PropertyInformation propertyInformation) {
+    private <P> void bindProperty(C object, JfxInstanceUI<P> propertyUi, PropertyInformation propertyInformation) {
         // Get the property value
-        Object propertyValue;
+        P propertyValue;
         try {
-            propertyValue = getPropertyValue(object, propertyInformation.getPropertyDescriptor());
+            //noinspection unchecked
+            propertyValue = (P) getPropertyValue(object, propertyInformation.getPropertyDescriptor());
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
             return;
@@ -250,15 +286,17 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
             }
         }
 
-        final Class<?> valueClass = propertyValue != null ? propertyValue.getClass() : propertyInformation.getPropertyType();
+        final Class<? extends P> valueClass = propertyValue != null
+                ? (Class<? extends P>) propertyValue.getClass()
+                : (Class<? extends P>) propertyInformation.getPropertyType();
         String propertyName = propertyInformation.getName();
 
         // if the property has an associated a JavaFX-style property, get its value (which is assumed to be of type
         // javafx.beans.property.Property) and bind directly to it
         if (propertyInformation.getJfxProperty() != null) {
-            Property<?> jfxProperty;
+            Property<P> jfxProperty;
             try {
-                jfxProperty = (Property<?>) getPropertyValue(object, propertyInformation.getJfxProperty());
+                jfxProperty = (Property<P>) getPropertyValue(object, propertyInformation.getJfxProperty());
             } catch (Exception e) {
                 log.error("failed to get value for JavaFX property " + propertyInformation.getJfxProperty().getName(), e);
                 return;
@@ -279,7 +317,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
 
         // otherwise try to bind bidirectionally to a generated JavaBeanObjectProperty
         try {
-            Property<?> jfxSyntheticProperty = JavaBeanObjectPropertyBuilder.create()
+            Property<P> jfxSyntheticProperty = (Property<P>) JavaBeanObjectPropertyBuilder.create()
                     .bean(object)
                     .name(propertyName)
                     .build();
@@ -304,7 +342,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         // otherwise if the property implements java.util.Observable, register a listener
         if (java.util.Observable.class.isAssignableFrom(valueClass)) {
             java.util.Observable observableValue = (java.util.Observable) propertyValue;
-            Observer observer = (observable, o) -> propertyUi.boundObjectProperty().setValue(observable);
+            Observer observer = (observable, o) -> propertyUi.boundObjectProperty().setValue((P) observable);
             observableValue.addObserver(observer);
             observer.update(observableValue, this);
             log.debug("[" + propertyName + "] bound using java.util.Observable method");
@@ -314,7 +352,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         // otherwise if the property implements javafx.beans.Observable, register a listener
         if (Observable.class.isAssignableFrom(valueClass)) {
             Observable observableValue = (Observable) propertyValue;
-            InvalidationListener listener = observable -> propertyUi.boundObjectProperty().setValue(observable);
+            InvalidationListener listener = observable -> propertyUi.boundObjectProperty().setValue((P) observable);
             observableValue.addListener(listener);
             //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
             listener.invalidated(observableValue);
@@ -341,12 +379,11 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
      * Try to instantiate a collection of the speficied type. Beware: the type may be an interface, in which case
      * we use a default implementation.
      */
-    private Collection createEmptyCollection(PropertyInformation propertyInformation) {
-        Class<? extends Collection> propertyType = (Class<? extends Collection>) propertyInformation.getPropertyType();
-
+    private <S extends Collection<?>> S createEmptyCollection(PropertyInformation propertyInformation) {
+        Class<S> propertyType = (Class<S>) propertyInformation.getPropertyType();
 
         if (propertyType.isInterface()) {
-            propertyType = getDefaultCollectionImplementation(propertyType);
+            propertyType = (Class<S>) getDefaultCollectionImplementation(propertyType);
         }
 
         try {

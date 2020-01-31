@@ -32,7 +32,7 @@ import java.nio.file.Paths;
  */
 public class JfxPathUi extends HBox implements JfxInstanceUI<Path> {
 
-    private ObjectProperty<Path> boundPathProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Path> boundPathProperty = new SimpleObjectProperty<>();
 
     private final Button button;
     private final TextField text;
@@ -74,6 +74,11 @@ public class JfxPathUi extends HBox implements JfxInstanceUI<Path> {
     @Override
     public void bind(Path path) {
         boundPathProperty.setValue(path);
+    }
+
+    @Override
+    public void display(Path object) {
+        boundObjectProperty().set(object);
     }
 
     private class PathConverter extends StringConverter<Path> {

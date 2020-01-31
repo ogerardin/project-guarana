@@ -11,10 +11,12 @@ import com.ogerardin.guarana.core.persistence.basic.DefaultPersistenceServiceBui
 import com.ogerardin.guarana.core.ui.InstanceUI;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.SystemConfiguration;
+import org.apache.commons.configuration2.CompositeConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.SystemConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.lang.reflect.Executable;
 import java.net.URL;
@@ -91,7 +93,13 @@ public class Configuration extends CompositeConfiguration {
             throw new ConfigurationException("Resource not found: " + resource);
         }
         log.debug("Reading configuration resource: " + resource);
-        addConfiguration(new PropertiesConfiguration(url));
+        FileBasedConfigurationBuilder<PropertiesConfiguration> builder =
+                new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
+                        .configure(new Parameters().properties()
+                                .setURL(url)
+                        );
+        PropertiesConfiguration config = builder.getConfiguration();
+        addConfiguration(config);
     }
 
     /**

@@ -10,6 +10,7 @@ import com.ogerardin.guarana.core.config.Util;
 import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import com.ogerardin.guarana.core.metamodel.ClassInformation;
 import com.ogerardin.guarana.core.metamodel.PropertyInformation;
+import com.ogerardin.guarana.core.observability.ObservableFactory;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.binding.Bindings;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
@@ -30,6 +31,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import lombok.extern.slf4j.Slf4j;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -52,7 +55,7 @@ import java.util.*;
  * @since 29/05/15
  */
 @Slf4j
-public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C> {
+public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>, PropertyChangeListener {
 
     private final BiMap<Node, PropertyInformation> propertyInformationByNode = HashBiMap.create();
     private final BiMap<JfxInstanceUI<?>, PropertyInformation> propertyInformationByUi = HashBiMap.create();
@@ -175,10 +178,18 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
             // Try to use generic introspection to determine the type of collection members.
             final Method readMethod = propertyInformation.getReadMethod();
             final Class<I> itemType = JavaIntrospector.getMethodResultSingleParameterType(readMethod);
-            Collection<I> collection = (Collection<I>) readMethod.invoke(getBoundObject());
+            Collection<I> originalCollection = (Collection<I>) readMethod.invoke(getBoundObject());
+            Collection<I> collection = originalCollection;
 
             if (collection == null) {
                 collection = createEmptyCollection(propertyInformation);
+            }
+            if (! (collection instanceof Observable)) {
+                collection = makeObervable(collection);
+            }
+
+            if (collection != originalCollection) {
+                propertyInformation.getWriteMethod().invoke(getBoundObject(), collection);
             }
 
             getBuilder().displayCollection(collection, itemType, parent, title);
@@ -214,11 +225,26 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
      */
     public void bind(C object) {
         log.debug("Binding " + object + " to " + this);
-        if (getBoundObject() != null) {
-            unbindProperties();
+        unbind();
+
+        if (! (object instanceof com.ogerardin.guarana.core.observability.Observable)) {
+            object = ObservableFactory.createObservable(object);
         }
+
+        ((com.ogerardin.guarana.core.observability.Observable) object).addPropertyChangeListener(
+                this
+        );
+
         boundObjectProperty.set(object);
         bindProperties(object);
+    }
+
+    private void unbind() {
+        final C boundObject = getBoundObject();
+        if (boundObject != null) {
+            unbindProperties();
+            boundObjectProperty.set(null);
+        }
     }
 
     /**
@@ -230,10 +256,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
     @Override
     public void display(C object) {
         log.debug("Displaying {}", object);
-        if (getBoundObject() != null) {
-            unbindProperties();
-        }
-        boundObjectProperty.set(null);
+        unbind();
         displayProperties(object);
     }
 
@@ -296,28 +319,6 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
             return;
         }
 
-        // if it's null and it's a collection, try to use an empty collection instead
-/*
-        if (propertyValue == null && propertyInformation.isCollection()) {
-            //ui.boundObjectProperty().unbind();
-//            if (!propertyInformation.isCollection() || propertyInformation.getWriteMethod() == null) {
-//                log.warn("Attempted to bind UI " + propertyUi + ": can't bind to null value");
-//                return;
-//            }
-            propertyValue = createEmptyCollection(propertyInformation);
-            if (propertyValue == null) {
-                log.warn("Attempted to bind UI " + propertyUi + " to null collection: failed to create empty collection");
-                return;
-            }
-            log.warn("Attempted to bind UI " + propertyUi + " to null collection: providing empty collection");
-            try {
-                propertyInformation.getWriteMethod().invoke(object, propertyValue);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                log.error("failed to set value for property [" + propertyInformation.getName() + "]", e);
-            }
-        }
-*/
-
         final Class<? extends P> valueClass = propertyValue != null
                 ? (Class<? extends P>) propertyValue.getClass()
                 : (Class<? extends P>) propertyInformation.getPropertyType();
@@ -328,6 +329,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         if (propertyInformation.getJfxProperty() != null) {
             Property<P> jfxProperty;
             try {
+                //noinspection unchecked
                 jfxProperty = (Property<P>) getPropertyValue(object, propertyInformation.getJfxProperty());
             } catch (Exception e) {
                 log.error("failed to get value for JavaFX property " + propertyInformation.getJfxProperty().getName(), e);
@@ -416,29 +418,33 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
 
         if (propertyType.isInterface()) {
             if (propertyType == List.class) {
-                return FXCollections.emptyObservableList();
+                return new ArrayList<>();
             }
             if (propertyType == Set.class) {
-                return FXCollections.emptyObservableSet();
+                return new HashSet<>();
             }
             throw new IllegalArgumentException("No default implementation for " + propertyType);
         }
 
         try {
             final Collection<?> collection = (Collection<?>) propertyType.newInstance();
-            if (collection instanceof List) {
-                return FXCollections.observableList((List) collection);
-            }
-            if (collection instanceof Set) {
-                return FXCollections.observableSet((Set) collection);
-            }
-            log.warn("Don't know how to make an observable of " + collection);
             return (Collection<I>) collection;
         }
         catch (InstantiationException | IllegalAccessException e) {
             log.error("Failed to instantiate " + propertyType);
             throw e;
         }
+    }
+
+    private <I> Collection<I> makeObervable(Collection<I> collection) {
+        if (collection instanceof List<?>) {
+            return FXCollections.observableList((List<I>) collection);
+        }
+        if (collection instanceof Set<?>) {
+            return FXCollections.observableSet((Set<I>) collection);
+        }
+        log.warn("Don't know how to make an observable of " + collection);
+        return collection;
     }
 
     @Override
@@ -461,5 +467,13 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
     @Override
     public ObjectProperty<C> boundObjectProperty() {
         return boundObjectProperty;
+    }
+
+    // implementation of PropertyChangeListener
+    @Override
+    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        log.debug("{}: {}", this, propertyChangeEvent);
+        final String propertyName = propertyChangeEvent.getPropertyName();
+        //TODO rebind corresponding property UI
     }
 }

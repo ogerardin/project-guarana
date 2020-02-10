@@ -47,11 +47,11 @@ public class DefaultJfxEmbeddedInstanceUI<P> extends TextField implements JfxIns
         }
 
         textProperty().addListener((observable, oldValue, newValue) -> {
-            log.debug("DefaultJfxEmbeddedInstanceUI: text changed: " + oldValue + " --> " + newValue);
+            log.debug("text changed: " + oldValue + " --> " + newValue);
         });
 
         boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-            log.debug("DefaultJfxEmbeddedInstanceUI: bound object changed: " + oldValue + " --> " + newValue);
+            log.debug("bound object changed: " + oldValue + " --> " + newValue);
         });
 
     }

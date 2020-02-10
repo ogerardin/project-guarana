@@ -21,6 +21,7 @@ public enum ObservableFactory {
      *                    will be observed.
      */
     public static <T> T createObservable(T object, Class<? super T> objectClass) {
+        log.debug("creating obervable wrapper for {}" ,object);
         Enhancer enhancer = new Enhancer();
 
         // the object will be a subclass of T

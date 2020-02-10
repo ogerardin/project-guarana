@@ -146,7 +146,6 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 
         root.getChildren().add(tableView);
 
-
         configureDragSource(titleLabel, tableView::getItems);
         configureContextMenu(titleLabel, classInformation, null);
 
@@ -161,9 +160,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
     }
 
     private void handleDoubleClick(TableRow<T> row) {
-        if (row.isEmpty()) {
-            addNewItem();
-        } else {
+        if (!row.isEmpty()) {
             editItem(row);
         }
     }
@@ -183,8 +180,8 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
         final Dialog<T> dialog = getDialog(item, ui);
         dialog.showAndWait()
                 .ifPresent(i -> {
-                    log.debug("Form submitted, updating item");
                     ui.populate(i);
+                    log.debug("Form submitted, updating item {}", i);
                     //make sure changes on item are reflected in the list UI
                     tableView.refresh();
                 });
@@ -211,7 +208,7 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 
 //        JfxInstanceUI<T> ui = getBuilder().displayInstance(item, itemClass, "New Item");
         JfxInstanceUI<T> ui = getBuilder().buildInstanceUI(itemClass);
-        ui.bind(item);
+        ui.display(item);
         ui.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("List item changed: " + oldValue + " -> " + newValue);
         });
@@ -219,7 +216,8 @@ public class DefaultJfxCollectionUI<T> extends JfxUI implements JfxCollectionUI<
 
         dialog.showAndWait()
                 .ifPresent(i -> {
-                    log.debug("Form submitted, adding item");
+                    ui.populate(item);
+                    log.debug("Form submitted, adding item {}", item);
                     tableView.getItems().add(i);
                 });
     }

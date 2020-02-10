@@ -21,6 +21,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
+import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -102,7 +103,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
             // if it's a collection, add a button to open as list
             if (Collection.class.isAssignableFrom(propertyType)) {
                 Button zoomButton = new Button("...");
-                zoomButton.setOnAction(e -> zoomCollection(zoomButton, readMethod, humanizedName));
+                zoomButton.setOnAction(e -> zoomCollection(zoomButton, propertyInformation, humanizedName));
                 grid.add(zoomButton, 2, row);
             }
             // if it's an array, add a button to open as a list only if element type is not primitive
@@ -169,11 +170,17 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         return field;
     }
 
-    private <I> void zoomCollection(Node parent, Method readMethod, String title) {
+    private <I> void zoomCollection(Node parent, PropertyInformation propertyInformation, String title) {
         try {
             // Try to use generic introspection to determine the type of collection members.
+            final Method readMethod = propertyInformation.getReadMethod();
             final Class<I> itemType = JavaIntrospector.getMethodResultSingleParameterType(readMethod);
-            final Collection<I> collection = (Collection<I>) readMethod.invoke(getBoundObject());
+            Collection<I> collection = (Collection<I>) readMethod.invoke(getBoundObject());
+
+            if (collection == null) {
+                collection = createEmptyCollection(propertyInformation);
+            }
+
             getBuilder().displayCollection(collection, itemType, parent, title);
         } catch (Exception e) {
             getBuilder().displayException(e);
@@ -290,6 +297,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         }
 
         // if it's null and it's a collection, try to use an empty collection instead
+/*
         if (propertyValue == null && propertyInformation.isCollection()) {
             //ui.boundObjectProperty().unbind();
 //            if (!propertyInformation.isCollection() || propertyInformation.getWriteMethod() == null) {
@@ -308,6 +316,7 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
                 log.error("failed to set value for property [" + propertyInformation.getName() + "]", e);
             }
         }
+*/
 
         final Class<? extends P> valueClass = propertyValue != null
                 ? (Class<? extends P>) propertyValue.getClass()
@@ -402,30 +411,33 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
      * Try to instantiate a collection of the speficied type. Beware: the type may be an interface, in which case
      * we use a default implementation.
      */
-    private <S extends Collection<?>> S createEmptyCollection(PropertyInformation propertyInformation) {
-        Class<S> propertyType = (Class<S>) propertyInformation.getPropertyType();
+    private <I> Collection<I> createEmptyCollection(PropertyInformation propertyInformation) throws IllegalAccessException, InstantiationException {
+        Class<I> propertyType = (Class<I>) propertyInformation.getPropertyType();
 
         if (propertyType.isInterface()) {
-            propertyType = (Class<S>) getDefaultCollectionImplementation(propertyType);
+            if (propertyType == List.class) {
+                return FXCollections.emptyObservableList();
+            }
+            if (propertyType == Set.class) {
+                return FXCollections.emptyObservableSet();
+            }
+            throw new IllegalArgumentException("No default implementation for " + propertyType);
         }
 
         try {
-            return propertyType.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            log.error("Failed to instantiate " + propertyType + " for null property");
-            return null;
+            final Collection<?> collection = (Collection<?>) propertyType.newInstance();
+            if (collection instanceof List) {
+                return FXCollections.observableList((List) collection);
+            }
+            if (collection instanceof Set) {
+                return FXCollections.observableSet((Set) collection);
+            }
+            log.warn("Don't know how to make an observable of " + collection);
+            return (Collection<I>) collection;
         }
-    }
-
-    private Class<? extends Collection> getDefaultCollectionImplementation(Class<? extends Collection> propertyType) {
-        if (propertyType ==  List.class) {
-            return ArrayList.class;
-        }
-        else if (propertyType == Set.class) {
-            return HashSet.class;
-        }
-        else {
-            throw new IllegalArgumentException("No default implementation for " + propertyType);
+        catch (InstantiationException | IllegalAccessException e) {
+            log.error("Failed to instantiate " + propertyType);
+            throw e;
         }
     }
 

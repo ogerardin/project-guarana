@@ -4,36 +4,32 @@
 
 package com.ogerardin.guarana.javafx.ui.impl;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.ogerardin.guarana.core.config.Util;
 import com.ogerardin.guarana.core.introspection.JavaIntrospector;
 import com.ogerardin.guarana.core.metamodel.ClassInformation;
 import com.ogerardin.guarana.core.metamodel.PropertyInformation;
 import com.ogerardin.guarana.core.observability.ObservableFactory;
 import com.ogerardin.guarana.javafx.JfxUiManager;
-import com.ogerardin.guarana.javafx.binding.Bindings;
+import com.ogerardin.guarana.javafx.binding.BindingStrategy;
+import com.ogerardin.guarana.javafx.binding.strategies.*;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import com.ogerardin.guarana.javafx.ui.impl.embedded.DefaultJfxEmbeddedInstanceUI;
 import com.ogerardin.guarana.javafx.ui.impl.embedded.JfxDateUi;
-import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -57,8 +53,15 @@ import java.util.*;
 @Slf4j
 public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>, PropertyChangeListener {
 
-    private final BiMap<Node, PropertyInformation> propertyInformationByNode = HashBiMap.create();
-    private final BiMap<JfxInstanceUI<?>, PropertyInformation> propertyInformationByUi = HashBiMap.create();
+    private static final List<BindingStrategy> BINDING_STRATEGIES = Arrays.asList(
+            new JfxBindingStrategy(),
+            new JfxObservableListBindingStrategy(),
+            new JfxObservableBindingStrategy(),
+            new JavaObservableBindingStrategy(),
+            new JavaBeanObjectPropertyBuilderStrategy()
+    );
+
+    private final Map<String, UIPropertyInfo> propertyNameToPropertyInfo = new HashMap<>();
 
     private final ObjectProperty<C> boundObjectProperty = new SimpleObjectProperty<C>();
 
@@ -127,7 +130,6 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
 
             row++;
         }
-
     }
 
     private <P> void displayProperty(C object, JfxInstanceUI<P> ui, PropertyInformation propertyInformation) {
@@ -135,8 +137,8 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         P propertyValue;
         try {
             //noinspection unchecked
-            propertyValue = (P) getPropertyValue(object, propertyInformation.getPropertyDescriptor());
-        } catch (IllegalAccessException | InvocationTargetException e) {
+            propertyValue = (P) PropertyUtils.getSimpleProperty(object, propertyInformation.getPropertyDescriptor().getName());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             log.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
             return;
         }
@@ -167,8 +169,10 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
                 (P value) -> propertyType.isAssignableFrom(value.getClass()),
                 (P value) -> ui.boundObjectProperty().setValue(value));
 
-        propertyInformationByUi.put(ui, propertyInformation);
-        propertyInformationByNode.put(field, propertyInformation);
+        propertyNameToPropertyInfo.put(
+                propertyInformation.getName(),
+                new UIPropertyInfo(propertyInformation, ui)
+        );
 
         return field;
     }
@@ -207,10 +211,11 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         }
     }
 
-    private void zoomProperty(Node parent, Method readMethod, String title) {
+    @SuppressWarnings("unchecked")
+    private <P> void zoomProperty(Node parent, Method readMethod, String title) {
         try {
-            final Object value = readMethod.invoke(getBoundObject());
-            Class runtimeClass = value.getClass();
+            final P value = (P) readMethod.invoke(getBoundObject());
+            Class<P> runtimeClass = (Class<P>) value.getClass();
             getBuilder().displayInstance(value, runtimeClass, parent, title);
         } catch (Exception ex) {
             getBuilder().displayException(ex);
@@ -266,18 +271,16 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
     }
 
     private void populateProperties(C object) {
-        propertyInformationByUi.forEach(
-                (ui, propertyInformation) -> populateProperty(object, ui, propertyInformation)
-        );
+        propertyNameToPropertyInfo.values()
+                .forEach(v -> populateProperty(object, v.getJfxInstanceUI(), v.getPropertyInformation()));
     }
 
     /**
      * Unbind each embedded UI
      */
     private void unbindProperties() {
-        propertyInformationByUi.forEach(
-                this::unbindProperty
-        );
+        propertyNameToPropertyInfo.values()
+                .forEach(v -> unbindProperty(v.getJfxInstanceUI()));
     }
 
 
@@ -286,19 +289,19 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
      * @param object object providing property values
      */
     private void bindProperties(C object) {
-        propertyInformationByUi.forEach(
-                (ui, propertyInformation) -> bindProperty(object, ui, propertyInformation)
-        );
+        propertyNameToPropertyInfo.values()
+                .forEach(v -> bindProperty(object, v.getJfxInstanceUI(), v.getPropertyInformation()));
+
     }
 
     private void displayProperties(C object) {
-        propertyInformationByUi.forEach(
-                (ui, propertyInformation) -> displayProperty(object, ui, propertyInformation)
-        );
+        propertyNameToPropertyInfo.values()
+                .forEach(v -> displayProperty(object, v.getJfxInstanceUI(), v.getPropertyInformation()));
+
     }
 
 
-    private <P> void unbindProperty(JfxInstanceUI<P> ui, PropertyInformation propertyInformation) {
+    private <P> void unbindProperty(JfxInstanceUI<P> ui) {
         //FIXME we should unbind bidirectionally
         ui.boundObjectProperty().unbind();
     }
@@ -313,100 +316,26 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         P propertyValue;
         try {
             //noinspection unchecked
-            propertyValue = (P) getPropertyValue(object, propertyInformation.getPropertyDescriptor());
-        } catch (IllegalAccessException | InvocationTargetException e) {
+            propertyValue = (P) PropertyUtils.getSimpleProperty(object, propertyInformation.getPropertyDescriptor().getName());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             log.error("failed to get value for property " + propertyInformation.getDisplayName(), e);
             return;
         }
 
-        final Class<? extends P> valueClass = propertyValue != null
-                ? (Class<? extends P>) propertyValue.getClass()
-                : (Class<? extends P>) propertyInformation.getPropertyType();
         String propertyName = propertyInformation.getName();
-
-        // if the property has an associated a JavaFX-style property, get its value (which is assumed to be of type
-        // javafx.beans.property.Property) and bind directly to it
-        if (propertyInformation.getJfxProperty() != null) {
-            Property<P> jfxProperty;
+        for (BindingStrategy strategy : BINDING_STRATEGIES) {
             try {
-                //noinspection unchecked
-                jfxProperty = (Property<P>) getPropertyValue(object, propertyInformation.getJfxProperty());
-            } catch (Exception e) {
-                log.error("failed to get value for JavaFX property " + propertyInformation.getJfxProperty().getName(), e);
+                strategy.bind(object, propertyUi, propertyInformation, propertyValue);
+                log.debug("Property [{}] bound using strategy {}", propertyName, strategy.getClass());
                 return;
+            } catch (Exception ignored) {
             }
-            propertyUi.boundObjectProperty().bindBidirectional(jfxProperty);
-            log.debug("[" + propertyName + "] bound using javafx.beans.property.Property method");
-
-            // DEBUG: trace change events on both UI field and object property
-            jfxProperty.addListener((observable, oldValue, newValue) -> {
-                log.debug("jfx property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
-            });
-            propertyUi.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-                log.debug("object bound to property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
-            });
-
-            return;
         }
 
-        // otherwise try to bind bidirectionally to a generated JavaBeanObjectProperty
-        try {
-            Property<P> jfxSyntheticProperty = (Property<P>) JavaBeanObjectPropertyBuilder.create()
-                    .bean(object)
-                    .name(propertyName)
-                    .build();
-
-            propertyUi.boundObjectProperty().bindBidirectional(jfxSyntheticProperty);
-            log.debug("[" + propertyName + "] bound using JavaBeanObjectPropertyBuilder method");
-
-            // DEBUG: trace change events on both UI field and object property
-            jfxSyntheticProperty.addListener((observable, oldValue, newValue) -> {
-                log.debug("jfx property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
-            });
-            propertyUi.boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-                log.debug("object bound to property [" + propertyName + "] changed: " + oldValue + " --> " + newValue);
-            });
-
-            return;
-        } catch (NoSuchMethodException e) {
-            // This happens when we try to use JavaBeanObjectPropertyBuilder on a read-only property
-            log.warn("DEBUG: bindBidirectional threw NoSuchMethodException (read-only property?): " + e.toString());
-        }
-
-        // otherwise if the property implements java.util.Observable, register a listener
-        if (java.util.Observable.class.isAssignableFrom(valueClass)) {
-            java.util.Observable observableValue = (java.util.Observable) propertyValue;
-            Observer observer = (observable, o) -> propertyUi.boundObjectProperty().setValue((P) observable);
-            observableValue.addObserver(observer);
-            observer.update(observableValue, this);
-            log.debug("[" + propertyName + "] bound using java.util.Observable method");
-            return;
-        }
-
-        // otherwise if the property implements javafx.beans.Observable, register a listener
-        if (Observable.class.isAssignableFrom(valueClass)) {
-            Observable observableValue = (Observable) propertyValue;
-            InvalidationListener listener = observable -> propertyUi.boundObjectProperty().setValue((P) observable);
-            observableValue.addListener(listener);
-            //FIXME listener is not called when list is changed subsequently; likely because change events are not invalidation events
-            listener.invalidated(observableValue);
-            log.debug("[" + propertyName + "] bound using javafx.beans.Observable method");
-            return;
-        }
-
-        // otherwise just set the value
+        // no strategy succeeded: just set the value
         log.warn("no binding for property [" + propertyName + "]");
-
         //ui.setReadOnly(true);
         propertyUi.bind(propertyValue);
-    }
-
-    private Object getPropertyValue(C object, PropertyDescriptor propertyDescriptor) throws IllegalAccessException, InvocationTargetException {
-        Method readMethod = propertyDescriptor.getReadMethod();
-        if (!readMethod.isAccessible()) {
-            readMethod.setAccessible(true);
-        }
-        return readMethod.invoke(object);
     }
 
     /**
@@ -452,14 +381,6 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
         //TODO
     }
 
-    @Deprecated
-    protected void propertyUpdated(PropertyInformation propertyInformation, Object value) {
-        Node node = propertyInformationByNode.inverse().get(propertyInformation);
-        if (node instanceof TextField) {
-            Bindings.fieldSetValue(getConfiguration(), ((TextField) node), propertyInformation, value);
-        }
-    }
-
     protected C getBoundObject() {
         return boundObjectProperty.get();
     }
@@ -472,8 +393,22 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
     // implementation of PropertyChangeListener
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        log.debug("{}: {}", this, propertyChangeEvent);
+        log.debug("property change notified: {}", propertyChangeEvent);
+        // a property has changed, we need to unbind the UI from the previous value
+        // and rebind it to the new value
         final String propertyName = propertyChangeEvent.getPropertyName();
-        //TODO rebind corresponding property UI
+        log.debug("Rebinding property [{}] to new value {}", propertyName, propertyChangeEvent.getNewValue());
+        final UIPropertyInfo uiPropertyInfo = propertyNameToPropertyInfo.get(propertyName);
+        final JfxInstanceUI<?> ui = uiPropertyInfo.getJfxInstanceUI();
+        final PropertyInformation propertyInformation = uiPropertyInfo.getPropertyInformation();
+        unbindProperty(ui);
+        bindProperty(getBoundObject(), ui, propertyInformation);
+
+    }
+
+    @Data
+    private static class UIPropertyInfo {
+        private final PropertyInformation propertyInformation;
+        private final JfxInstanceUI<?> jfxInstanceUI;
     }
 }

@@ -29,12 +29,12 @@
     
     <repositories>
         <repository>
-            <id>exo</id>
-            <url>http://nexus.luxbourse.local:8081/nexus/content/repositories/exoplatform/</url>
-        </repository>
-        <repository>
             <id>jcenter</id>
             <url>https://jcenter.bintray.com/</url>
+        </repository>
+        <repository>
+            <id>restlet</id>
+            <url>https://maven.restlet.talend.com/</url>
         </repository>
     </repositories>
 

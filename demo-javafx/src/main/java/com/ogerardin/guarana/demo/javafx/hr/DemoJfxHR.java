@@ -10,7 +10,7 @@ package com.ogerardin.guarana.demo.javafx.hr;
  */
 
 import com.ogerardin.business.sample.hr.service.DomainManager;
-import com.ogerardin.guarana.demo.javafx.hr.adapters.DomainManagerDb4OImpl;
+import com.ogerardin.guarana.demo.javafx.hr.adapters.DomainManagerMapDBImpl;
 import com.ogerardin.guarana.javafx.JfxUiManager;
 import com.ogerardin.guarana.javafx.ui.JfxInstanceUI;
 import javafx.application.Application;
@@ -37,7 +37,7 @@ public class DemoJfxHR extends Application {
     public static void main(String[] args) {
 
         // instantiate our main business object
-        domainManager = new DomainManagerDb4OImpl();
+        domainManager = new DomainManagerMapDBImpl();
 
         // handoff to JavaFX; this will call the start() method
         launch(args);

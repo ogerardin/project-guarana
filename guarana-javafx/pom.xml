@@ -8,10 +8,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <prerequisites>
-        <maven>3.0</maven>
-    </prerequisites>
-
     <parent>
         <groupId>com.ogerardin.guarana</groupId>
         <artifactId>project-guarana</artifactId>
@@ -22,9 +18,7 @@
     <version>0.1-SNAPSHOT</version>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.module.name>com.ogerardin.guarana.javafx</java.module.name>
     </properties>
 
     <build>
@@ -35,6 +29,45 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>CollectionFieldPojo</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openjfx</groupId>
+                        <artifactId>javafx-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>com.ogerardin.guarana.javafx/com.ogerardin.guarana.javafx.test.runnable.CollectionFieldPojo</mainClass>
+                            <options>
+                                <option>--add-opens</option>
+                                <option>java.base/java.lang=cglib</option>
+                            </options>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>CollectionBean</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openjfx</groupId>
+                        <artifactId>javafx-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>com.ogerardin.guarana.javafx/com.ogerardin.guarana.javafx.test.runnable.CollectionBean</mainClass>
+                            <options>
+                                <option>--add-opens</option>
+                                <option>java.base/java.lang=cglib</option>
+                            </options>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>com.ogerardin.guarana</groupId>
@@ -43,6 +76,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>21</version>
+        </dependency>
+        <dependency>
             <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-labs</artifactId>
             <version>8.0-r5</version>
@@ -50,7 +88,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
 

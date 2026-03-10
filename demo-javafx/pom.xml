@@ -8,10 +8,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <prerequisites>
-        <maven>3.0</maven>
-    </prerequisites>
-
     <parent>
         <groupId>com.ogerardin.guarana</groupId>
         <artifactId>project-guarana</artifactId>
@@ -21,20 +17,14 @@
     <artifactId>demo-javafx</artifactId>
     <version>0.1-SNAPSHOT</version>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-    
     <repositories>
         <repository>
-            <id>exo</id>
-            <url>http://nexus.luxbourse.local:8081/nexus/content/repositories/exoplatform/</url>
+            <id>shamanblackout</id>
+            <url>https://repo.shamanblackout.com/</url>
         </repository>
         <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com/</url>
+            <id>exo</id>
+            <url>https://repo.maven.apache.org/maven2/</url>
         </repository>
     </repositories>
 
@@ -56,15 +46,21 @@
         </dependency>
 
         <dependency>
-            <groupId>com.db4o</groupId>
-            <artifactId>com.db4o</artifactId>
-            <version>7.7.67</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.5.0</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.1</version>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>21</version>
         </dependency>
     </dependencies>
 
@@ -78,6 +74,58 @@
                 </includes>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.ogerardin.guarana.demo.javafx/com.ogerardin.guarana.demo.javafx.hr.DemoJfxHR</mainClass>
+                    <options>
+                        <option>--add-opens</option>
+                        <option>java.base/java.lang=cglib</option>
+                    </options>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>DemoJfxConfig</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openjfx</groupId>
+                        <artifactId>javafx-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>com.ogerardin.guarana.demo.javafx/com.ogerardin.guarana.demo.javafx.config.DemoJfxConfig</mainClass>
+                            <options>
+                                <option>--add-opens</option>
+                                <option>java.base/java.lang=cglib</option>
+                            </options>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>DemoJfxWebsite</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openjfx</groupId>
+                        <artifactId>javafx-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>com.ogerardin.guarana.demo.javafx/com.ogerardin.guarana.demo.javafx.website.DemoJfxWebsite</mainClass>
+                            <options>
+                                <option>--add-opens</option>
+                                <option>java.base/java.lang=cglib</option>
+                            </options>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

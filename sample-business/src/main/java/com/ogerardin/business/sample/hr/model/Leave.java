@@ -5,9 +5,8 @@
 package com.ogerardin.business.sample.hr.model;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -15,7 +14,7 @@ import java.util.Date;
  * @since 09/06/2016
  */
 @Data
-public class Leave {
+public class Leave implements Serializable {
 
     private final Employee employee;
 
@@ -23,9 +22,7 @@ public class Leave {
 
     private Date end;
 
-    @Getter
-    @Setter
-    double duration;
+    private double duration;
 
     public Leave(Employee employee, Date start, Date end) {
         this.employee = employee;

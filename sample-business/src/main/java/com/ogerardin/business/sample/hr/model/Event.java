@@ -5,7 +5,9 @@
 package com.ogerardin.business.sample.hr.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,9 +15,10 @@ import java.util.Date;
  * @since 06/10/2015
  */
 @Data
-public class Event {
+@NoArgsConstructor
+public class Event implements Serializable {
 
-    private final Employee employee;
+    private Employee employee;
 
     private Date date;
 

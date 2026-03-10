@@ -4,30 +4,24 @@
 
 package com.ogerardin.business.sample.hr.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * @author Olivier
  * @since 26/05/15
  */
-@Getter
-@Setter
-public class Employee {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Employee implements Serializable {
 
     private String lastName;
 
     private String firstName;
-
-    public Employee(String lastName, String firstName) {
-        this.lastName = lastName;
-        this.firstName = firstName;
-    }
-
-    @Override
-    public String toString() {
-        return firstName + " " + lastName;
-    }
 
     public String getFullNameLastFirst() {
         return getLastName() + ", " + getFirstName();

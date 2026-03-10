@@ -7,6 +7,13 @@ import javafx.beans.property.Property;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtils;
 
+/**
+ * Binding strategy for JavaFX properties that have a corresponding Property object.
+ * Uses bidirectional binding to synchronize the model property with the UI component.
+ *
+ * @author Olivier Gérardin
+ * @since 1.0
+ */
 @Slf4j
 public class JfxBindingStrategy implements BindingStrategy {
 

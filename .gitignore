@@ -11,3 +11,8 @@ data.db4o
 *.db.wal.*
 /.idea/
 *.ser
+bin/
+.project
+.classpath
+.settings/
+.factorypath

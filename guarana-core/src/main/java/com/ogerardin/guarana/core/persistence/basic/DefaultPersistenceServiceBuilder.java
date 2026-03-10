@@ -8,7 +8,12 @@ import com.ogerardin.guarana.core.persistence.PersistenceService;
 import com.ogerardin.guarana.core.persistence.PersistenceServiceBuilder;
 
 /**
- * Created by olivier on 18/05/2017.
+ * Default implementation of {@link PersistenceServiceBuilder} that creates
+ * {@link BasicPersistenceService} instances.
+ *
+ * @param <C> the type of objects to be persisted
+ * @author Olivier Gérardin
+ * @since 1.0
  */
 public class DefaultPersistenceServiceBuilder<C> implements PersistenceServiceBuilder<C> {
 

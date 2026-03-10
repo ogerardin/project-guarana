@@ -12,22 +12,46 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author Olivier
- * @since 26/05/15
+ * Service interface for managing HR domain objects (Employee, Event, Leave).
+ * Provides CRUD operations and demo data reset functionality.
+ *
+ * @author Olivier Gérardin
+ * @since 1.0
  */
 public interface DomainManager {
 
+    /**
+     * Clears all data from the persistence store.
+     */
     void clearAll();
 
+    /**
+     * Returns all employees in the system.
+     */
     Collection<Employee> getAllEmployees();
 
+    /**
+     * Returns all events in the system.
+     */
     Collection<Event> getAllEvents();
 
+    /**
+     * Saves an employee to the persistence store.
+     */
     Employee save(Employee employee);
 
+    /**
+     * Saves an event to the persistence store.
+     */
     Event save(Event event);
 
+    /**
+     * Returns all leaves associated with the specified employee.
+     */
     List<Leave> getLeavesByPerson(Employee employee);
 
+    /**
+     * Resets the system with sample demo data.
+     */
     void resetDemo();
 }

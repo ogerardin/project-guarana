@@ -11,8 +11,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author oge
- * @since 06/10/2015
+ * Represents an HR event associated with an employee.
+ * Events can include performance reviews, meetings, or other notable occurrences.
+ *
+ * @author Olivier Gérardin
+ * @since 1.0
  */
 @Data
 @NoArgsConstructor
@@ -24,6 +27,9 @@ public class Event implements Serializable {
 
     private String memo;
 
+    /**
+     * Creates a new event for the specified employee on the given date.
+     */
     public Event(Employee employee, Date date) {
         this.employee = employee;
         this.date = date;

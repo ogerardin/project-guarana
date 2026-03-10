@@ -14,6 +14,14 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
+/**
+ * Utility class for Java class introspection using reflection.
+ * Provides methods to analyze class structure, extract type information,
+ * and manage cached {@link ClassInformation} instances.
+ *
+ * @author Olivier Gérardin
+ * @since 1.0
+ */
 @Slf4j
 public class JavaIntrospector {
 
@@ -29,6 +37,11 @@ public class JavaIntrospector {
         return getSingleParameterType(genericReturnType);
     }
 
+    /**
+     * Extracts the single type parameter from a parameterized type.
+     *
+     * @throws RuntimeException if the type is not a parameterized type
+     */
     public static <C> Class<C> getSingleParameterType(Type genericType) {
         if (!(genericType instanceof ParameterizedType)) {
             throw new RuntimeException("Type is not a parameterized type: " + genericType);
@@ -38,11 +51,18 @@ public class JavaIntrospector {
         return (Class<C>) actualTypeArguments[0];
     }
 
+    /**
+     * Checks if the specified class is annotated with {@link Service}.
+     */
     static boolean isService(Class<?> targetClass) {
         return Arrays.stream(targetClass.getAnnotations())
                 .anyMatch(a -> a.getClass() == Service.class);
     }
 
+    /**
+     * Determines if a class is a system class (part of Java core libraries).
+     * Returns true for primitive types and classes in java.*, javax.*, or sun.* packages.
+     */
     public static boolean isSystem(Class targetClass) {
         if (targetClass.isPrimitive()) {
             return true;
@@ -53,10 +73,17 @@ public class JavaIntrospector {
                 || targetClassName.startsWith("sun.");
     }
 
+    /**
+     * Checks if the specified class is a primitive type.
+     */
     static boolean isPrimitive(Class clazz) {
         return clazz.isPrimitive();
     }
 
+    /**
+     * Returns the cached {@link ClassInformation} for the specified class,
+     * creating and caching it if necessary.
+     */
     public static <T> ClassInformation<T> getClassInformation(Class<T> clazz) {
         //noinspection unchecked
         ClassInformation<T> classInformation = classInformationByClass.get(clazz);
@@ -71,6 +98,9 @@ public class JavaIntrospector {
         return classInformation;
     }
 
+    /**
+     * Checks if the specified executable references the target class in its signature.
+     */
     static <C> boolean executableReferences(Executable executable, Class<C> targetClass) {
         return getReferencedClasses(executable).contains(targetClass);
     }

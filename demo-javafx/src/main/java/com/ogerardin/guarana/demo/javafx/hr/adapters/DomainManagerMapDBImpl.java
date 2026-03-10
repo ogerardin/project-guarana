@@ -22,8 +22,11 @@ import java.util.NavigableSet;
 import java.util.stream.Collectors;
 
 /**
- * @author Olivier
- * @since 26/05/15
+ * MapDB-based implementation of {@link DomainManager} for persisting
+ * HR domain objects (Employee, Event, Leave) to disk.
+ *
+ * @author Olivier Gérardin
+ * @since 1.0
  */
 public class DomainManagerMapDBImpl implements DomainManager {
 
@@ -34,6 +37,9 @@ public class DomainManagerMapDBImpl implements DomainManager {
     private ObservableList<Leave> allLeaves;
 
 
+    /**
+     * Creates a new DomainManagerMapDBImpl with a file-based MapDB database.
+     */
     public DomainManagerMapDBImpl() {
         db = DBMaker.fileDB("demo.db")
                 .fileMmapEnableIfSupported()
@@ -49,6 +55,9 @@ public class DomainManagerMapDBImpl implements DomainManager {
     }
 
     @Override
+    /**
+     * Clears all data from the database.
+     */
     public void clearAll() {
         @SuppressWarnings("unchecked")
         NavigableSet<Employee> employees = (NavigableSet<Employee>) db.treeSet("employees", Serializer.JAVA).createOrOpen();
@@ -59,6 +68,9 @@ public class DomainManagerMapDBImpl implements DomainManager {
         db.commit();
     }
 
+    /**
+     * Returns all employees in the database as an observable list.
+     */
     public Collection<Employee> getAllEmployees() {
         if (allEmployees == null) {
             @SuppressWarnings("unchecked")
@@ -69,6 +81,9 @@ public class DomainManagerMapDBImpl implements DomainManager {
     }
 
     @Override
+    /**
+     * Returns all events in the database as an observable list.
+     */
     public Collection<Event> getAllEvents() {
         if (allEvents == null) {
             @SuppressWarnings("unchecked")
@@ -78,6 +93,9 @@ public class DomainManagerMapDBImpl implements DomainManager {
         return allEvents;
     }
 
+    /**
+     * Returns all leaves in the database as an observable list.
+     */
     public Collection<Leave> getAllLeaves() {
         if (allLeaves == null) {
             @SuppressWarnings("unchecked")
@@ -111,6 +129,9 @@ public class DomainManagerMapDBImpl implements DomainManager {
         return observableList;
     }
 
+    /**
+     * Saves an employee to the database.
+     */
     public Employee save(Employee employee) {
         @SuppressWarnings("unchecked")
         NavigableSet<Employee> employees = (NavigableSet<Employee>) db.treeSet("employees", Serializer.JAVA).createOrOpen();
@@ -120,6 +141,9 @@ public class DomainManagerMapDBImpl implements DomainManager {
     }
 
     @Override
+    /**
+     * Saves an event to the database.
+     */
     public Event save(Event event) {
         @SuppressWarnings("unchecked")
         NavigableSet<Event> events = (NavigableSet<Event>) db.treeSet("events", Serializer.JAVA).createOrOpen();
@@ -129,6 +153,9 @@ public class DomainManagerMapDBImpl implements DomainManager {
     }
 
     @Override
+    /**
+     * Resets the database with sample demo data.
+     */
     public void resetDemo() {
         clearAll();
 
@@ -147,6 +174,9 @@ public class DomainManagerMapDBImpl implements DomainManager {
     }
 
     @Override
+    /**
+     * Returns all leaves associated with the specified employee.
+     */
     public List<Leave> getLeavesByPerson(Employee employee) {
         return getAllLeaves().stream()
                 .filter(l -> l.getEmployee() == employee)

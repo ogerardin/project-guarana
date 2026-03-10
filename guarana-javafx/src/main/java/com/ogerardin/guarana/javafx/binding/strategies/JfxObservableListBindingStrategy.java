@@ -7,8 +7,16 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Binding strategy for JavaFX ObservableList collections.
+ * Uses list change listeners to propagate collection modifications to the UI.
+ *
+ * @author Olivier Gérardin
+ * @since 1.0
+ */
 @Slf4j
 public class JfxObservableListBindingStrategy implements BindingStrategy {
+
     @Override
     public <C, P> void bind(C object, JfxInstanceUI<P> propertyUi, PropertyInformation propertyInformation, P propertyValue) {
         if (! (propertyValue instanceof ObservableList)) {

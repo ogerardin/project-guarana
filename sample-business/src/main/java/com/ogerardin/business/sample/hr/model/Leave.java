@@ -10,8 +10,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author oge
- * @since 09/06/2016
+ * Represents an employee leave/absence period.
+ * Automatically computes the duration in days based on start and end dates.
+ *
+ * @author Olivier Gérardin
+ * @since 1.0
  */
 @Data
 public class Leave implements Serializable {
@@ -24,6 +27,10 @@ public class Leave implements Serializable {
 
     private double duration;
 
+    /**
+     * Creates a new leave record for the specified employee and date range.
+     * Duration is automatically computed.
+     */
     public Leave(Employee employee, Date start, Date end) {
         this.employee = employee;
         this.start = start;
@@ -31,6 +38,9 @@ public class Leave implements Serializable {
         computeDuration();
     }
 
+    /**
+     * Computes the duration in days based on start and end dates.
+     */
     private void computeDuration() {
         final long millis = end.getTime() - start.getTime();
         final long days = millis / (24 * 60 * 60 * 1000);

@@ -8,6 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * Binding strategy for Java's standard Observable (java.util.Observable) values.
+ * Uses the Observer pattern to propagate changes from the model to the UI.
+ *
+ * @author Olivier Gérardin
+ * @since 1.0
+ */
 @Slf4j
 public class JavaObservableBindingStrategy implements BindingStrategy {
 

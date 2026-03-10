@@ -25,8 +25,12 @@ import java.util.stream.Stream;
 import static com.ogerardin.guarana.core.util.LambdaExceptionUtil.rethrowFunction;
 
 /**
- * @author oge
- * @since 07/09/2015
+ * Implementation of {@link Introspector} that uses Java reflection and
+ * JavaBeans introspection to extract class metadata.
+ *
+ * @param <C> the type of class being introspected
+ * @author Olivier Gérardin
+ * @since 1.0
  */
 @Slf4j
 public class JavaClassIntrospector<C> implements Introspector<C> {
@@ -38,6 +42,9 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
 
     private List<Executable> contributedExecutables = null;
 
+    /**
+     * Creates a new introspector for the specified class.
+     */
     public JavaClassIntrospector(Class<C> clazz) {
         this.clazz = clazz;
         try {
@@ -58,6 +65,9 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
         return JavaIntrospector.isSystem(clazz);
     }
 
+    /**
+     * Returns true if the target class is a primitive type.
+     */
     public boolean isPrimitive() {
         return JavaIntrospector.isPrimitive(clazz);
     }
@@ -138,11 +148,17 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
     }
 
     @Override
+    /**
+     * Returns all public methods declared by the target class.
+     */
     public List<Method> getMethods() {
         return Arrays.stream(beanInfo.getMethodDescriptors()).map(MethodDescriptor::getMethod).collect(Collectors.toList());
     }
 
     @Override
+    /**
+     * Returns all public constructors of the target class.
+     */
     public List<Constructor<C>> getConstructors() {
         @SuppressWarnings("unchecked")
         Constructor<C>[] constructors = (Constructor<C>[]) clazz.getConstructors();
@@ -150,6 +166,10 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
     }
 
     @Override
+    /**
+     * Returns all properties (getter/setter pairs) of the target class.
+     * JavaFX properties are paired with their corresponding bean properties.
+     */
     public List<PropertyInformation> getProperties() {
 
         List<PropertyDescriptor> propertyDescriptors = Arrays.asList(beanInfo.getPropertyDescriptors());
@@ -181,6 +201,11 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
     }
 
     @Override
+    /**
+     * Returns all contributed executables (methods and constructors) that should be
+     * exposed as UI actions. This includes methods from other classes that reference
+     * this class in their signatures.
+     */
     public Collection<Executable> getContributedExecutables() {
         if (contributedExecutables != null) {
             return contributedExecutables;
@@ -191,16 +216,25 @@ public class JavaClassIntrospector<C> implements Introspector<C> {
     }
 
     @Override
+    /**
+     * Returns true if the target class is annotated as a service.
+     */
     public boolean isService() {
         return JavaIntrospector.isService(clazz);
     }
 
     @Override
+    /**
+     * Returns the simple name of the target class.
+     */
     public String getSimpleName() {
         return beanInfo.getBeanDescriptor().getBeanClass().getSimpleName();
     }
 
     @Override
+    /**
+     * Returns the display name of the target class for UI presentation.
+     */
     public String getDisplayName() {
         return beanInfo.getBeanDescriptor().getDisplayName();
     }

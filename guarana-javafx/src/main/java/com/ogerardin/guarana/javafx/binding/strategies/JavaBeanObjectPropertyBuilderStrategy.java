@@ -8,8 +8,17 @@ import javafx.beans.property.adapter.JavaBeanObjectProperty;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Binding strategy that creates a JavaFX property wrapper around a JavaBean property.
+ * Uses JavaBeanObjectPropertyBuilder to enable bidirectional binding with standard
+ * JavaBean properties that don't have native JavaFX property support.
+ *
+ * @author Olivier Gérardin
+ * @since 1.0
+ */
 @Slf4j
 public class JavaBeanObjectPropertyBuilderStrategy implements BindingStrategy {
+
     @Override
     public <C, P> void bind(C object, JfxInstanceUI<P> propertyUi, PropertyInformation propertyInformation, P propertyValue) {
         final String propertyName = propertyInformation.getName();

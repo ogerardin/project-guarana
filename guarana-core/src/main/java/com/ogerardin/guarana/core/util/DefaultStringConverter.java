@@ -15,6 +15,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Default string converter that can convert objects to and from strings.
+ * Attempts to use String constructors or factory methods (of/valueOf) for conversion.
+ *
+ * @param <T> the type of object to convert
+ * @author Olivier Gérardin
+ * @since 1.0
+ */
 public class DefaultStringConverter<T> extends StringConverter<T> {
 
     private final List<String> FACTORY_METHODS = Arrays.asList("of", "valueOf");
@@ -22,6 +30,10 @@ public class DefaultStringConverter<T> extends StringConverter<T> {
     private  Set<Method> methods;
     private  Constructor<T> constructor;
 
+    /**
+     * Creates a new converter for the specified class.
+     * Attempts to find a String constructor or factory methods.
+     */
     public DefaultStringConverter(Class<T> clazz) {
         try {
             // try to get a constructor that takes a String as single argument
@@ -40,11 +52,19 @@ public class DefaultStringConverter<T> extends StringConverter<T> {
     }
 
     @Override
+    /**
+     * Converts an object to its string representation.
+     * Returns empty string for null objects.
+     */
     public String toString(T object) {
         return object == null ? "" : object.toString();
     }
 
     @Override
+    /**
+     * Converts a string back to an object using the constructor or factory methods.
+     * Returns null if conversion fails.
+     */
     public T fromString(String string) {
         if (constructor != null) {
             try {

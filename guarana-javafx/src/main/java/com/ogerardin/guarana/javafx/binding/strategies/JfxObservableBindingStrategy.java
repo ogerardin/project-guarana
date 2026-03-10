@@ -7,8 +7,16 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Binding strategy for JavaFX Observable values.
+ * Uses invalidation listeners to propagate changes from the model to the UI.
+ *
+ * @author Olivier Gérardin
+ * @since 1.0
+ */
 @Slf4j
 public class JfxObservableBindingStrategy implements BindingStrategy {
+
     @Override
     public <C, P> void bind(C object, JfxInstanceUI<P> propertyUi, PropertyInformation propertyInformation, P propertyValue) {
         if (! (propertyValue instanceof Observable)) {

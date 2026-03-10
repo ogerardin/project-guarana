@@ -215,6 +215,10 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
     private <P> void zoomProperty(Node parent, Method readMethod, String title) {
         try {
             final P value = (P) readMethod.invoke(getBoundObject());
+            if (value == null) {
+                log.error("property value is null");
+                return;
+            }
             Class<P> runtimeClass = (Class<P>) value.getClass();
             getBuilder().displayInstance(value, runtimeClass, parent, title);
         } catch (Exception ex) {

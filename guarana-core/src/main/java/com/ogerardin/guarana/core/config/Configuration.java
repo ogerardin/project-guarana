@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.function.Function;
 
 /**
@@ -47,7 +48,6 @@ public class Configuration extends CompositeConfiguration {
     private static final String PROPERTY_PREFIX = "guarana.";
 
     private static final String CORE_PROPERTIES = "/.guarana-core.properties";
-    private static final String TOOLKIT_PROPERTIES = "/.guarana-ui.properties";
     private static final String USER_PROPERTIES = "/guarana.properties";
 
     private final Map<Class<?>, ClassConfiguration<?>> classConfigurationByClass = new HashMap<>();
@@ -69,12 +69,21 @@ public class Configuration extends CompositeConfiguration {
             log.warn("Failed to load " + USER_PROPERTIES + ": " + e.getMessage());
         }
 
-        // priority 3: toolkit-specific properties
-        try {
-            addConfigurationResource(TOOLKIT_PROPERTIES);
-        } catch (ConfigurationException e) {
-            throw new RuntimeException("Failed to load " + TOOLKIT_PROPERTIES +
-                    " - you need one UI implementation in your classpath!", e);
+        // priority 3: toolkit-specific properties (loaded via ServiceLoader)
+        ServiceLoader<ToolkitConfigurationProvider> loader = ServiceLoader.load(ToolkitConfigurationProvider.class);
+        boolean providerFound = false;
+        for (ToolkitConfigurationProvider provider : loader) {
+            providerFound = true;
+            String toolkitProperties = provider.getPropertiesResourceName();
+            try {
+                // Use provider's class to load resource from its module
+                addConfigurationResource(toolkitProperties, provider.getClass());
+            } catch (ConfigurationException e) {
+                throw new RuntimeException("Failed to load toolkit properties: " + toolkitProperties, e);
+            }
+        }
+        if (!providerFound) {
+            throw new RuntimeException("No ToolkitConfigurationProvider found - you need one UI implementation in your classpath!");
         }
 
         // priority 4: Guarana model defaults
@@ -88,7 +97,27 @@ public class Configuration extends CompositeConfiguration {
     }
 
     private void addConfigurationResource(String resource) throws ConfigurationException {
-        final URL url = getClass().getResource(resource);
+        addConfigurationResource(resource, null);
+    }
+
+    private void addConfigurationResource(String resource, Class<?> clazz) throws ConfigurationException {
+        URL url = null;
+        
+        if (clazz != null) {
+            // Use provided class to load resource from its module
+            url = clazz.getResource(resource);
+        }
+        
+        if (url == null) {
+            // Try context class loader
+            url = Thread.currentThread().getContextClassLoader().getResource(resource);
+        }
+        
+        if (url == null) {
+            // Fall back to this class's class loader
+            url = getClass().getResource(resource);
+        }
+        
         if (url == null) {
             throw new ConfigurationException("Resource not found: " + resource);
         }

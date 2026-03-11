@@ -30,7 +30,7 @@ module guarana.javafx {
     
     // Apache Commons
     requires static org.apache.commons.lang3;       // Utility functions (compile-only)
-    requires static org.apache.commons.beanutils;   // Bean utilities (compile-only)
+    requires static commons.beanutils;              // Bean utilities (compile-only)
     
     // ===== Public API Exports =====
     // Export all public API packages for use by demo applications

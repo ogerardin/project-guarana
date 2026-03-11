@@ -20,8 +20,8 @@ module guarana.core {
     // Google Guava - with Automatic-Module-Name
     requires static com.google.common;  // Common utilities (compile-only)
     
-    // Apache Commons - with Automatic-Module-Name
-    requires static org.apache.commons.beanutils;  // Bean utilities (compile-only)
+    // Apache Commons - JAR-derived module names (no Automatic-Module-Name)
+    requires static commons.beanutils;  // Bean utilities (compile-only)
     
     // Other libraries - JAR-derived module names
     requires org.slf4j;                       // SLF4J API (logging facade)

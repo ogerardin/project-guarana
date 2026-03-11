@@ -19,10 +19,6 @@
 
     <repositories>
         <repository>
-            <id>shamanblackout</id>
-            <url>https://repo.shamanblackout.com/</url>
-        </repository>
-        <repository>
             <id>exo</id>
             <url>https://repo.maven.apache.org/maven2/</url>
         </repository>

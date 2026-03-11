@@ -45,6 +45,10 @@ public class ClassConfiguration<C> {
         this.clazz = clazz;
     }
 
+    public Class<C> getClazz() {
+        return clazz;
+    }
+
     public ClassConfiguration<C> hideProperties(String... propertyNames) {
         hiddenProperties.addAll(Arrays.asList(propertyNames));
         return this;
@@ -52,6 +56,10 @@ public class ClassConfiguration<C> {
 
     public boolean isHiddenProperty(String propertyName) {
         return hiddenProperties.contains(propertyName);
+    }
+
+    public Set<String> getHiddenProperties() {
+        return hiddenProperties;
     }
 
     public String toString(C value) {

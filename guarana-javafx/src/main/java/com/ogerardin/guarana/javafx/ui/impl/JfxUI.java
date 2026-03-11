@@ -45,9 +45,9 @@ import java.util.function.Supplier;
 @Slf4j
 abstract class JfxUI implements JfxRenderable {
 
-    Image ICON_CONSTRUCTOR = new Image("icons/call_class_16.png");
-    Image ICON_METHOD = new Image("icons/call_method_16.png");
-    Image ICON_DRAG_HANDLE = new Image("icons/drag_handle_16.jpg");
+    Image ICON_CONSTRUCTOR = new Image(JfxUI.class.getResource("/icons/call_class_16.png").toExternalForm());
+    Image ICON_METHOD = new Image(JfxUI.class.getResource("/icons/call_method_16.png").toExternalForm());
+    Image ICON_DRAG_HANDLE = new Image(JfxUI.class.getResource("/icons/drag_handle_16.jpg").toExternalForm());
 
     private final JfxUiManager builder;
 

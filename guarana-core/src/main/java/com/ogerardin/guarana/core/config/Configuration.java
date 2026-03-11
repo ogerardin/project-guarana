@@ -16,6 +16,7 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.SystemConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.lang.reflect.Executable;
@@ -62,14 +63,26 @@ public class Configuration extends CompositeConfiguration {
         // priority 1: system properties
         addConfiguration(new SystemConfiguration());
 
-        // priority 2: user-defined properties
-        try {
-            addConfigurationResource(USER_PROPERTIES);
-        } catch (ConfigurationException e) {
-            log.warn("Failed to load " + USER_PROPERTIES + ": " + e.getMessage());
+        // priority 2: user-defined properties (loaded via ServiceLoader)
+        log.debug("Looking for AppConfigurationProvider implementations...");
+        // Use module-layer-aware ServiceLoader (works with JPMS provides/uses)
+        ServiceLoader<AppConfigurationProvider> appConfigLoader = ServiceLoader.load(AppConfigurationProvider.class);
+        int count = 0;
+        for (AppConfigurationProvider provider : appConfigLoader) {
+            count++;
+            log.debug("Found AppConfigurationProvider #{}: {}", count, provider.getClass().getName());
+            String appProperties = provider.getPropertiesResourceName();
+            try {
+                // Use provider's class to load resource from its module
+                addConfigurationResource(appProperties, provider.getClass());
+            } catch (ConfigurationException e) {
+                log.warn("Failed to load app configuration from " + appProperties + ": " + e.getMessage());
+            }
         }
+        log.debug("Total AppConfigurationProvider implementations found: {}", count);
 
         // priority 3: toolkit-specific properties (loaded via ServiceLoader)
+        // Use module-layer-aware ServiceLoader (works with JPMS provides/uses)
         ServiceLoader<ToolkitConfigurationProvider> loader = ServiceLoader.load(ToolkitConfigurationProvider.class);
         boolean providerFound = false;
         for (ToolkitConfigurationProvider provider : loader) {
@@ -109,8 +122,9 @@ public class Configuration extends CompositeConfiguration {
         }
         
         if (url == null) {
-            // Try context class loader
-            url = Thread.currentThread().getContextClassLoader().getResource(resource);
+            // Try context class loader (remove leading slash if present)
+            String resourcePath = resource.startsWith("/") ? resource.substring(1) : resource;
+            url = Thread.currentThread().getContextClassLoader().getResource(resourcePath);
         }
         
         if (url == null) {
@@ -126,6 +140,7 @@ public class Configuration extends CompositeConfiguration {
                 new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
                         .configure(new Parameters().properties()
                                 .setURL(url)
+                                .setListDelimiterHandler(new DefaultListDelimiterHandler(','))
                         );
         PropertiesConfiguration config = builder.getConfiguration();
         addConfiguration(config);
@@ -197,7 +212,9 @@ public class Configuration extends CompositeConfiguration {
                 classConfiguration.hideMethods(getStringArray(key));
                 break;
             case "hideProperties":
-                classConfiguration.hideProperties(getStringArray(key));
+                String[] hiddenProps = getStringArray(key);
+                classConfiguration.hideProperties(hiddenProps);
+                log.debug("Class [{}]: hiding properties: {}", className, Arrays.toString(hiddenProps));
                 break;
             case "showProperties":
                 classConfiguration.showProperties(getStringArray(key));

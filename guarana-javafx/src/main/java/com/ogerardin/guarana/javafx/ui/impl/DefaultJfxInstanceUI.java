@@ -91,6 +91,8 @@ public class DefaultJfxInstanceUI<C> extends JfxForm implements JfxInstanceUI<C>
 
             // ignore hidden properties
             if (! getConfiguration().isShownProperty(classInformation.getJavaClass(), propertyName)) {
+                log.debug("Property [{}] of class [{}] is hidden, skipping UI creation", 
+                    propertyName, classInformation.getJavaClass().getSimpleName());
                 continue;
             }
 

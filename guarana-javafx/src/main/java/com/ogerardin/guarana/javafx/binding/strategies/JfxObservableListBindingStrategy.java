@@ -29,6 +29,7 @@ public class JfxObservableListBindingStrategy implements BindingStrategy {
             log.debug("Property [{}]: list changed: {}", propertyName, c);
             propertyUi.display(propertyValue);
         });
+        propertyUi.display(propertyValue);
     }
 
 }

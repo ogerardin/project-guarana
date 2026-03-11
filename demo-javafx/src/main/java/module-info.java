@@ -9,6 +9,10 @@ module com.ogerardin.guarana.demo.javafx {
     requires java.sql;
     requires cglib;
     
+    // Service loading declarations (REQUIRED for JPMS)
+    uses com.ogerardin.guarana.core.config.AppConfigurationProvider;
+    uses com.ogerardin.guarana.core.config.ToolkitConfigurationProvider;
+    
     exports com.ogerardin.guarana.demo.javafx.config;
     exports com.ogerardin.guarana.demo.javafx.hr;
     exports com.ogerardin.guarana.demo.javafx.website;
@@ -17,4 +21,7 @@ module com.ogerardin.guarana.demo.javafx {
     opens com.ogerardin.guarana.demo.javafx.hr;
     opens com.ogerardin.guarana.demo.javafx.hr.adapters;
     opens com.ogerardin.guarana.demo.javafx.website;
+    
+    provides com.ogerardin.guarana.core.config.AppConfigurationProvider
+        with com.ogerardin.guarana.demo.javafx.hr.DemoAppConfigurationProvider;
 }

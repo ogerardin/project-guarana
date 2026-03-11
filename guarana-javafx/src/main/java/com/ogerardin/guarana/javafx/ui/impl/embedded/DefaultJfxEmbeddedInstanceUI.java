@@ -47,11 +47,11 @@ public class DefaultJfxEmbeddedInstanceUI<P> extends TextField implements JfxIns
         }
 
         textProperty().addListener((observable, oldValue, newValue) -> {
-            log.debug("text changed: " + oldValue + " --> " + newValue);
+            log.trace("text changed: " + oldValue + " --> " + newValue);
         });
 
         boundObjectProperty().addListener((observable, oldValue, newValue) -> {
-            log.debug("bound object changed: " + oldValue + " --> " + newValue);
+            log.trace("bound object changed: " + oldValue + " --> " + newValue);
         });
 
     }
@@ -69,6 +69,13 @@ public class DefaultJfxEmbeddedInstanceUI<P> extends TextField implements JfxIns
 
     @Override
     public void display(P object) {
+        // Force update by setting to null first if the object is the same reference
+        // This is needed because JavaFX properties don't fire change events for same-reference updates
+        P currentValue = boundObjectProperty.get();
+        if (currentValue == object) {
+            // Same reference - need to force update
+            boundObjectProperty.set(null);
+        }
         boundObjectProperty.set(object);
     }
 

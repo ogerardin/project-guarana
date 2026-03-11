@@ -102,13 +102,11 @@
             <artifactId>fontawesomefx-fontawesome</artifactId>
             <version>4.7.0-5</version>
         </dependency>
-<!--
         <dependency>
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx-icons525</artifactId>
-            <version>3.0.0-11</version>
+            <version>3.0.0-4</version>
         </dependency>
--->
     </dependencies>
 
     <repositories>

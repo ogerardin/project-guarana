@@ -166,6 +166,37 @@ Contributions are welcome! Please ensure:
 - Build passes: `mvn clean install -DskipTests`
 - No TODO/FIXME comments in committed code
 
+## Security
+
+### Known Vulnerabilities
+
+This project has the following known security vulnerabilities in transitive dependencies:
+
+#### CVE-2025-66566, CVE-2025-12183 (High - MapDB)
+- **Affected**: `org.mapdb:mapdb:3.1.0` (via `org.lz4:lz4-java`)
+- **Impact**: Buffer overflow and denial of service in LZ4 compression library
+- **Status**: **Not fixed** - MapDB 3.1.0 is the latest stable release
+- **Risk Assessment**: **Low** - MapDB is only used in demo applications for sample data persistence, not in production code
+
+#### CVE-2021-36374, CVE-2021-36373 (Moderate - CGLIB)
+- **Affected**: `cglib:cglib:3.3.0` (via `org.apache.ant:ant`)
+- **Impact**: XML External Entity (XXE) injection in Apache Ant
+- **Status**: **Not fixed** - CGLIB is unmaintained
+- **Risk Assessment**: **Low** - CGLIB is used only at build/compile time for bytecode generation, not at runtime in production
+
+### Fixed Vulnerabilities
+
+#### CVE-2025-48734 (Fixed)
+- **Affected**: `commons-beanutils:commons-beanutils:1.9.4`
+- **Impact**: Improper access control allowing classloader access via enum's `declaredClass` property
+- **Fix**: Upgraded to `commons-beanutils:1.11.0`
+- **Commit**: `c0ff83b`
+
+### Mitigation
+
+- **MapDB**: Only used in `demo-javafx` module. Not used in production code. Consider replacing with H2 or other embedded database if concerned.
+- **CGLIB**: Build-time dependency only. The vulnerable Apache Ant code path is not exercised by this project. Consider migrating to ByteBuddy for future development.
+
 ## Acknowledgments
 
 - Built with JavaFX 21

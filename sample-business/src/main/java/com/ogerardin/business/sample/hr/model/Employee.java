@@ -20,7 +20,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Employee implements Serializable {
+public class Employee implements Serializable, Comparable<Employee> {
 
     private String lastName;
 
@@ -38,5 +38,17 @@ public class Employee implements Serializable {
      */
     public String getFullNameFirstLast() {
         return getFirstName() + " " + getLastName();
+    }
+
+    @Override
+    public int compareTo(Employee other) {
+        if (other == null) {
+            return 1;
+        }
+        int lastNameCompare = this.lastName.compareTo(other.lastName);
+        if (lastNameCompare != 0) {
+            return lastNameCompare;
+        }
+        return this.firstName.compareTo(other.firstName);
     }
 }

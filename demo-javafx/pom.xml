@@ -26,6 +26,10 @@
             <id>exo</id>
             <url>https://repo.maven.apache.org/maven2/</url>
         </repository>
+        <repository>
+            <id>restlet</id>
+            <url>https://maven.restlet.talend.com/</url>
+        </repository>
     </repositories>
 
     <dependencies>
